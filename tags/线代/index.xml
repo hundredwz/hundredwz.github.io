@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>线代 on A Lazy Coder</title>
+    <link>https://hundredwz.github.io/tags/%E7%BA%BF%E4%BB%A3/</link>
+    <description>Recent content in 线代 on A Lazy Coder</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Fri, 01 Dec 2017 07:37:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://hundredwz.github.io/tags/%E7%BA%BF%E4%BB%A3/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>transpose理解</title>
+      <link>https://hundredwz.github.io/post/transpose%E7%90%86%E8%A7%A3/</link>
+      <pubDate>Fri, 01 Dec 2017 07:37:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/transpose%E7%90%86%E8%A7%A3/</guid>
+      <description>&lt;p&gt;最近要做一个作业，用到了numpy的transpose函数，感觉理解起来不是很容易，记录一下。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

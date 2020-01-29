@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Tendermint II - A Lazy Coder</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="Hundred" /><meta name="description" content="我们知道，在启动一个节点前，需要执行tendermint init完成相关系统文件的生成，具体如何处理的我们查看下InitFilesCmd 查看" /><meta name="keywords" content="Blockchain, Golang, Fabric, Ethereum, Code" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.56.1 with even 4.0.0" />
+
+
+<link rel="canonical" href="https://hundredwz.github.io/post/Tendermint-II/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<link href="/dist/even.c2a46f00.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+<link rel="stylesheet" href="/css/reset-even.css">
+
+
+<meta property="og:title" content="Tendermint II" />
+<meta property="og:description" content="我们知道，在启动一个节点前，需要执行tendermint init完成相关系统文件的生成，具体如何处理的我们查看下InitFilesCmd 查看" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://hundredwz.github.io/post/Tendermint-II/" />
+<meta property="article:published_time" content="2020-01-29T03:08:43+00:00" />
+<meta property="article:modified_time" content="2020-01-29T03:08:43+00:00" />
+<meta itemprop="name" content="Tendermint II">
+<meta itemprop="description" content="我们知道，在启动一个节点前，需要执行tendermint init完成相关系统文件的生成，具体如何处理的我们查看下InitFilesCmd 查看">
+
+
+<meta itemprop="datePublished" content="2020-01-29T03:08:43&#43;00:00" />
+<meta itemprop="dateModified" content="2020-01-29T03:08:43&#43;00:00" />
+<meta itemprop="wordCount" content="1804">
+
+
+
+<meta itemprop="keywords" content="tendermint,blockchain," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Tendermint II"/>
+<meta name="twitter:description" content="我们知道，在启动一个节点前，需要执行tendermint init完成相关系统文件的生成，具体如何处理的我们查看下InitFilesCmd 查看"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">A Lazy Coder</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">首页</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">归档</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">分类</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/friends/">
+        <li class="mobile-menu-item">Friends</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">A Lazy Coder</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">首页</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">归档</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">分类</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/friends/">Friends</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">Tendermint II</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2020-01-29 03:08 </span>
+        
+          <span class="more-meta"> 约 1804 字 </span>
+          <span class="more-meta"> 预计阅读 4 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#初始化分析">初始化分析</a>
+<ul>
+<li><a href="#配置文件">配置文件</a></li>
+<li><a href="#filepv">FilePV</a></li>
+<li><a href="#nodekey">NodeKey</a></li>
+<li><a href="#genesis">Genesis</a></li>
+</ul></li>
+<li><a href="#结束">结束</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+  </div>
+</div>
+    <div class="post-content">
+      
+
+<p>我们知道，在启动一个节点前，需要执行<code>tendermint init</code>完成相关系统文件的生成，具体如何处理的我们查看下<code>InitFilesCmd</code></p>
+
+<p>查看源代码，发现本部分功能比较长</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">privValKeyFile</span> <span class="o">:=</span> <span class="nx">config</span><span class="p">.</span><span class="nf">PrivValidatorKeyFile</span><span class="p">()</span>
+<span class="nx">privValStateFile</span> <span class="o">:=</span> <span class="nx">config</span><span class="p">.</span><span class="nf">PrivValidatorStateFile</span><span class="p">()</span>
+<span class="kd">var</span> <span class="nx">pv</span> <span class="o">*</span><span class="nx">privval</span><span class="p">.</span><span class="nx">FilePV</span>
+<span class="k">if</span> <span class="nx">tmos</span><span class="p">.</span><span class="nf">FileExists</span><span class="p">(</span><span class="nx">privValKeyFile</span><span class="p">)</span> <span class="p">{</span>
+	<span class="nx">pv</span> <span class="p">=</span> <span class="nx">privval</span><span class="p">.</span><span class="nf">LoadFilePV</span><span class="p">(</span><span class="nx">privValKeyFile</span><span class="p">,</span> <span class="nx">privValStateFile</span><span class="p">)</span>
+	<span class="nx">logger</span><span class="p">.</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;Found private validator&#34;</span><span class="p">,</span> <span class="s">&#34;keyFile&#34;</span><span class="p">,</span> <span class="nx">privValKeyFile</span><span class="p">,</span>
+		<span class="s">&#34;stateFile&#34;</span><span class="p">,</span> <span class="nx">privValStateFile</span><span class="p">)</span>
+<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+	<span class="nx">pv</span> <span class="p">=</span> <span class="nx">privval</span><span class="p">.</span><span class="nf">GenFilePV</span><span class="p">(</span><span class="nx">privValKeyFile</span><span class="p">,</span> <span class="nx">privValStateFile</span><span class="p">)</span>
+	<span class="nx">pv</span><span class="p">.</span><span class="nf">Save</span><span class="p">()</span>
+	<span class="nx">logger</span><span class="p">.</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;Generated private validator&#34;</span><span class="p">,</span> <span class="s">&#34;keyFile&#34;</span><span class="p">,</span> <span class="nx">privValKeyFile</span><span class="p">,</span>
+		<span class="s">&#34;stateFile&#34;</span><span class="p">,</span> <span class="nx">privValStateFile</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="nx">nodeKeyFile</span> <span class="o">:=</span> <span class="nx">config</span><span class="p">.</span><span class="nf">NodeKeyFile</span><span class="p">()</span>
+<span class="k">if</span> <span class="nx">tmos</span><span class="p">.</span><span class="nf">FileExists</span><span class="p">(</span><span class="nx">nodeKeyFile</span><span class="p">)</span> <span class="p">{</span>
+	<span class="nx">logger</span><span class="p">.</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;Found node key&#34;</span><span class="p">,</span> <span class="s">&#34;path&#34;</span><span class="p">,</span> <span class="nx">nodeKeyFile</span><span class="p">)</span>
+<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+	<span class="k">if</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">p2p</span><span class="p">.</span><span class="nf">LoadOrGenNodeKey</span><span class="p">(</span><span class="nx">nodeKeyFile</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">err</span>
+	<span class="p">}</span>
+	<span class="nx">logger</span><span class="p">.</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;Generated node key&#34;</span><span class="p">,</span> <span class="s">&#34;path&#34;</span><span class="p">,</span> <span class="nx">nodeKeyFile</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1">// genesis file
+</span><span class="c1"></span><span class="nx">genFile</span> <span class="o">:=</span> <span class="nx">config</span><span class="p">.</span><span class="nf">GenesisFile</span><span class="p">()</span>
+<span class="k">if</span> <span class="nx">tmos</span><span class="p">.</span><span class="nf">FileExists</span><span class="p">(</span><span class="nx">genFile</span><span class="p">)</span> <span class="p">{</span>
+	<span class="nx">logger</span><span class="p">.</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;Found genesis file&#34;</span><span class="p">,</span> <span class="s">&#34;path&#34;</span><span class="p">,</span> <span class="nx">genFile</span><span class="p">)</span>
+<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+	<span class="nx">genDoc</span> <span class="o">:=</span> <span class="nx">types</span><span class="p">.</span><span class="nx">GenesisDoc</span><span class="p">{</span>
+		<span class="nx">ChainID</span><span class="p">:</span>         <span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">&#34;test-chain-%v&#34;</span><span class="p">,</span> <span class="nx">tmrand</span><span class="p">.</span><span class="nf">Str</span><span class="p">(</span><span class="mi">6</span><span class="p">)),</span>
+		<span class="nx">GenesisTime</span><span class="p">:</span>     <span class="nx">tmtime</span><span class="p">.</span><span class="nf">Now</span><span class="p">(),</span>
+		<span class="nx">ConsensusParams</span><span class="p">:</span> <span class="nx">types</span><span class="p">.</span><span class="nf">DefaultConsensusParams</span><span class="p">(),</span>
+	<span class="p">}</span>
+	<span class="nx">key</span> <span class="o">:=</span> <span class="nx">pv</span><span class="p">.</span><span class="nf">GetPubKey</span><span class="p">()</span>
+	<span class="nx">genDoc</span><span class="p">.</span><span class="nx">Validators</span> <span class="p">=</span> <span class="p">[]</span><span class="nx">types</span><span class="p">.</span><span class="nx">GenesisValidator</span><span class="p">{{</span>
+		<span class="nx">Address</span><span class="p">:</span> <span class="nx">key</span><span class="p">.</span><span class="nf">Address</span><span class="p">(),</span>
+		<span class="nx">PubKey</span><span class="p">:</span>  <span class="nx">key</span><span class="p">,</span>
+		<span class="nx">Power</span><span class="p">:</span>   <span class="mi">10</span><span class="p">,</span>
+	<span class="p">}}</span>
+
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">genDoc</span><span class="p">.</span><span class="nf">SaveAs</span><span class="p">(</span><span class="nx">genFile</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">err</span>
+	<span class="p">}</span>
+	<span class="nx">logger</span><span class="p">.</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;Generated genesis file&#34;</span><span class="p">,</span> <span class="s">&#34;path&#34;</span><span class="p">,</span> <span class="nx">genFile</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="k">return</span> <span class="kc">nil</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>我们一步一步进行分析。</p>
+
+<h4 id="初始化分析">初始化分析</h4>
+
+<h5 id="配置文件">配置文件</h5>
+
+<p>初始化首先默认获取验证节点的秘钥配置文件和状态文件。</p>
+
+<p>查看默认的配置文件，可以发现文件的默认位置按照如下规则生成</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">defaultConfigDir</span>     <span class="p">=</span> <span class="s">&#34;config&#34;</span>
+<span class="o">...</span>
+<span class="nx">defaultPrivValKeyName</span>   <span class="p">=</span> <span class="s">&#34;priv_validator_key.json&#34;</span>
+<span class="nx">defaultPrivValStateName</span> <span class="p">=</span> <span class="s">&#34;priv_validator_state.json&#34;</span>
+<span class="o">...</span>
+<span class="nx">defaultPrivValKeyPath</span>   <span class="p">=</span> <span class="nx">filepath</span><span class="p">.</span><span class="nf">Join</span><span class="p">(</span><span class="nx">defaultConfigDir</span><span class="p">,</span> <span class="nx">defaultPrivValKeyName</span><span class="p">)</span>
+<span class="nx">defaultPrivValStatePath</span> <span class="p">=</span> <span class="nx">filepath</span><span class="p">.</span><span class="nf">Join</span><span class="p">(</span><span class="nx">defaultDataDir</span><span class="p">,</span> <span class="nx">defaultPrivValStateName</span><span class="p">)</span>
+<span class="o">...</span>
+<span class="nf">rootify</span><span class="p">(</span><span class="nx">cfg</span><span class="p">.</span><span class="nx">PrivValidatorKey</span><span class="p">,</span> <span class="nx">cfg</span><span class="p">.</span><span class="nx">RootDir</span><span class="p">)</span>
+<span class="o">...</span>
+<span class="kd">func</span> <span class="nf">rootify</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">root</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">string</span> <span class="p">{</span>
+	<span class="k">if</span> <span class="nx">filepath</span><span class="p">.</span><span class="nf">IsAbs</span><span class="p">(</span><span class="nx">path</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">path</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="nx">filepath</span><span class="p">.</span><span class="nf">Join</span><span class="p">(</span><span class="nx">root</span><span class="p">,</span> <span class="nx">path</span><span class="p">)</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>上文已经分析，绝对路径<code>root</code>在系统启动前已经配置了，是读取的<code>HOME</code>中的设置，如果我们没有设置，则路径就是<code>.tendermint</code>，所以获取的文件路径是<code>.tendermint/config/priv_validator_key.json</code>和<code>.tendermint/config/priv_validator_state.json</code>。如果文件存在，则读取文件内容，否则生成。</p>
+
+<h5 id="filepv">FilePV</h5>
+
+<p>一个默认验证者的信息、状态是通过<code>FilePV</code>进行持久化存储的，具体的定义格式如下</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">FilePV</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">Key</span>           <span class="nx">FilePVKey</span>
+	<span class="nx">LastSignState</span> <span class="nx">FilePVLastSignState</span>
+<span class="p">}</span>
+<span class="kd">type</span> <span class="nx">FilePVKey</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">Address</span> <span class="nx">types</span><span class="p">.</span><span class="nx">Address</span>  <span class="s">`json:&#34;address&#34;`</span>
+	<span class="nx">PubKey</span>  <span class="nx">crypto</span><span class="p">.</span><span class="nx">PubKey</span>  <span class="s">`json:&#34;pub_key&#34;`</span>
+	<span class="nx">PrivKey</span> <span class="nx">crypto</span><span class="p">.</span><span class="nx">PrivKey</span> <span class="s">`json:&#34;priv_key&#34;`</span>
+
+	<span class="nx">filePath</span> <span class="kt">string</span>
+<span class="p">}</span>
+<span class="kd">type</span> <span class="nx">FilePVLastSignState</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">Height</span>    <span class="kt">int64</span>            <span class="s">`json:&#34;height&#34;`</span>
+	<span class="nx">Round</span>     <span class="kt">int</span>              <span class="s">`json:&#34;round&#34;`</span>
+	<span class="nx">Step</span>      <span class="kt">int8</span>             <span class="s">`json:&#34;step&#34;`</span>
+	<span class="nx">Signature</span> <span class="p">[]</span><span class="kt">byte</span>           <span class="s">`json:&#34;signature,omitempty&#34;`</span>
+	<span class="nx">SignBytes</span> <span class="nx">tmbytes</span><span class="p">.</span><span class="nx">HexBytes</span> <span class="s">`json:&#34;signbytes,omitempty&#34;`</span>
+
+	<span class="nx">filePath</span> <span class="kt">string</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>验证者信息包括验证者地址、公私钥，验证状态包括当前验证的高度、进行PBFT的轮次和所处的位置、当前进行的签名。</p>
+
+<p>读取过程如下</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">loadFilePV</span><span class="p">(</span><span class="nx">keyFilePath</span><span class="p">,</span> <span class="nx">stateFilePath</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">loadState</span> <span class="kt">bool</span><span class="p">)</span> <span class="o">*</span><span class="nx">FilePV</span> <span class="p">{</span>
+	<span class="nx">keyJSONBytes</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">ioutil</span><span class="p">.</span><span class="nf">ReadFile</span><span class="p">(</span><span class="nx">keyFilePath</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">tmos</span><span class="p">.</span><span class="nf">Exit</span><span class="p">(</span><span class="nx">err</span><span class="p">.</span><span class="nf">Error</span><span class="p">())</span>
+	<span class="p">}</span>
+	<span class="nx">pvKey</span> <span class="o">:=</span> <span class="nx">FilePVKey</span><span class="p">{}</span>
+	<span class="nx">err</span> <span class="p">=</span> <span class="nx">cdc</span><span class="p">.</span><span class="nf">UnmarshalJSON</span><span class="p">(</span><span class="nx">keyJSONBytes</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">pvKey</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">tmos</span><span class="p">.</span><span class="nf">Exit</span><span class="p">(</span><span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">&#34;Error reading PrivValidator key from %v: %v\n&#34;</span><span class="p">,</span> <span class="nx">keyFilePath</span><span class="p">,</span> <span class="nx">err</span><span class="p">))</span>
+	<span class="p">}</span>
+
+	<span class="c1">// overwrite pubkey and address for convenience
+</span><span class="c1"></span>	<span class="nx">pvKey</span><span class="p">.</span><span class="nx">PubKey</span> <span class="p">=</span> <span class="nx">pvKey</span><span class="p">.</span><span class="nx">PrivKey</span><span class="p">.</span><span class="nf">PubKey</span><span class="p">()</span>
+	<span class="nx">pvKey</span><span class="p">.</span><span class="nx">Address</span> <span class="p">=</span> <span class="nx">pvKey</span><span class="p">.</span><span class="nx">PubKey</span><span class="p">.</span><span class="nf">Address</span><span class="p">()</span>
+	<span class="nx">pvKey</span><span class="p">.</span><span class="nx">filePath</span> <span class="p">=</span> <span class="nx">keyFilePath</span>
+
+	<span class="nx">pvState</span> <span class="o">:=</span> <span class="nx">FilePVLastSignState</span><span class="p">{}</span>
+	<span class="k">if</span> <span class="nx">loadState</span> <span class="p">{</span>
+		<span class="nx">stateJSONBytes</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">ioutil</span><span class="p">.</span><span class="nf">ReadFile</span><span class="p">(</span><span class="nx">stateFilePath</span><span class="p">)</span>
+		<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="nx">tmos</span><span class="p">.</span><span class="nf">Exit</span><span class="p">(</span><span class="nx">err</span><span class="p">.</span><span class="nf">Error</span><span class="p">())</span>
+		<span class="p">}</span>
+		<span class="nx">err</span> <span class="p">=</span> <span class="nx">cdc</span><span class="p">.</span><span class="nf">UnmarshalJSON</span><span class="p">(</span><span class="nx">stateJSONBytes</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">pvState</span><span class="p">)</span>
+		<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="nx">tmos</span><span class="p">.</span><span class="nf">Exit</span><span class="p">(</span><span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">&#34;Error reading PrivValidator state from %v: %v\n&#34;</span><span class="p">,</span> <span class="nx">stateFilePath</span><span class="p">,</span> <span class="nx">err</span><span class="p">))</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+
+	<span class="nx">pvState</span><span class="p">.</span><span class="nx">filePath</span> <span class="p">=</span> <span class="nx">stateFilePath</span>
+
+	<span class="k">return</span> <span class="o">&amp;</span><span class="nx">FilePV</span><span class="p">{</span>
+		<span class="nx">Key</span><span class="p">:</span>           <span class="nx">pvKey</span><span class="p">,</span>
+		<span class="nx">LastSignState</span><span class="p">:</span> <span class="nx">pvState</span><span class="p">,</span>
+	<span class="p">}</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>本流程实际比较简单，直接读取文件，反序列化到结构体中即可。我们在读取<code>FilePV</code>时有一个假设，即节点的公私钥信息存在，则默认节点的状态信息也存在。而当启动时节点信息不存在的情况下，需要生成节点信息和相应的状态。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">GenFilePV</span><span class="p">(</span><span class="nx">keyFilePath</span><span class="p">,</span> <span class="nx">stateFilePath</span> <span class="kt">string</span><span class="p">)</span> <span class="o">*</span><span class="nx">FilePV</span> <span class="p">{</span>
+	<span class="nx">privKey</span> <span class="o">:=</span> <span class="nx">ed25519</span><span class="p">.</span><span class="nf">GenPrivKey</span><span class="p">()</span>
+
+	<span class="k">return</span> <span class="o">&amp;</span><span class="nx">FilePV</span><span class="p">{</span>
+		<span class="nx">Key</span><span class="p">:</span> <span class="nx">FilePVKey</span><span class="p">{</span>
+			<span class="nx">Address</span><span class="p">:</span>  <span class="nx">privKey</span><span class="p">.</span><span class="nf">PubKey</span><span class="p">().</span><span class="nf">Address</span><span class="p">(),</span>
+			<span class="nx">PubKey</span><span class="p">:</span>   <span class="nx">privKey</span><span class="p">.</span><span class="nf">PubKey</span><span class="p">(),</span>
+			<span class="nx">PrivKey</span><span class="p">:</span>  <span class="nx">privKey</span><span class="p">,</span>
+			<span class="nx">filePath</span><span class="p">:</span> <span class="nx">keyFilePath</span><span class="p">,</span>
+		<span class="p">},</span>
+		<span class="nx">LastSignState</span><span class="p">:</span> <span class="nx">FilePVLastSignState</span><span class="p">{</span>
+			<span class="nx">Step</span><span class="p">:</span>     <span class="nx">stepNone</span><span class="p">,</span>
+			<span class="nx">filePath</span><span class="p">:</span> <span class="nx">stateFilePath</span><span class="p">,</span>
+		<span class="p">},</span>
+	<span class="p">}</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>在此处我们发现生成时并不对直接生成文件，而是在上层显示调用<code>Save</code>函数保存的。</p>
+
+<p>由于保存文件对于启动过程影响并不大，而且保存的代码比较长，我们暂时忽略。</p>
+
+<p>到目前为止，验证者的信息和状态已经获取完毕。</p>
+
+<h5 id="nodekey">NodeKey</h5>
+
+<p>读取完验证者的相关信息后，接下来是节点的信息</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">type NodeKey struct {
+	PrivKey crypto.PrivKey `json:&#34;priv_key&#34;` // our priv key
+}</pre></td></tr></table>
+</div>
+</div>
+<p>其读取方式以及生成很简单，和验证者的处理方式一致，此处不再赘述。</p>
+
+<p>但是，此处有一点问题，在上层调用时显示判断了一次文件是否存在，当文件不存在时，程序调用的方式为<code>LoadOrGenNodeKey</code>，即又判断了一次，私认为此处有一些重复代码。</p>
+
+<p>此外，还有一个需要注意的，在这个地方，node的私钥信息是和privval的私钥信息是不一致的。在次数是为什么呢？</p>
+
+<p>通常一个节点，可以对应一个验证者身份，节点用私钥可以标识自己的唯一身份，所以用验证者的私钥生成地址即可，为何要再单独生成呢？</p>
+
+<p>我们带着问题往后面看吧。</p>
+
+<h5 id="genesis">Genesis</h5>
+
+<p>生成了验证者身份和节点身份后，初始化还需要创建创世区块。</p>
+
+<p>创世区块的格式如下</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">GenesisDoc</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">GenesisTime</span>     <span class="nx">time</span><span class="p">.</span><span class="nx">Time</span>          <span class="s">`json:&#34;genesis_time&#34;`</span>
+	<span class="nx">ChainID</span>         <span class="kt">string</span>             <span class="s">`json:&#34;chain_id&#34;`</span>
+	<span class="nx">ConsensusParams</span> <span class="o">*</span><span class="nx">ConsensusParams</span>   <span class="s">`json:&#34;consensus_params,omitempty&#34;`</span>
+	<span class="nx">Validators</span>      <span class="p">[]</span><span class="nx">GenesisValidator</span> <span class="s">`json:&#34;validators,omitempty&#34;`</span>
+	<span class="nx">AppHash</span>         <span class="nx">tmbytes</span><span class="p">.</span><span class="nx">HexBytes</span>   <span class="s">`json:&#34;app_hash&#34;`</span>
+	<span class="nx">AppState</span>        <span class="nx">json</span><span class="p">.</span><span class="nx">RawMessage</span>    <span class="s">`json:&#34;app_state,omitempty&#34;`</span>
+<span class="p">}</span>
+<span class="kd">type</span> <span class="nx">ConsensusParams</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">Block</span>     <span class="nx">BlockParams</span>     <span class="s">`json:&#34;block&#34;`</span> <span class="c1">//定义生成区块的参数，包括区块最大大小，区块最大Gas以及区块最小生成间隔
+</span><span class="c1"></span>	<span class="nx">Evidence</span>  <span class="nx">EvidenceParams</span>  <span class="s">`json:&#34;evidence&#34;`</span> <span class="c1">// tendermint支持对错误交易的举证，此处指允许证据距离如今最长的时间
+</span><span class="c1"></span>	<span class="nx">Validator</span> <span class="nx">ValidatorParams</span> <span class="s">`json:&#34;validator&#34;`</span> <span class="c1">//指的是验证者的地址类型，主要包括ed25519,sr25519,secp256k1三种类型
+</span><span class="c1"></span><span class="p">}</span>
+<span class="kd">type</span> <span class="nx">GenesisValidator</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">Address</span> <span class="nx">Address</span>       <span class="s">`json:&#34;address&#34;`</span>
+	<span class="nx">PubKey</span>  <span class="nx">crypto</span><span class="p">.</span><span class="nx">PubKey</span> <span class="s">`json:&#34;pub_key&#34;`</span>
+	<span class="nx">Power</span>   <span class="kt">int64</span>         <span class="s">`json:&#34;power&#34;`</span>
+	<span class="nx">Name</span>    <span class="kt">string</span>        <span class="s">`json:&#34;name&#34;`</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>可以得知，生成的创世区块内容比较简单，包括整个链的配置和验证者，此外没有其他的信息了。然而，创世区块中的<code>AppHash</code>和<code>AppState</code>指的是什么呢？</p>
+
+<p>我们后续继续探索。</p>
+
+<h4 id="结束">结束</h4>
+
+<p>到此为止，一个节点的初始化就算结束了，而且创世过程也比较简单，就是尝试读取已有的文件，没有则创建新的，生成完毕创立区块链结束。</p>
+
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">Hundred</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2020-01-29 03:08
+        
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">许可协议</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/tendermint/">tendermint</a>
+          <a href="/tags/blockchain/">blockchain</a>
+          </div>
+      <nav class="post-nav">
+        
+        <a class="next" href="/post/Tendermint-I/">
+            <span class="next-text nav-default">Tendermint I</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+  
+  
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="#" class="iconfont icon-cnblogs" title="cnblogs"></a>
+      <a href="mailto:sdwangzhuo@gmail.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/hundredwz" class="iconfont icon-github" title="github"></a>
+      <a href="#" class="iconfont icon-juejin" title="juejin"></a>
+      <a href="#" class="iconfont icon-v2ex" title="v2ex"></a>
+      <a href="https://weibo.com/hundredwz" class="iconfont icon-weibo" title="weibo"></a>
+  <a href="https://hundredwz.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2013 - 
+    2020
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Hundred</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.min.js" integrity="sha256-jwCP0NAdCBloaIWTWHmW4i3snUNMHUNO+jr9rYd2iOI=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.locales.min.js" integrity="sha256-ZwofwC1Lf/faQCzN7nZtfijVV6hSwxjQMwXL4gn9qU8=" crossorigin="anonymous"></script>
+  <script><!-- NOTE: timeago.js uses the language code format like "zh_CN" (underscore and case sensitive) -->
+    var languageCode = "zh-CN".replace(/-/g, '_').replace(/_(.*)/, function ($0, $1) {return $0.replace($1, $1.toUpperCase());});
+    timeago().render(document.querySelectorAll('.timeago'), languageCode);
+    timeago.cancel();  
+  </script>
+<script type="text/javascript" src="/dist/even.26188efa.min.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+      showProcessingMessages: false,
+      messageStyle: 'none'
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"  integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-138883536-1', 'auto');
+	ga('set', 'anonymizeIp', true);
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>tendermint on A Lazy Coder</title>
+    <link>https://hundredwz.github.io/tags/tendermint/</link>
+    <description>Recent content in tendermint on A Lazy Coder</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Wed, 29 Jan 2020 03:08:43 +0000</lastBuildDate>
+    
+	<atom:link href="https://hundredwz.github.io/tags/tendermint/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Tendermint II</title>
+      <link>https://hundredwz.github.io/post/Tendermint-II/</link>
+      <pubDate>Wed, 29 Jan 2020 03:08:43 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Tendermint-II/</guid>
+      <description>我们知道，在启动一个节点前，需要执行tendermint init完成相关系统文件的生成，具体如何处理的我们查看下InitFilesCmd 查看</description>
+    </item>
+    
+    <item>
+      <title>Tendermint I</title>
+      <link>https://hundredwz.github.io/post/Tendermint-I/</link>
+      <pubDate>Wed, 29 Jan 2020 03:05:57 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Tendermint-I/</guid>
+      <description>由于新型肺炎，不得不宅在家里面，闲着也是闲着，不如再认真地过一遍Tendermint源码吧。之前看的比较粗略，理解的也不够深。正好毕设使用了</description>
+    </item>
+    
+    <item>
+      <title>Tendermint阅读XI</title>
+      <link>https://hundredwz.github.io/post/Tendermint%E9%98%85%E8%AF%BBXI/</link>
+      <pubDate>Fri, 08 Mar 2019 08:25:56 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Tendermint%E9%98%85%E8%AF%BBXI/</guid>
+      <description>&lt;p&gt;我们现在来看一下Tendermint的工作流程，接上我们第一篇文章了。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Tendermint阅读X</title>
+      <link>https://hundredwz.github.io/post/Tendermint%E9%98%85%E8%AF%BBX/</link>
+      <pubDate>Fri, 08 Mar 2019 06:26:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Tendermint%E9%98%85%E8%AF%BBX/</guid>
+      <description>&lt;p&gt;我们要开始看最难的了，共识模块，这块事区块链的核心，也是流程多到让人痛苦，我们就尽力的看一看吧。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Tendermint阅读IX</title>
+      <link>https://hundredwz.github.io/post/Tendermint%E9%98%85%E8%AF%BBIX/</link>
+      <pubDate>Fri, 08 Mar 2019 03:11:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Tendermint%E9%98%85%E8%AF%BBIX/</guid>
+      <description>&lt;p&gt;我们现在要啃一个硬骨头了，共识模块。在开始之前，我们先看一下EvidencePool模块，一个合法证据池模块。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Tendermint阅读VIII</title>
+      <link>https://hundredwz.github.io/post/Tendermint%E9%98%85%E8%AF%BBVIII/</link>
+      <pubDate>Wed, 06 Mar 2019 02:32:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Tendermint%E9%98%85%E8%AF%BBVIII/</guid>
+      <description>&lt;p&gt;我们在上一篇文章中提到，block处理有处理state，以及相应的执行过程。我们这一节就来看一看。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Tendermint阅读VII</title>
+      <link>https://hundredwz.github.io/post/Tendermint%E9%98%85%E8%AF%BBVII/</link>
+      <pubDate>Mon, 04 Mar 2019 02:43:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Tendermint%E9%98%85%E8%AF%BBVII/</guid>
+      <description>&lt;p&gt;这次我们来看一个复杂的模块，blockchain模块，实际上我个人感觉，叫block模块似乎更好。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Tendermint阅读VI</title>
+      <link>https://hundredwz.github.io/post/Tendermint%E9%98%85%E8%AF%BBVI/</link>
+      <pubDate>Sat, 02 Mar 2019 02:15:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Tendermint%E9%98%85%E8%AF%BBVI/</guid>
+      <description>&lt;p&gt;看了两个复杂的，我们来看一个简单的模块，crypto模块。这个模块封装了很多常用的加密所用的包。我们就大体介绍一下。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Tendermint阅读V</title>
+      <link>https://hundredwz.github.io/post/Tendermint%E9%98%85%E8%AF%BBV/</link>
+      <pubDate>Thu, 28 Feb 2019 01:50:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Tendermint%E9%98%85%E8%AF%BBV/</guid>
+      <description>&lt;p&gt;我们看完了peer，看点稍微简单点的mempool实现吧。
+这个和我们写的abci程序有直接的关联，因此，我们需要仔细阅读下。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Tendermint阅读IV</title>
+      <link>https://hundredwz.github.io/post/Tendermint%E9%98%85%E8%AF%BBIV/</link>
+      <pubDate>Tue, 26 Feb 2019 13:05:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Tendermint%E9%98%85%E8%AF%BBIV/</guid>
+      <description>&lt;p&gt;我们之前看了Tendermint如何和别人连接，如何接受别人的连接，可是，Tendermint得怎么找到别人啊！
+不能手动一个一个的输入连接地址啊！
+这个就是pexreactor的功能了！&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Tendermint源码学习III</title>
+      <link>https://hundredwz.github.io/post/Tendermint%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0III/</link>
+      <pubDate>Mon, 25 Feb 2019 12:34:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Tendermint%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0III/</guid>
+      <description>&lt;p&gt;我们之前看了peer的基本操作，现在看一下更上一层的工作内容。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Tendermint源码阅读II</title>
+      <link>https://hundredwz.github.io/post/Tendermint%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BBII/</link>
+      <pubDate>Fri, 22 Feb 2019 02:40:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Tendermint%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BBII/</guid>
+      <description>&lt;p&gt;在开始本节之前，我们得先说两个非常重要的接口，service和reactor。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Tendermint源码学习I</title>
+      <link>https://hundredwz.github.io/post/Tendermint%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0I/</link>
+      <pubDate>Wed, 20 Feb 2019 03:26:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Tendermint%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0I/</guid>
+      <description>&lt;p&gt;作为一个区块链研究生&amp;amp;码农，没有系统的阅读过一个区块链系统的源码，实在不好意思说出去。
+之前我阅读过几天的Fabric，结果发现读起来有点难以理解。于是放弃了好久。
+以前了解了Tendermint，发现是一个研究生的毕设，而且目前应用也挺广泛，就沉下心来阅读一下吧。
+当然啦，我自己直接阅读起来发现还是有一些问题，就看着github上以为大神的内容，阅读了一遍。
+github大佬的地址为&lt;a href=&#34;https://github.com/wupeaking/tendermint_code_analysis&#34; target=&#34;_blank&#34;&gt;通用区块链平台tendermint源码分析&lt;/a&gt;&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

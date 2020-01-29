@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>boltdb阅读III - A Lazy Coder</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="Hundred" /><meta name="description" content="我们上一篇主要分析了boltdb初始化，也就是创建一个新的数据库的过程。
+" /><meta name="keywords" content="Blockchain, Golang, Fabric, Ethereum, Code" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.56.1 with even 4.0.0" />
+
+
+<link rel="canonical" href="https://hundredwz.github.io/post/boltdb%E9%98%85%E8%AF%BBIII/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<link href="/dist/even.c2a46f00.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+<link rel="stylesheet" href="/css/reset-even.css">
+
+
+<meta property="og:title" content="boltdb阅读III" />
+<meta property="og:description" content="我们上一篇主要分析了boltdb初始化，也就是创建一个新的数据库的过程。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://hundredwz.github.io/post/boltdb%E9%98%85%E8%AF%BBIII/" />
+<meta property="article:published_time" content="2018-11-02T08:37:00+00:00" />
+<meta property="article:modified_time" content="2018-11-02T08:37:00+00:00" />
+<meta itemprop="name" content="boltdb阅读III">
+<meta itemprop="description" content="我们上一篇主要分析了boltdb初始化，也就是创建一个新的数据库的过程。">
+
+
+<meta itemprop="datePublished" content="2018-11-02T08:37:00&#43;00:00" />
+<meta itemprop="dateModified" content="2018-11-02T08:37:00&#43;00:00" />
+<meta itemprop="wordCount" content="1056">
+
+
+
+<meta itemprop="keywords" content="golang,boltdb,源码," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="boltdb阅读III"/>
+<meta name="twitter:description" content="我们上一篇主要分析了boltdb初始化，也就是创建一个新的数据库的过程。"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">A Lazy Coder</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">首页</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">归档</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">分类</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/friends/">
+        <li class="mobile-menu-item">Friends</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">A Lazy Coder</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">首页</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">归档</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">分类</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/friends/">Friends</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">boltdb阅读III</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2018-11-02 08:37 </span>
+        <div class="post-category">
+            <a href="/categories/program/"> program </a>
+            </div>
+          <span class="more-meta"> 约 1056 字 </span>
+          <span class="more-meta"> 预计阅读 3 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#读取">读取</a></li>
+<li><a href="#mmap">mmap</a></li>
+<li><a href="#freelist">freelist</a></li>
+<li><a href="#结构">结构</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+  </div>
+</div>
+  <div class="post-outdated">
+    <div class="hint">
+      <p>【注意】最后更新于 <span class="timeago" datetime="2018-11-02T08:37:00" title="November 2, 2018">November 2, 2018</span>，文中内容可能已过时，请谨慎使用。</p>
+    </div>
+  </div>
+    <div class="post-content">
+      <p>我们上一篇主要分析了boltdb初始化，也就是创建一个新的数据库的过程。</p>
+
+<h4 id="读取">读取</h4>
+
+<p>数据库如果直接从文件读取，会效率低下，因此bolt做了一个mmap，也就是将数据使用内存映射的方法读取对应的数据。
+我们接着第一篇的脚步，往后面执行。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// Initialize page pool.
+</span><span class="c1"></span><span class="nx">db</span><span class="p">.</span><span class="nx">pagePool</span> <span class="p">=</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">Pool</span><span class="p">{</span>
+	<span class="nx">New</span><span class="p">:</span> <span class="kd">func</span><span class="p">()</span> <span class="kd">interface</span><span class="p">{}</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">byte</span><span class="p">,</span> <span class="nx">db</span><span class="p">.</span><span class="nx">pageSize</span><span class="p">)</span>
+	<span class="p">},</span>
+<span class="p">}</span>
+
+<span class="c1">// Memory map the data file.
+</span><span class="c1"></span><span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">db</span><span class="p">.</span><span class="nf">mmap</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">InitialMmapSize</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+	<span class="nx">_</span> <span class="p">=</span> <span class="nx">db</span><span class="p">.</span><span class="nb">close</span><span class="p">()</span>
+	<span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
+<span class="p">}</span>
+
+<span class="c1">// Read in the freelist.
+</span><span class="c1"></span><span class="nx">db</span><span class="p">.</span><span class="nx">freelist</span> <span class="p">=</span> <span class="nf">newFreelist</span><span class="p">()</span>
+<span class="nx">db</span><span class="p">.</span><span class="nx">freelist</span><span class="p">.</span><span class="nf">read</span><span class="p">(</span><span class="nx">db</span><span class="p">.</span><span class="nf">page</span><span class="p">(</span><span class="nx">db</span><span class="p">.</span><span class="nf">meta</span><span class="p">().</span><span class="nx">freelist</span><span class="p">))</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>创建pagePool就忽略吧，页面池创建一个新的页面。
+接下来是<code>mmap</code>了，我们看下是如何工作的。</p>
+
+<h4 id="mmap">mmap</h4>
+
+<p>首先我们看下mmap是如何工作的</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">db</span> <span class="o">*</span><span class="nx">DB</span><span class="p">)</span> <span class="nf">mmap</span><span class="p">(</span><span class="nx">minsz</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+	<span class="nx">db</span><span class="p">.</span><span class="nx">mmaplock</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
+	<span class="k">defer</span> <span class="nx">db</span><span class="p">.</span><span class="nx">mmaplock</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+
+	<span class="nx">info</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">db</span><span class="p">.</span><span class="nx">file</span><span class="p">.</span><span class="nf">Stat</span><span class="p">()</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;mmap stat error: %s&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="nx">info</span><span class="p">.</span><span class="nf">Size</span><span class="p">())</span> <span class="p">&lt;</span> <span class="nx">db</span><span class="p">.</span><span class="nx">pageSize</span><span class="o">*</span><span class="mi">2</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;file size too small&#34;</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="c1">// Ensure the size is at least the minimum size.
+</span><span class="c1"></span>	<span class="kd">var</span> <span class="nx">size</span> <span class="p">=</span> <span class="nb">int</span><span class="p">(</span><span class="nx">info</span><span class="p">.</span><span class="nf">Size</span><span class="p">())</span>
+	<span class="k">if</span> <span class="nx">size</span> <span class="p">&lt;</span> <span class="nx">minsz</span> <span class="p">{</span>
+		<span class="nx">size</span> <span class="p">=</span> <span class="nx">minsz</span>
+	<span class="p">}</span>
+	<span class="nx">size</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">db</span><span class="p">.</span><span class="nf">mmapSize</span><span class="p">(</span><span class="nx">size</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">err</span>
+	<span class="p">}</span>
+
+	<span class="c1">// Dereference all mmap references before unmapping.
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">db</span><span class="p">.</span><span class="nx">rwtx</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">db</span><span class="p">.</span><span class="nx">rwtx</span><span class="p">.</span><span class="nx">root</span><span class="p">.</span><span class="nf">dereference</span><span class="p">()</span>
+	<span class="p">}</span>
+
+	<span class="c1">// Unmap existing data before continuing.
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">db</span><span class="p">.</span><span class="nf">munmap</span><span class="p">();</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">err</span>
+	<span class="p">}</span>
+
+	<span class="c1">// Memory-map the data file as a byte slice.
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nf">mmap</span><span class="p">(</span><span class="nx">db</span><span class="p">,</span> <span class="nx">size</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">err</span>
+	<span class="p">}</span>
+
+	<span class="c1">// Save references to the meta pages.
+</span><span class="c1"></span>	<span class="nx">db</span><span class="p">.</span><span class="nx">meta0</span> <span class="p">=</span> <span class="nx">db</span><span class="p">.</span><span class="nf">page</span><span class="p">(</span><span class="mi">0</span><span class="p">).</span><span class="nf">meta</span><span class="p">()</span>
+	<span class="nx">db</span><span class="p">.</span><span class="nx">meta1</span> <span class="p">=</span> <span class="nx">db</span><span class="p">.</span><span class="nf">page</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="nf">meta</span><span class="p">()</span>
+
+	<span class="c1">// Validate the meta pages. We only return an error if both meta pages fail
+</span><span class="c1"></span>	<span class="c1">// validation, since meta0 failing validation means that it wasn&#39;t saved
+</span><span class="c1"></span>	<span class="c1">// properly -- but we can recover using meta1. And vice-versa.
+</span><span class="c1"></span>	<span class="nx">err0</span> <span class="o">:=</span> <span class="nx">db</span><span class="p">.</span><span class="nx">meta0</span><span class="p">.</span><span class="nf">validate</span><span class="p">()</span>
+	<span class="nx">err1</span> <span class="o">:=</span> <span class="nx">db</span><span class="p">.</span><span class="nx">meta1</span><span class="p">.</span><span class="nf">validate</span><span class="p">()</span>
+	<span class="k">if</span> <span class="nx">err0</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="o">&amp;&amp;</span> <span class="nx">err1</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">err0</span>
+	<span class="p">}</span>
+
+	<span class="k">return</span> <span class="kc">nil</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>程序首先加了一个锁，也就是说，从文件往内存映射的时候，一次只允许映射一次。
+我们从前文知道，创建文件的时候至少创建了4个pageSize，而且options的默认InitialMmapSize没有指定，因此判断一次映射多大的时候就是用文件大小进行判断。
+文件映射的大小从32K逐次翻倍直到1G,然后如果文件大小大于1G，就直接每次增加1G。
+再对文件进行映射前，先解除引用，然后再进行映射。
+我们之前知道，文件的前两页是metaPage，因此读取出来即可。</p>
+
+<h4 id="freelist">freelist</h4>
+
+<p>程序接下来创建freelist页面，我们看下freelist的结构</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">freelist</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">ids</span>     <span class="p">[]</span><span class="nx">pgid</span>          
+	<span class="nx">pending</span> <span class="kd">map</span><span class="p">[</span><span class="nx">txid</span><span class="p">][]</span><span class="nx">pgid</span> 
+	<span class="nx">cache</span>   <span class="kd">map</span><span class="p">[</span><span class="nx">pgid</span><span class="p">]</span><span class="kt">bool</span>   
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>结构比较简单。
+<code>ids</code>是指可用的页面的Id
+<code>pending</code>指将要空闲的页面，由于数据库中的各种事务，一些操作后部分页面就可以被释放了。
+<code>cache</code>就是做了一个缓存，看一个页面是否可用。
+我们在配置metaPage的时候强行指定了freelist的page位置是2，</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">db</span><span class="p">.</span><span class="nx">freelist</span><span class="p">.</span><span class="nf">read</span><span class="p">(</span><span class="nx">db</span><span class="p">.</span><span class="nf">page</span><span class="p">(</span><span class="nx">db</span><span class="p">.</span><span class="nf">meta</span><span class="p">().</span><span class="nx">freelist</span><span class="p">))</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>由于我们在创建的时候没有对freelist进行配置，因此freelist读取之后也没有什么变化</p>
+
+<h4 id="结构">结构</h4>
+
+<p>通过我们之前的阅读，我们知道目前的数据库结构如下</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">+----------+------------+-----------+-----------+
+|          |            |           |           |
+|          |            |           |           |
+|          |            |           |           |
+|          |            |           |           |
+|   meta   |  meta      | freelist  |  leafpage |
+|          |            |           |           |
+|          |            |           |           |
+|          |            |           |           |
+|          |            |           |           |
+|          |            |           |           |
+|          |            |           |           |
++----------+------------+-----------+-----------+</pre></td></tr></table>
+</div>
+</div>
+<p>到此为止，一个数据库的初始工作结束了。</p>
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">Hundred</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2018-11-02 08:37
+        
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">许可协议</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/golang/">golang</a>
+          <a href="/tags/boltdb/">boltdb</a>
+          <a href="/tags/%E6%BA%90%E7%A0%81/">源码</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/boltdb%E9%98%85%E8%AF%BBIV/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">boltdb阅读IV</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/boltdb%E9%98%85%E8%AF%BBII/">
+            <span class="next-text nav-default">boltdb阅读II</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+  
+  
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="#" class="iconfont icon-cnblogs" title="cnblogs"></a>
+      <a href="mailto:sdwangzhuo@gmail.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/hundredwz" class="iconfont icon-github" title="github"></a>
+      <a href="#" class="iconfont icon-juejin" title="juejin"></a>
+      <a href="#" class="iconfont icon-v2ex" title="v2ex"></a>
+      <a href="https://weibo.com/hundredwz" class="iconfont icon-weibo" title="weibo"></a>
+  <a href="https://hundredwz.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2013 - 
+    2020
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Hundred</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.min.js" integrity="sha256-jwCP0NAdCBloaIWTWHmW4i3snUNMHUNO+jr9rYd2iOI=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.locales.min.js" integrity="sha256-ZwofwC1Lf/faQCzN7nZtfijVV6hSwxjQMwXL4gn9qU8=" crossorigin="anonymous"></script>
+  <script><!-- NOTE: timeago.js uses the language code format like "zh_CN" (underscore and case sensitive) -->
+    var languageCode = "zh-CN".replace(/-/g, '_').replace(/_(.*)/, function ($0, $1) {return $0.replace($1, $1.toUpperCase());});
+    timeago().render(document.querySelectorAll('.timeago'), languageCode);
+    timeago.cancel();  
+  </script>
+<script type="text/javascript" src="/dist/even.26188efa.min.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+      showProcessingMessages: false,
+      messageStyle: 'none'
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"  integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-138883536-1', 'auto');
+	ga('set', 'anonymizeIp', true);
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+
+
+
+
+</body>
+</html>

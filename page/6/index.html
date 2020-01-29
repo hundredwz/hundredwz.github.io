@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>A Lazy Coder</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="Hundred" /><meta name="description" content="Hundred&#39;s Blog" /><meta name="keywords" content="Blockchain, Golang, Fabric, Ethereum, Code" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.56.1 with even 4.0.0" />
+
+
+<link rel="canonical" href="https://hundredwz.github.io/" />
+  <link href="https://hundredwz.github.io/index.xml" rel="alternate" type="application/rss+xml" title="A Lazy Coder" />
+  <link href="https://hundredwz.github.io/index.xml" rel="feed" type="application/rss+xml" title="A Lazy Coder" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<link href="/dist/even.c2a46f00.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+<link rel="stylesheet" href="/css/reset-even.css">
+
+
+<meta property="og:title" content="A Lazy Coder" />
+<meta property="og:description" content="Hundred&#39;s Blog" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://hundredwz.github.io/" />
+
+<meta property="og:updated_time" content="2020-01-29T03:08:43+00:00" />
+<meta itemprop="name" content="A Lazy Coder">
+<meta itemprop="description" content="Hundred&#39;s Blog">
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="A Lazy Coder"/>
+<meta name="twitter:description" content="Hundred&#39;s Blog"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">A Lazy Coder</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">首页</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">归档</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">分类</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/friends/">
+        <li class="mobile-menu-item">Friends</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">A Lazy Coder</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">首页</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">归档</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">分类</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/friends/">Friends</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <section id="posts" class="posts">
+    <article class="post">
+  <header class="post-header">
+    <h1 class="post-title"><a class="post-link" href="/post/%E8%A7%A3%E5%86%B3golang%E5%BE%AA%E7%8E%AF%E4%BE%9D%E8%B5%96/">解决golang循环依赖</a></h1>
+    <div class="post-meta">
+      <span class="post-time"> 2018-07-14 02:34 </span>
+      <div class="post-category">
+          <a href="/categories/program/"> program </a>
+          </div>
+        <span class="more-meta"> 约 1247 字 </span>
+        <span class="more-meta"> 预计阅读 3 分钟 </span>
+    </div>
+  </header>
+  
+  <div class="post-content">
+    <div class="post-summary">
+      <p>最近开发项目的时候，遇到了一个go里面很不好解决的问题，循环引用。</p>
+    </div>
+    <div class="read-more">
+      <a href="/post/%E8%A7%A3%E5%86%B3golang%E5%BE%AA%E7%8E%AF%E4%BE%9D%E8%B5%96/" class="read-more-link">阅读更多</a>
+    </div>
+  </div>
+</article>
+
+    <article class="post">
+  <header class="post-header">
+    <h1 class="post-title"><a class="post-link" href="/post/golang-getaddrinfow%E9%94%99%E8%AF%AF/">golang getaddrinfow错误</a></h1>
+    <div class="post-meta">
+      <span class="post-time"> 2018-07-14 01:16 </span>
+      <div class="post-category">
+          <a href="/categories/program/"> program </a>
+          </div>
+        <span class="more-meta"> 约 733 字 </span>
+        <span class="more-meta"> 预计阅读 2 分钟 </span>
+    </div>
+  </header>
+  
+  <div class="post-content">
+    <div class="post-summary">
+      <p>最近在开发一个golang的web项目，遇到了一个很奇怪的问题，服务一直无法启动。发现错误的原因让人很无奈。</p>
+    </div>
+    <div class="read-more">
+      <a href="/post/golang-getaddrinfow%E9%94%99%E8%AF%AF/" class="read-more-link">阅读更多</a>
+    </div>
+  </div>
+</article>
+
+    <article class="post">
+  <header class="post-header">
+    <h1 class="post-title"><a class="post-link" href="/post/%E6%8E%8C%E6%8F%A1%E6%AF%94%E7%89%B9%E5%B8%81III%E8%8A%82%E7%82%B9%E5%8A%9F%E8%83%BDI/">掌握比特币III:节点功能I</a></h1>
+    <div class="post-meta">
+      <span class="post-time"> 2018-07-13 06:15 </span>
+      <div class="post-category">
+          <a href="/categories/tool/"> tool </a>
+          </div>
+        <span class="more-meta"> 约 1251 字 </span>
+        <span class="more-meta"> 预计阅读 3 分钟 </span>
+    </div>
+  </header>
+  
+  <div class="post-content">
+    <div class="post-summary">
+      <p>比特币的节点分为好多种，但是功能都是钱包、矿工、完整区块链以及网络路由节点组成。</p>
+    </div>
+    <div class="read-more">
+      <a href="/post/%E6%8E%8C%E6%8F%A1%E6%AF%94%E7%89%B9%E5%B8%81III%E8%8A%82%E7%82%B9%E5%8A%9F%E8%83%BDI/" class="read-more-link">阅读更多</a>
+    </div>
+  </div>
+</article>
+
+    <article class="post">
+  <header class="post-header">
+    <h1 class="post-title"><a class="post-link" href="/post/%E6%8E%8C%E6%8F%A1%E6%AF%94%E7%89%B9%E5%B8%81II%E6%94%AF%E4%BB%98%E6%96%B9%E5%BC%8F/">掌握比特币II:支付方式</a></h1>
+    <div class="post-meta">
+      <span class="post-time"> 2018-07-12 03:11 </span>
+      <div class="post-category">
+          <a href="/categories/tool/"> tool </a>
+          </div>
+        <span class="more-meta"> 约 2107 字 </span>
+        <span class="more-meta"> 预计阅读 5 分钟 </span>
+    </div>
+  </header>
+  
+  <div class="post-content">
+    <div class="post-summary">
+      <p>今天了解了下比特币的支付方式，发现以前的了解太麻烦了，今天就多查了查资料弄明白点。</p>
+    </div>
+    <div class="read-more">
+      <a href="/post/%E6%8E%8C%E6%8F%A1%E6%AF%94%E7%89%B9%E5%B8%81II%E6%94%AF%E4%BB%98%E6%96%B9%E5%BC%8F/" class="read-more-link">阅读更多</a>
+    </div>
+  </div>
+</article>
+
+    <article class="post">
+  <header class="post-header">
+    <h1 class="post-title"><a class="post-link" href="/post/%E6%8E%8C%E6%8F%A1%E6%AF%94%E7%89%B9%E5%B8%81I%E9%92%B1%E5%8C%85%E5%8A%9F%E8%83%BD%E5%AD%A6%E4%B9%A0/">掌握比特币I：钱包功能学习</a></h1>
+    <div class="post-meta">
+      <span class="post-time"> 2018-07-10 08:42 </span>
+      <div class="post-category">
+          <a href="/categories/tool/"> tool </a>
+          </div>
+        <span class="more-meta"> 约 568 字 </span>
+        <span class="more-meta"> 预计阅读 2 分钟 </span>
+    </div>
+  </header>
+  
+  <div class="post-content">
+    <div class="post-summary">
+      <p>最近看了挺多区块链相关的论文，发现有挺多是解决比特币的一些问题的。仔细一看，发现这些问题我也能够想到，但是前提是对比特币的了解足够清楚。因此想着最近多看一看比特币的相关原理。</p>
+    </div>
+    <div class="read-more">
+      <a href="/post/%E6%8E%8C%E6%8F%A1%E6%AF%94%E7%89%B9%E5%B8%81I%E9%92%B1%E5%8C%85%E5%8A%9F%E8%83%BD%E5%AD%A6%E4%B9%A0/" class="read-more-link">阅读更多</a>
+    </div>
+  </div>
+</article>
+
+    </section>
+  
+  <nav class="pagination">
+    <a class="prev" href="/page/5/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text">上一页</span>
+      </a>
+    <a class="next" href="/page/7/">
+        <span class="next-text">下一页</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+  </nav>
+        </div>
+        
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="#" class="iconfont icon-cnblogs" title="cnblogs"></a>
+      <a href="mailto:sdwangzhuo@gmail.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/hundredwz" class="iconfont icon-github" title="github"></a>
+      <a href="#" class="iconfont icon-juejin" title="juejin"></a>
+      <a href="#" class="iconfont icon-v2ex" title="v2ex"></a>
+      <a href="https://weibo.com/hundredwz" class="iconfont icon-weibo" title="weibo"></a>
+  <a href="https://hundredwz.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2013 - 
+    2020
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Hundred</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.min.js" integrity="sha256-jwCP0NAdCBloaIWTWHmW4i3snUNMHUNO+jr9rYd2iOI=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.locales.min.js" integrity="sha256-ZwofwC1Lf/faQCzN7nZtfijVV6hSwxjQMwXL4gn9qU8=" crossorigin="anonymous"></script>
+  <script><!-- NOTE: timeago.js uses the language code format like "zh_CN" (underscore and case sensitive) -->
+    var languageCode = "zh-CN".replace(/-/g, '_').replace(/_(.*)/, function ($0, $1) {return $0.replace($1, $1.toUpperCase());});
+    timeago().render(document.querySelectorAll('.timeago'), languageCode);
+    timeago.cancel();  
+  </script>
+<script type="text/javascript" src="/dist/even.26188efa.min.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+      showProcessingMessages: false,
+      messageStyle: 'none'
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"  integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-138883536-1', 'auto');
+	ga('set', 'anonymizeIp', true);
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>节点 on A Lazy Coder</title>
+    <link>https://hundredwz.github.io/tags/%E8%8A%82%E7%82%B9/</link>
+    <description>Recent content in 节点 on A Lazy Coder</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Fri, 13 Jul 2018 06:15:17 +0000</lastBuildDate>
+    
+	<atom:link href="https://hundredwz.github.io/tags/%E8%8A%82%E7%82%B9/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>掌握比特币III:节点功能I</title>
+      <link>https://hundredwz.github.io/post/%E6%8E%8C%E6%8F%A1%E6%AF%94%E7%89%B9%E5%B8%81III%E8%8A%82%E7%82%B9%E5%8A%9F%E8%83%BDI/</link>
+      <pubDate>Fri, 13 Jul 2018 06:15:17 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/%E6%8E%8C%E6%8F%A1%E6%AF%94%E7%89%B9%E5%B8%81III%E8%8A%82%E7%82%B9%E5%8A%9F%E8%83%BDI/</guid>
+      <description>&lt;p&gt;比特币的节点分为好多种，但是功能都是钱包、矿工、完整区块链以及网络路由节点组成。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

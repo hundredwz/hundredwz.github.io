@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>raft on A Lazy Coder</title>
+    <link>https://hundredwz.github.io/tags/raft/</link>
+    <description>Recent content in raft on A Lazy Coder</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Tue, 17 Apr 2018 08:25:40 +0000</lastBuildDate>
+    
+	<atom:link href="https://hundredwz.github.io/tags/raft/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Raft造轮子VI</title>
+      <link>https://hundredwz.github.io/post/Raft%E9%80%A0%E8%BD%AE%E5%AD%90VI/</link>
+      <pubDate>Tue, 17 Apr 2018 08:25:40 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Raft%E9%80%A0%E8%BD%AE%E5%AD%90VI/</guid>
+      <description>&lt;p&gt;我们上一篇说了领导的选举，本篇讨论日志和心跳包的处理。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Raft造轮子V</title>
+      <link>https://hundredwz.github.io/post/Raft%E9%80%A0%E8%BD%AE%E5%AD%90V/</link>
+      <pubDate>Tue, 17 Apr 2018 06:59:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Raft%E9%80%A0%E8%BD%AE%E5%AD%90V/</guid>
+      <description>&lt;p&gt;我们上一篇文章分析了一个节点作为主动发起方，向别的节点请求投票的信息，本篇就分析下接收方的工作流程。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Raft造轮子IV</title>
+      <link>https://hundredwz.github.io/post/Raft%E9%80%A0%E8%BD%AE%E5%AD%90IV/</link>
+      <pubDate>Tue, 17 Apr 2018 06:15:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Raft%E9%80%A0%E8%BD%AE%E5%AD%90IV/</guid>
+      <description>&lt;p&gt;经过上一篇文章关于一些基础“接口”的定义，我们本篇开始操作核心，节点。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Raft造轮子III</title>
+      <link>https://hundredwz.github.io/post/Raft%E9%80%A0%E8%BD%AE%E5%AD%90III/</link>
+      <pubDate>Fri, 13 Apr 2018 08:50:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Raft%E9%80%A0%E8%BD%AE%E5%AD%90III/</guid>
+      <description>&lt;p&gt;我们之前定义了raft通信的基本数据格式以及rpc模式也生成了数据内容，这篇文章就要开始具体的操作了。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Raft造轮子II</title>
+      <link>https://hundredwz.github.io/post/Raft%E9%80%A0%E8%BD%AE%E5%AD%90II/</link>
+      <pubDate>Fri, 13 Apr 2018 07:35:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Raft%E9%80%A0%E8%BD%AE%E5%AD%90II/</guid>
+      <description>&lt;p&gt;读过文章之后，我们虽然不知道具体的程序要怎么动笔，但是让我们说出来怎么选举领导人，怎么复制日志，对大家来说问题不大了。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Raft造轮子I</title>
+      <link>https://hundredwz.github.io/post/Raft%E9%80%A0%E8%BD%AE%E5%AD%90I/</link>
+      <pubDate>Fri, 13 Apr 2018 07:02:24 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Raft%E9%80%A0%E8%BD%AE%E5%AD%90I/</guid>
+      <description>&lt;p&gt;前一段时间在学习raft算法，看完后感觉相对paxos来说没有那么复杂,就萌生了要造个轮子的想法。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

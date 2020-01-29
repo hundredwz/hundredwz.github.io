@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>boltdb阅读IV - A Lazy Coder</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="Hundred" /><meta name="description" content="我们在前面的文章中创建了一个数据库，接下来就要对数据库进行操作了。
+" /><meta name="keywords" content="Blockchain, Golang, Fabric, Ethereum, Code" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.56.1 with even 4.0.0" />
+
+
+<link rel="canonical" href="https://hundredwz.github.io/post/boltdb%E9%98%85%E8%AF%BBIV/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<link href="/dist/even.c2a46f00.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+<link rel="stylesheet" href="/css/reset-even.css">
+
+
+<meta property="og:title" content="boltdb阅读IV" />
+<meta property="og:description" content="我们在前面的文章中创建了一个数据库，接下来就要对数据库进行操作了。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://hundredwz.github.io/post/boltdb%E9%98%85%E8%AF%BBIV/" />
+<meta property="article:published_time" content="2018-11-04T08:10:50+00:00" />
+<meta property="article:modified_time" content="2018-11-04T08:10:50+00:00" />
+<meta itemprop="name" content="boltdb阅读IV">
+<meta itemprop="description" content="我们在前面的文章中创建了一个数据库，接下来就要对数据库进行操作了。">
+
+
+<meta itemprop="datePublished" content="2018-11-04T08:10:50&#43;00:00" />
+<meta itemprop="dateModified" content="2018-11-04T08:10:50&#43;00:00" />
+<meta itemprop="wordCount" content="1797">
+
+
+
+<meta itemprop="keywords" content="golang,boltdb,源码," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="boltdb阅读IV"/>
+<meta name="twitter:description" content="我们在前面的文章中创建了一个数据库，接下来就要对数据库进行操作了。"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">A Lazy Coder</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">首页</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">归档</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">分类</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/friends/">
+        <li class="mobile-menu-item">Friends</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">A Lazy Coder</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">首页</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">归档</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">分类</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/friends/">Friends</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">boltdb阅读IV</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2018-11-04 08:10 </span>
+        <div class="post-category">
+            <a href="/categories/program/"> program </a>
+            </div>
+          <span class="more-meta"> 约 1797 字 </span>
+          <span class="more-meta"> 预计阅读 4 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#指令">指令</a></li>
+<li><a href="#update">Update</a>
+<ul>
+<li><a href="#begin">Begin</a></li>
+</ul></li>
+<li><a href="#tx">Tx</a></li>
+<li><a href="#执行">执行</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+  </div>
+</div>
+  <div class="post-outdated">
+    <div class="hint">
+      <p>【注意】最后更新于 <span class="timeago" datetime="2018-11-04T08:10:50" title="November 4, 2018">November 4, 2018</span>，文中内容可能已过时，请谨慎使用。</p>
+    </div>
+  </div>
+    <div class="post-content">
+      <p>我们在前面的文章中创建了一个数据库，接下来就要对数据库进行操作了。</p>
+
+<h4 id="指令">指令</h4>
+
+<p>为了方便后续的操作，我们沿着以下程序进行阅读</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">db</span><span class="p">.</span><span class="nf">Update</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">bolt</span><span class="p">.</span><span class="nx">Tx</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+	<span class="nx">b</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">tx</span><span class="p">.</span><span class="nf">CreateBucket</span><span class="p">([]</span><span class="nb">byte</span><span class="p">(</span><span class="s">&#34;MyBucket&#34;</span><span class="p">))</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;create bucket: %s&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="kc">nil</span>
+<span class="p">})</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>可以看到Update的参数是一个匿名函数，我们从Update开始。</p>
+
+<h4 id="update">Update</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">db</span> <span class="o">*</span><span class="nx">DB</span><span class="p">)</span> <span class="nf">Update</span><span class="p">(</span><span class="nx">fn</span> <span class="kd">func</span><span class="p">(</span><span class="o">*</span><span class="nx">Tx</span><span class="p">)</span> <span class="kt">error</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+	<span class="nx">t</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">db</span><span class="p">.</span><span class="nf">Begin</span><span class="p">(</span><span class="kc">true</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">err</span>
+	<span class="p">}</span>
+
+	<span class="c1">// Make sure the transaction rolls back in the event of a panic.
+</span><span class="c1"></span>	<span class="k">defer</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+		<span class="k">if</span> <span class="nx">t</span><span class="p">.</span><span class="nx">db</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="nx">t</span><span class="p">.</span><span class="nf">rollback</span><span class="p">()</span>
+		<span class="p">}</span>
+	<span class="p">}()</span>
+
+	<span class="c1">// Mark as a managed tx so that the inner function cannot manually commit.
+</span><span class="c1"></span>	<span class="nx">t</span><span class="p">.</span><span class="nx">managed</span> <span class="p">=</span> <span class="kc">true</span>
+
+	<span class="c1">// If an error is returned from the function then rollback and return error.
+</span><span class="c1"></span>	<span class="nx">err</span> <span class="p">=</span> <span class="nf">fn</span><span class="p">(</span><span class="nx">t</span><span class="p">)</span>
+	<span class="nx">t</span><span class="p">.</span><span class="nx">managed</span> <span class="p">=</span> <span class="kc">false</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">_</span> <span class="p">=</span> <span class="nx">t</span><span class="p">.</span><span class="nf">Rollback</span><span class="p">()</span>
+		<span class="k">return</span> <span class="nx">err</span>
+	<span class="p">}</span>
+
+	<span class="k">return</span> <span class="nx">t</span><span class="p">.</span><span class="nf">Commit</span><span class="p">()</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>第一步开始一个事务，我们看下事务是如何开始的。</p>
+
+<h5 id="begin">Begin</h5>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">db</span> <span class="o">*</span><span class="nx">DB</span><span class="p">)</span> <span class="nf">Begin</span><span class="p">(</span><span class="nx">writable</span> <span class="kt">bool</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="nx">Tx</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+	<span class="k">if</span> <span class="nx">writable</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">db</span><span class="p">.</span><span class="nf">beginRWTx</span><span class="p">()</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="nx">db</span><span class="p">.</span><span class="nf">beginTx</span><span class="p">()</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>根据我们之前执行的命令，我们是需要开一个可读写的事务。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">db</span> <span class="o">*</span><span class="nx">DB</span><span class="p">)</span> <span class="nf">beginRWTx</span><span class="p">()</span> <span class="p">(</span><span class="o">*</span><span class="nx">Tx</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+	<span class="c1">// If the database was opened with Options.ReadOnly, return an error.
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">db</span><span class="p">.</span><span class="nx">readOnly</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">ErrDatabaseReadOnly</span>
+	<span class="p">}</span>
+
+	<span class="c1">// Obtain writer lock. This is released by the transaction when it closes.
+</span><span class="c1"></span>	<span class="c1">// This enforces only one writer transaction at a time.
+</span><span class="c1"></span>	<span class="nx">db</span><span class="p">.</span><span class="nx">rwlock</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
+
+	<span class="c1">// Once we have the writer lock then we can lock the meta pages so that
+</span><span class="c1"></span>	<span class="c1">// we can set up the transaction.
+</span><span class="c1"></span>	<span class="nx">db</span><span class="p">.</span><span class="nx">metalock</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
+	<span class="k">defer</span> <span class="nx">db</span><span class="p">.</span><span class="nx">metalock</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+
+	<span class="c1">// Exit if the database is not open yet.
+</span><span class="c1"></span>	<span class="k">if</span> <span class="p">!</span><span class="nx">db</span><span class="p">.</span><span class="nx">opened</span> <span class="p">{</span>
+		<span class="nx">db</span><span class="p">.</span><span class="nx">rwlock</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+		<span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">ErrDatabaseNotOpen</span>
+	<span class="p">}</span>
+
+	<span class="c1">// Create a transaction associated with the database.
+</span><span class="c1"></span>	<span class="nx">t</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">Tx</span><span class="p">{</span><span class="nx">writable</span><span class="p">:</span> <span class="kc">true</span><span class="p">}</span>
+	<span class="nx">t</span><span class="p">.</span><span class="nf">init</span><span class="p">(</span><span class="nx">db</span><span class="p">)</span>
+	<span class="nx">db</span><span class="p">.</span><span class="nx">rwtx</span> <span class="p">=</span> <span class="nx">t</span>
+
+	<span class="c1">// Free any pages associated with closed read-only transactions.
+</span><span class="c1"></span>	<span class="kd">var</span> <span class="nx">minid</span> <span class="nx">txid</span> <span class="p">=</span> <span class="mh">0xFFFFFFFFFFFFFFFF</span>
+	<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">t</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">db</span><span class="p">.</span><span class="nx">txs</span> <span class="p">{</span>
+		<span class="k">if</span> <span class="nx">t</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">txid</span> <span class="p">&lt;</span> <span class="nx">minid</span> <span class="p">{</span>
+			<span class="nx">minid</span> <span class="p">=</span> <span class="nx">t</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">txid</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+	<span class="k">if</span> <span class="nx">minid</span> <span class="p">&gt;</span> <span class="mi">0</span> <span class="p">{</span>
+		<span class="nx">db</span><span class="p">.</span><span class="nx">freelist</span><span class="p">.</span><span class="nf">release</span><span class="p">(</span><span class="nx">minid</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="k">return</span> <span class="nx">t</span><span class="p">,</span> <span class="kc">nil</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>根据bolt的介绍，我们可以知道，bolt允许多个读操作，但在同一时刻，只能有一个写操作。
+所以在程序开始之前，需要加上读写锁。
+除此之外，我们还记得，在metapages中记录着交易序号txid，所以也需要对meta页面加锁，防止更新出错。
+综合来说，这些都是为了保证在一个时间只有一个写交易。
+（注：交易，事务，都是transaction的翻译，这里面我就混用了）
+接下来就是创建交易，初始化交易，并且释放读交易所占用的页面。
+我们需要看一下交易的定义了。</p>
+
+<h4 id="tx">Tx</h4>
+
+<p>交易的定义比较简单</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Tx</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">writable</span>       <span class="kt">bool</span>
+	<span class="nx">managed</span>        <span class="kt">bool</span>
+	<span class="nx">db</span>             <span class="o">*</span><span class="nx">DB</span>
+	<span class="nx">meta</span>           <span class="o">*</span><span class="nx">meta</span>
+	<span class="nx">root</span>           <span class="nx">Bucket</span>
+	<span class="nx">pages</span>          <span class="kd">map</span><span class="p">[</span><span class="nx">pgid</span><span class="p">]</span><span class="o">*</span><span class="nx">page</span>
+	<span class="nx">stats</span>          <span class="nx">TxStats</span>
+	<span class="nx">commitHandlers</span> <span class="p">[]</span><span class="kd">func</span><span class="p">()</span>
+
+	<span class="nx">WriteFlag</span> <span class="kt">int</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p><code>writable</code>是用来表明当前的tx是否可读，在我们这，tx是可读的。
+<code>managed</code>表示当前这个tx是否通过db.Update()或者db.View()进行数据库操作。
+<code>db</code>就是当前的db对象。
+<code>meta</code>就是我们之前db中存储的meta信息。
+<code>root</code>就是指的根bucket，所有的tx都要从根开始查起。
+<code>pages</code>当前tx操作的page
+<code>stats</code>统计tx的操作内容
+<code>commitHandler</code>回调函数，在commit的时候执行的函数
+<code>WriteFlag</code>复制或者剪切数据库的时候文件的打开方式
+明白了交易的内容，我们需要看下交易的初始化操作。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">Tx</span><span class="p">)</span> <span class="nf">init</span><span class="p">(</span><span class="nx">db</span> <span class="o">*</span><span class="nx">DB</span><span class="p">)</span> <span class="p">{</span>
+	<span class="nx">tx</span><span class="p">.</span><span class="nx">db</span> <span class="p">=</span> <span class="nx">db</span>
+	<span class="nx">tx</span><span class="p">.</span><span class="nx">pages</span> <span class="p">=</span> <span class="kc">nil</span>
+
+	<span class="c1">// Copy the meta page since it can be changed by the writer.
+</span><span class="c1"></span>	<span class="nx">tx</span><span class="p">.</span><span class="nx">meta</span> <span class="p">=</span> <span class="o">&amp;</span><span class="nx">meta</span><span class="p">{}</span>
+	<span class="nx">db</span><span class="p">.</span><span class="nf">meta</span><span class="p">().</span><span class="nb">copy</span><span class="p">(</span><span class="nx">tx</span><span class="p">.</span><span class="nx">meta</span><span class="p">)</span>
+
+	<span class="c1">// Copy over the root bucket.
+</span><span class="c1"></span>	<span class="nx">tx</span><span class="p">.</span><span class="nx">root</span> <span class="p">=</span> <span class="nf">newBucket</span><span class="p">(</span><span class="nx">tx</span><span class="p">)</span>
+	<span class="nx">tx</span><span class="p">.</span><span class="nx">root</span><span class="p">.</span><span class="nx">bucket</span> <span class="p">=</span> <span class="o">&amp;</span><span class="nx">bucket</span><span class="p">{}</span>
+	<span class="o">*</span><span class="nx">tx</span><span class="p">.</span><span class="nx">root</span><span class="p">.</span><span class="nx">bucket</span> <span class="p">=</span> <span class="nx">tx</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">root</span>
+
+	<span class="c1">// Increment the transaction id and add a page cache for writable transactions.
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">tx</span><span class="p">.</span><span class="nx">writable</span> <span class="p">{</span>
+		<span class="nx">tx</span><span class="p">.</span><span class="nx">pages</span> <span class="p">=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">map</span><span class="p">[</span><span class="nx">pgid</span><span class="p">]</span><span class="o">*</span><span class="nx">page</span><span class="p">)</span>
+		<span class="nx">tx</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">txid</span> <span class="o">+=</span> <span class="nf">txid</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>我们可以看到，tx首先初始化了db，并创建了空的pages。接下来把db中存储的meta复制给交易。
+在最开始的时候，我们创建了两个meta，所以，复制的是哪一个呢？</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">db</span> <span class="o">*</span><span class="nx">DB</span><span class="p">)</span> <span class="nf">meta</span><span class="p">()</span> <span class="o">*</span><span class="nx">meta</span> <span class="p">{</span>
+	<span class="c1">// We have to return the meta with the highest txid which doesn&#39;t fail
+</span><span class="c1"></span>	<span class="c1">// validation. Otherwise, we can cause errors when in fact the database is
+</span><span class="c1"></span>	<span class="c1">// in a consistent state. metaA is the one with the higher txid.
+</span><span class="c1"></span>	<span class="nx">metaA</span> <span class="o">:=</span> <span class="nx">db</span><span class="p">.</span><span class="nx">meta0</span>
+	<span class="nx">metaB</span> <span class="o">:=</span> <span class="nx">db</span><span class="p">.</span><span class="nx">meta1</span>
+	<span class="k">if</span> <span class="nx">db</span><span class="p">.</span><span class="nx">meta1</span><span class="p">.</span><span class="nx">txid</span> <span class="p">&gt;</span> <span class="nx">db</span><span class="p">.</span><span class="nx">meta0</span><span class="p">.</span><span class="nx">txid</span> <span class="p">{</span>
+		<span class="nx">metaA</span> <span class="p">=</span> <span class="nx">db</span><span class="p">.</span><span class="nx">meta1</span>
+		<span class="nx">metaB</span> <span class="p">=</span> <span class="nx">db</span><span class="p">.</span><span class="nx">meta0</span>
+	<span class="p">}</span>
+
+	<span class="c1">// Use higher meta page if valid. Otherwise fallback to previous, if valid.
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">metaA</span><span class="p">.</span><span class="nf">validate</span><span class="p">();</span> <span class="nx">err</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">metaA</span>
+	<span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">metaB</span><span class="p">.</span><span class="nf">validate</span><span class="p">();</span> <span class="nx">err</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">metaB</span>
+	<span class="p">}</span>
+
+	<span class="c1">// This should never be reached, because both meta1 and meta0 were validated
+</span><span class="c1"></span>	<span class="c1">// on mmap() and we do fsync() on every write.
+</span><span class="c1"></span>	<span class="nb">panic</span><span class="p">(</span><span class="s">&#34;bolt.DB.meta(): invalid meta pages&#34;</span><span class="p">)</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>可以看到，谁存储的txid大，就用哪个meta。我们还注意到，传递的是指针形式的meta，也就是meta信息会随着更新，这个tx中的meta也会更新。
+接下来，为tx的root创建了一个包含本交易的bucket，并且是根bucket。此外，我们在meta中也记录了根bucket，这个地方我们使用meta中的bucket初始化了这个地方创建的bucket。
+最后由于bolt是使用txid来标识数据库的状态信息，如果是可读写交易，就将txid加一，标识有了新的交易，随后会在commit中更新meta的txid。</p>
+
+<h4 id="执行">执行</h4>
+
+<p>我们目前执行完了bolt的Update中的begin操作，后续还有一些容易理解的操作。
+首先程序设置defer，如果执行出错，就进行rollback，否则执行我们手动传入的函数，并执行commit。
+在这个地方有个有意思的内容</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">t</span><span class="p">.</span><span class="nx">managed</span><span class="p">=</span><span class="kc">true</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>正好对应了我们介绍tx的时候，对<code>managed</code>关键字的介绍。在使用update的时候，手动无法进行提交，因为已经将程序托管给update了。</p>
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">Hundred</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2018-11-04 08:10
+        
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">许可协议</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/golang/">golang</a>
+          <a href="/tags/boltdb/">boltdb</a>
+          <a href="/tags/%E6%BA%90%E7%A0%81/">源码</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/golang%E7%9A%84slice%E5%A4%84%E7%90%86/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">golang的slice处理</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/boltdb%E9%98%85%E8%AF%BBIII/">
+            <span class="next-text nav-default">boltdb阅读III</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+  
+  
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="#" class="iconfont icon-cnblogs" title="cnblogs"></a>
+      <a href="mailto:sdwangzhuo@gmail.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/hundredwz" class="iconfont icon-github" title="github"></a>
+      <a href="#" class="iconfont icon-juejin" title="juejin"></a>
+      <a href="#" class="iconfont icon-v2ex" title="v2ex"></a>
+      <a href="https://weibo.com/hundredwz" class="iconfont icon-weibo" title="weibo"></a>
+  <a href="https://hundredwz.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2013 - 
+    2020
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Hundred</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.min.js" integrity="sha256-jwCP0NAdCBloaIWTWHmW4i3snUNMHUNO+jr9rYd2iOI=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.locales.min.js" integrity="sha256-ZwofwC1Lf/faQCzN7nZtfijVV6hSwxjQMwXL4gn9qU8=" crossorigin="anonymous"></script>
+  <script><!-- NOTE: timeago.js uses the language code format like "zh_CN" (underscore and case sensitive) -->
+    var languageCode = "zh-CN".replace(/-/g, '_').replace(/_(.*)/, function ($0, $1) {return $0.replace($1, $1.toUpperCase());});
+    timeago().render(document.querySelectorAll('.timeago'), languageCode);
+    timeago.cancel();  
+  </script>
+<script type="text/javascript" src="/dist/even.26188efa.min.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+      showProcessingMessages: false,
+      messageStyle: 'none'
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"  integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-138883536-1', 'auto');
+	ga('set', 'anonymizeIp', true);
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+
+
+
+
+</body>
+</html>

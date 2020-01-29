@@ -1,0 +1,1354 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Tendermint源码阅读II - A Lazy Coder</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="Hundred" /><meta name="description" content="在开始本节之前，我们得先说两个非常重要的接口，service和reactor。
+" /><meta name="keywords" content="Blockchain, Golang, Fabric, Ethereum, Code" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.56.1 with even 4.0.0" />
+
+
+<link rel="canonical" href="https://hundredwz.github.io/post/Tendermint%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BBII/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<link href="/dist/even.c2a46f00.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+<link rel="stylesheet" href="/css/reset-even.css">
+
+
+<meta property="og:title" content="Tendermint源码阅读II" />
+<meta property="og:description" content="在开始本节之前，我们得先说两个非常重要的接口，service和reactor。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://hundredwz.github.io/post/Tendermint%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BBII/" />
+<meta property="article:published_time" content="2019-02-22T02:40:00+00:00" />
+<meta property="article:modified_time" content="2019-02-22T02:40:00+00:00" />
+<meta itemprop="name" content="Tendermint源码阅读II">
+<meta itemprop="description" content="在开始本节之前，我们得先说两个非常重要的接口，service和reactor。">
+
+
+<meta itemprop="datePublished" content="2019-02-22T02:40:00&#43;00:00" />
+<meta itemprop="dateModified" content="2019-02-22T02:40:00&#43;00:00" />
+<meta itemprop="wordCount" content="3285">
+
+
+
+<meta itemprop="keywords" content="区块链,源码,tendermint," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Tendermint源码阅读II"/>
+<meta name="twitter:description" content="在开始本节之前，我们得先说两个非常重要的接口，service和reactor。"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">A Lazy Coder</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">首页</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">归档</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">分类</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/friends/">
+        <li class="mobile-menu-item">Friends</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">A Lazy Coder</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">首页</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">归档</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">分类</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/friends/">Friends</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">Tendermint源码阅读II</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2019-02-22 02:40 </span>
+        <div class="post-category">
+            <a href="/categories/program/"> program </a>
+            </div>
+          <span class="more-meta"> 约 3285 字 </span>
+          <span class="more-meta"> 预计阅读 7 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#接口">接口</a></li>
+<li><a href="#peer">peer</a>
+<ul>
+<li><a href="#peerconn">peerConn</a></li>
+<li><a href="#mconn">mconn</a></li>
+<li><a href="#peer-1">peer</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+  </div>
+</div>
+    <div class="post-content">
+      <p>在开始本节之前，我们得先说两个非常重要的接口，service和reactor。</p>
+
+<h2 id="接口">接口</h2>
+
+<p>首先我们来看service，tendermint中所有的服务都是实现了这个接口定义的函数。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Service</span> <span class="kd">interface</span> <span class="p">{</span>
+	<span class="c1">// 默认的启动函数
+</span><span class="c1"></span>	<span class="nf">Start</span><span class="p">()</span> <span class="kt">error</span>
+	<span class="nf">OnStart</span><span class="p">()</span> <span class="kt">error</span>
+
+	<span class="c1">// 停止运行函数
+</span><span class="c1"></span>	<span class="nf">Stop</span><span class="p">()</span> <span class="kt">error</span>
+	<span class="nf">OnStop</span><span class="p">()</span>
+
+	<span class="c1">// 重启服务
+</span><span class="c1"></span>	<span class="nf">Reset</span><span class="p">()</span> <span class="kt">error</span>
+	<span class="nf">OnReset</span><span class="p">()</span> <span class="kt">error</span>
+
+	<span class="c1">// 服务是否在运行
+</span><span class="c1"></span>	<span class="nf">IsRunning</span><span class="p">()</span> <span class="kt">bool</span>
+
+	<span class="c1">// 返回一个通道，结束服务
+</span><span class="c1"></span>	<span class="nf">Quit</span><span class="p">()</span> <span class="o">&lt;-</span><span class="kd">chan</span> <span class="kd">struct</span><span class="p">{}</span>
+
+	<span class="c1">// 返回服务的标志
+</span><span class="c1"></span>	<span class="nf">String</span><span class="p">()</span> <span class="kt">string</span>
+
+	<span class="c1">// 日志记录
+</span><span class="c1"></span>	<span class="nf">SetLogger</span><span class="p">(</span><span class="nx">log</span><span class="p">.</span><span class="nx">Logger</span><span class="p">)</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>可以很清楚的理解service定义的这几个接口，并不难，对service的基本的操作也就这几个函数。
+我们再看一看reactor接口。
+说到reactor，总会想到RxJava，或者spring中的reactor，也就是异步式编程。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Reactor</span> <span class="kd">interface</span> <span class="p">{</span>
+	<span class="nx">cmn</span><span class="p">.</span><span class="nx">Service</span> <span class="c1">// 默认继承了service基本接口
+</span><span class="c1"></span>
+	<span class="c1">// 添加一个路由
+</span><span class="c1"></span>	<span class="nf">SetSwitch</span><span class="p">(</span><span class="o">*</span><span class="nx">Switch</span><span class="p">)</span>
+
+	<span class="c1">// 获取channel
+</span><span class="c1"></span>	<span class="nf">GetChannels</span><span class="p">()</span> <span class="p">[]</span><span class="o">*</span><span class="nx">conn</span><span class="p">.</span><span class="nx">ChannelDescriptor</span>
+
+	<span class="c1">// 添加以恶搞peer
+</span><span class="c1"></span>	<span class="nf">AddPeer</span><span class="p">(</span><span class="nx">peer</span> <span class="nx">Peer</span><span class="p">)</span>
+
+	<span class="c1">// 移除一个peer
+</span><span class="c1"></span>	<span class="nf">RemovePeer</span><span class="p">(</span><span class="nx">peer</span> <span class="nx">Peer</span><span class="p">,</span> <span class="nx">reason</span> <span class="kd">interface</span><span class="p">{})</span>
+
+	<span class="c1">// 处理receive函数
+</span><span class="c1"></span>	<span class="nf">Receive</span><span class="p">(</span><span class="nx">chID</span> <span class="kt">byte</span><span class="p">,</span> <span class="nx">peer</span> <span class="nx">Peer</span><span class="p">,</span> <span class="nx">msgBytes</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>这个reactor就是和整个P2P网络进行交互的组件模块。</p>
+
+<h2 id="peer">peer</h2>
+
+<p>我们先看一下peer的定义</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">peer</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">cmn</span><span class="p">.</span><span class="nx">BaseService</span>
+
+	<span class="nx">peerConn</span>
+	<span class="nx">mconn</span> <span class="o">*</span><span class="nx">tmconn</span><span class="p">.</span><span class="nx">MConnection</span>
+
+	<span class="nx">nodeInfo</span> <span class="nx">NodeInfo</span>
+	<span class="nx">channels</span> <span class="p">[]</span><span class="kt">byte</span>
+
+	<span class="nx">Data</span> <span class="o">*</span><span class="nx">cmn</span><span class="p">.</span><span class="nx">CMap</span>
+
+	<span class="nx">metrics</span>       <span class="o">*</span><span class="nx">Metrics</span>
+	<span class="nx">metricsTicker</span> <span class="o">*</span><span class="nx">time</span><span class="p">.</span><span class="nx">Ticker</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>我们先关注peer的通信模块。我们根据内部成员变量，猜测主要和通信相关的是peerConn以及mconn,点进去一看，确实没错。</p>
+
+<h3 id="peerconn">peerConn</h3>
+
+<p>这个定义比较简单，就是简单的原声通信，记录了通信的一些内容</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">peerConn</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">outbound</span>   <span class="kt">bool</span>
+	<span class="nx">persistent</span> <span class="kt">bool</span>
+	<span class="nx">conn</span>       <span class="nx">net</span><span class="p">.</span><span class="nx">Conn</span> <span class="c1">// source connection
+</span><span class="c1"></span>
+	<span class="nx">originalAddr</span> <span class="o">*</span><span class="nx">NetAddress</span> <span class="c1">// nil for inbound connections
+</span><span class="c1"></span>
+	<span class="c1">// cached RemoteIP()
+</span><span class="c1"></span>	<span class="nx">ip</span> <span class="nx">net</span><span class="p">.</span><span class="nx">IP</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>可以看着，peerConn维护了一个连接，和别人的通信地址。没有太难理解的内容。</p>
+
+<h3 id="mconn">mconn</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">MConnection</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">cmn</span><span class="p">.</span><span class="nx">BaseService</span>
+
+	<span class="nx">conn</span>          <span class="nx">net</span><span class="p">.</span><span class="nx">Conn</span>
+	<span class="nx">bufConnReader</span> <span class="o">*</span><span class="nx">bufio</span><span class="p">.</span><span class="nx">Reader</span>
+	<span class="nx">bufConnWriter</span> <span class="o">*</span><span class="nx">bufio</span><span class="p">.</span><span class="nx">Writer</span>
+	<span class="nx">sendMonitor</span>   <span class="o">*</span><span class="nx">flow</span><span class="p">.</span><span class="nx">Monitor</span>
+	<span class="nx">recvMonitor</span>   <span class="o">*</span><span class="nx">flow</span><span class="p">.</span><span class="nx">Monitor</span>
+	<span class="nx">send</span>          <span class="kd">chan</span> <span class="kd">struct</span><span class="p">{}</span>
+	<span class="nx">pong</span>          <span class="kd">chan</span> <span class="kd">struct</span><span class="p">{}</span>
+	<span class="nx">channels</span>      <span class="p">[]</span><span class="o">*</span><span class="nx">Channel</span>
+	<span class="nx">channelsIdx</span>   <span class="kd">map</span><span class="p">[</span><span class="kt">byte</span><span class="p">]</span><span class="o">*</span><span class="nx">Channel</span>
+	<span class="nx">onReceive</span>     <span class="nx">receiveCbFunc</span>
+	<span class="nx">onError</span>       <span class="nx">errorCbFunc</span>
+	<span class="nx">errored</span>       <span class="kt">uint32</span>
+	<span class="nx">config</span>        <span class="nx">MConnConfig</span>
+
+	<span class="c1">// Closing quitSendRoutine will cause
+</span><span class="c1"></span>	<span class="c1">// doneSendRoutine to close.
+</span><span class="c1"></span>	<span class="nx">quitSendRoutine</span> <span class="kd">chan</span> <span class="kd">struct</span><span class="p">{}</span>
+	<span class="nx">doneSendRoutine</span> <span class="kd">chan</span> <span class="kd">struct</span><span class="p">{}</span>
+
+	<span class="nx">flushTimer</span> <span class="o">*</span><span class="nx">cmn</span><span class="p">.</span><span class="nx">ThrottleTimer</span> <span class="c1">// flush writes as necessary but throttled.
+</span><span class="c1"></span>	<span class="nx">pingTimer</span>  <span class="o">*</span><span class="nx">cmn</span><span class="p">.</span><span class="nx">RepeatTimer</span>   <span class="c1">// send pings periodically
+</span><span class="c1"></span>
+	<span class="c1">// close conn if pong is not received in pongTimeout
+</span><span class="c1"></span>	<span class="nx">pongTimer</span>     <span class="o">*</span><span class="nx">time</span><span class="p">.</span><span class="nx">Timer</span>
+	<span class="nx">pongTimeoutCh</span> <span class="kd">chan</span> <span class="kt">bool</span> <span class="c1">// true - timeout, false - peer sent pong
+</span><span class="c1"></span>
+	<span class="nx">chStatsTimer</span> <span class="o">*</span><span class="nx">cmn</span><span class="p">.</span><span class="nx">RepeatTimer</span> <span class="c1">// update channel stats periodically
+</span><span class="c1"></span>
+	<span class="nx">created</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Time</span> <span class="c1">// time of creation
+</span><span class="c1"></span>
+	<span class="nx">_maxPacketMsgSize</span> <span class="kt">int</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>这个好复杂，我们根据自带的注释，可以理解为，这个实现了peer和其他节点的多工通信。对于每一个通信有一个通道和通道ID。
+我们来看一看具体的实现。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">NewMConnectionWithConfig</span><span class="p">(</span><span class="nx">conn</span> <span class="nx">net</span><span class="p">.</span><span class="nx">Conn</span><span class="p">,</span> <span class="nx">chDescs</span> <span class="p">[]</span><span class="o">*</span><span class="nx">ChannelDescriptor</span><span class="p">,</span> <span class="nx">onReceive</span> <span class="nx">receiveCbFunc</span><span class="p">,</span> <span class="nx">onError</span> <span class="nx">errorCbFunc</span><span class="p">,</span> <span class="nx">config</span> <span class="nx">MConnConfig</span><span class="p">)</span> <span class="o">*</span><span class="nx">MConnection</span> <span class="p">{</span>
+	<span class="k">if</span> <span class="nx">config</span><span class="p">.</span><span class="nx">PongTimeout</span> <span class="o">&gt;=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">PingInterval</span> <span class="p">{</span>
+		<span class="nb">panic</span><span class="p">(</span><span class="s">&#34;pongTimeout must be less than pingInterval (otherwise, next ping will reset pong timer)&#34;</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="nx">mconn</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">MConnection</span><span class="p">{</span>
+		<span class="nx">conn</span><span class="p">:</span>          <span class="nx">conn</span><span class="p">,</span>
+		<span class="nx">bufConnReader</span><span class="p">:</span> <span class="nx">bufio</span><span class="p">.</span><span class="nf">NewReaderSize</span><span class="p">(</span><span class="nx">conn</span><span class="p">,</span> <span class="nx">minReadBufferSize</span><span class="p">),</span>
+		<span class="nx">bufConnWriter</span><span class="p">:</span> <span class="nx">bufio</span><span class="p">.</span><span class="nf">NewWriterSize</span><span class="p">(</span><span class="nx">conn</span><span class="p">,</span> <span class="nx">minWriteBufferSize</span><span class="p">),</span>
+		<span class="nx">sendMonitor</span><span class="p">:</span>   <span class="nx">flow</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+		<span class="nx">recvMonitor</span><span class="p">:</span>   <span class="nx">flow</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+		<span class="nx">send</span><span class="p">:</span>          <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kd">struct</span><span class="p">{},</span> <span class="mi">1</span><span class="p">),</span>
+		<span class="nx">pong</span><span class="p">:</span>          <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kd">struct</span><span class="p">{},</span> <span class="mi">1</span><span class="p">),</span>
+		<span class="nx">onReceive</span><span class="p">:</span>     <span class="nx">onReceive</span><span class="p">,</span>
+		<span class="nx">onError</span><span class="p">:</span>       <span class="nx">onError</span><span class="p">,</span>
+		<span class="nx">config</span><span class="p">:</span>        <span class="nx">config</span><span class="p">,</span>
+		<span class="nx">created</span><span class="p">:</span>       <span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">(),</span>
+	<span class="p">}</span>
+
+	<span class="c1">// Create channels
+</span><span class="c1"></span>	<span class="kd">var</span> <span class="nx">channelsIdx</span> <span class="p">=</span> <span class="kd">map</span><span class="p">[</span><span class="kt">byte</span><span class="p">]</span><span class="o">*</span><span class="nx">Channel</span><span class="p">{}</span>
+	<span class="kd">var</span> <span class="nx">channels</span> <span class="p">=</span> <span class="p">[]</span><span class="o">*</span><span class="nx">Channel</span><span class="p">{}</span>
+
+	<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">desc</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">chDescs</span> <span class="p">{</span>
+		<span class="nx">channel</span> <span class="o">:=</span> <span class="nf">newChannel</span><span class="p">(</span><span class="nx">mconn</span><span class="p">,</span> <span class="o">*</span><span class="nx">desc</span><span class="p">)</span>
+		<span class="nx">channelsIdx</span><span class="p">[</span><span class="nx">channel</span><span class="p">.</span><span class="nx">desc</span><span class="p">.</span><span class="nx">ID</span><span class="p">]</span> <span class="p">=</span> <span class="nx">channel</span>
+		<span class="nx">channels</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">channels</span><span class="p">,</span> <span class="nx">channel</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="nx">mconn</span><span class="p">.</span><span class="nx">channels</span> <span class="p">=</span> <span class="nx">channels</span>
+	<span class="nx">mconn</span><span class="p">.</span><span class="nx">channelsIdx</span> <span class="p">=</span> <span class="nx">channelsIdx</span>
+
+	<span class="nx">mconn</span><span class="p">.</span><span class="nx">BaseService</span> <span class="p">=</span> <span class="o">*</span><span class="nx">cmn</span><span class="p">.</span><span class="nf">NewBaseService</span><span class="p">(</span><span class="kc">nil</span><span class="p">,</span> <span class="s">&#34;MConnection&#34;</span><span class="p">,</span> <span class="nx">mconn</span><span class="p">)</span>
+
+	<span class="c1">// maxPacketMsgSize() is a bit heavy, so call just once
+</span><span class="c1"></span>	<span class="nx">mconn</span><span class="p">.</span><span class="nx">_maxPacketMsgSize</span> <span class="p">=</span> <span class="nx">mconn</span><span class="p">.</span><span class="nf">maxPacketMsgSize</span><span class="p">()</span>
+
+	<span class="k">return</span> <span class="nx">mconn</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>我们可以看到几个回调函数，onReceive和onError，而且还对conn做了二次io封装，方便进行读写。并且在这创建了好几个通道，最后创建了一个MConnection的基础服务。
+通道是怎么实现的呢？</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Channel</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">conn</span>          <span class="o">*</span><span class="nx">MConnection</span>
+	<span class="nx">desc</span>          <span class="nx">ChannelDescriptor</span>
+	<span class="nx">sendQueue</span>     <span class="kd">chan</span> <span class="p">[]</span><span class="kt">byte</span>
+	<span class="nx">sendQueueSize</span> <span class="kt">int32</span> <span class="c1">// atomic.
+</span><span class="c1"></span>	<span class="nx">recving</span>       <span class="p">[]</span><span class="kt">byte</span>
+	<span class="nx">sending</span>       <span class="p">[]</span><span class="kt">byte</span>
+	<span class="nx">recentlySent</span>  <span class="kt">int64</span> <span class="c1">// exponential moving average
+</span><span class="c1"></span>
+	<span class="nx">maxPacketMsgPayloadSize</span> <span class="kt">int</span>
+
+	<span class="nx">Logger</span> <span class="nx">log</span><span class="p">.</span><span class="nx">Logger</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>每一个通道都维持着一个MConnection，然后有个发送队列，看内容应该是会把发送队列的内容放到sending缓冲区发出去，然后recving是接受缓冲区。根据channel的成员函数，我们可以看到，会有goroutine调用来读写sending和recving缓冲区进行数据收发。
+我们知道OnStart是开始方法，我们看下OnStart是怎么启动的吧</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">MConnection</span><span class="p">)</span> <span class="nf">OnStart</span><span class="p">()</span> <span class="kt">error</span> <span class="p">{</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">BaseService</span><span class="p">.</span><span class="nf">OnStart</span><span class="p">();</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">err</span>
+	<span class="p">}</span>
+	<span class="nx">c</span><span class="p">.</span><span class="nx">quitSendRoutine</span> <span class="p">=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kd">struct</span><span class="p">{})</span>
+	<span class="nx">c</span><span class="p">.</span><span class="nx">doneSendRoutine</span> <span class="p">=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kd">struct</span><span class="p">{})</span>
+	<span class="nx">c</span><span class="p">.</span><span class="nx">flushTimer</span> <span class="p">=</span> <span class="nx">cmn</span><span class="p">.</span><span class="nf">NewThrottleTimer</span><span class="p">(</span><span class="s">&#34;flush&#34;</span><span class="p">,</span> <span class="nx">c</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">FlushThrottle</span><span class="p">)</span>
+	<span class="nx">c</span><span class="p">.</span><span class="nx">pingTimer</span> <span class="p">=</span> <span class="nx">cmn</span><span class="p">.</span><span class="nf">NewRepeatTimer</span><span class="p">(</span><span class="s">&#34;ping&#34;</span><span class="p">,</span> <span class="nx">c</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">PingInterval</span><span class="p">)</span>
+	<span class="nx">c</span><span class="p">.</span><span class="nx">pongTimeoutCh</span> <span class="p">=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">bool</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+	<span class="nx">c</span><span class="p">.</span><span class="nx">chStatsTimer</span> <span class="p">=</span> <span class="nx">cmn</span><span class="p">.</span><span class="nf">NewRepeatTimer</span><span class="p">(</span><span class="s">&#34;chStats&#34;</span><span class="p">,</span> <span class="nx">updateStats</span><span class="p">)</span>
+	<span class="k">go</span> <span class="nx">c</span><span class="p">.</span><span class="nf">sendRoutine</span><span class="p">()</span>
+	<span class="k">go</span> <span class="nx">c</span><span class="p">.</span><span class="nf">recvRoutine</span><span class="p">()</span>
+	<span class="k">return</span> <span class="kc">nil</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>主要语句就两个，创建一个发协程，一个收协程。
+先看一看数据如何发出去</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span><span class="lnt">75
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">MConnection</span><span class="p">)</span> <span class="nf">sendRoutine</span><span class="p">()</span> <span class="p">{</span>
+	<span class="k">defer</span> <span class="nx">c</span><span class="p">.</span><span class="nf">_recover</span><span class="p">()</span>
+
+<span class="nx">FOR_LOOP</span><span class="p">:</span>
+	<span class="k">for</span> <span class="p">{</span>
+		<span class="kd">var</span> <span class="nx">_n</span> <span class="kt">int64</span>
+		<span class="kd">var</span> <span class="nx">err</span> <span class="kt">error</span>
+	<span class="nx">SELECTION</span><span class="p">:</span>
+		<span class="k">select</span> <span class="p">{</span>
+		<span class="k">case</span> <span class="o">&lt;-</span><span class="nx">c</span><span class="p">.</span><span class="nx">flushTimer</span><span class="p">.</span><span class="nx">Ch</span><span class="p">:</span>
+			<span class="c1">// NOTE: flushTimer.Set() must be called every time
+</span><span class="c1"></span>			<span class="c1">// something is written to .bufConnWriter.
+</span><span class="c1"></span>			<span class="nx">c</span><span class="p">.</span><span class="nf">flush</span><span class="p">()</span>
+		<span class="k">case</span> <span class="o">&lt;-</span><span class="nx">c</span><span class="p">.</span><span class="nx">chStatsTimer</span><span class="p">.</span><span class="nf">Chan</span><span class="p">():</span>
+			<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">channel</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">c</span><span class="p">.</span><span class="nx">channels</span> <span class="p">{</span>
+				<span class="nx">channel</span><span class="p">.</span><span class="nf">updateStats</span><span class="p">()</span>
+			<span class="p">}</span>
+		<span class="k">case</span> <span class="o">&lt;-</span><span class="nx">c</span><span class="p">.</span><span class="nx">pingTimer</span><span class="p">.</span><span class="nf">Chan</span><span class="p">():</span>
+			<span class="nx">c</span><span class="p">.</span><span class="nx">Logger</span><span class="p">.</span><span class="nf">Debug</span><span class="p">(</span><span class="s">&#34;Send Ping&#34;</span><span class="p">)</span>
+			<span class="nx">_n</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">cdc</span><span class="p">.</span><span class="nf">MarshalBinaryLengthPrefixedWriter</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">bufConnWriter</span><span class="p">,</span> <span class="nx">PacketPing</span><span class="p">{})</span>
+			<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+				<span class="k">break</span> <span class="nx">SELECTION</span>
+			<span class="p">}</span>
+			<span class="nx">c</span><span class="p">.</span><span class="nx">sendMonitor</span><span class="p">.</span><span class="nf">Update</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nx">_n</span><span class="p">))</span>
+			<span class="nx">c</span><span class="p">.</span><span class="nx">Logger</span><span class="p">.</span><span class="nf">Debug</span><span class="p">(</span><span class="s">&#34;Starting pong timer&#34;</span><span class="p">,</span> <span class="s">&#34;dur&#34;</span><span class="p">,</span> <span class="nx">c</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">PongTimeout</span><span class="p">)</span>
+			<span class="nx">c</span><span class="p">.</span><span class="nx">pongTimer</span> <span class="p">=</span> <span class="nx">time</span><span class="p">.</span><span class="nf">AfterFunc</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">PongTimeout</span><span class="p">,</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+				<span class="k">select</span> <span class="p">{</span>
+				<span class="k">case</span> <span class="nx">c</span><span class="p">.</span><span class="nx">pongTimeoutCh</span> <span class="o">&lt;-</span> <span class="kc">true</span><span class="p">:</span>
+				<span class="k">default</span><span class="p">:</span>
+				<span class="p">}</span>
+			<span class="p">})</span>
+			<span class="nx">c</span><span class="p">.</span><span class="nf">flush</span><span class="p">()</span>
+		<span class="k">case</span> <span class="nx">timeout</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="nx">c</span><span class="p">.</span><span class="nx">pongTimeoutCh</span><span class="p">:</span>
+			<span class="k">if</span> <span class="nx">timeout</span> <span class="p">{</span>
+				<span class="nx">c</span><span class="p">.</span><span class="nx">Logger</span><span class="p">.</span><span class="nf">Debug</span><span class="p">(</span><span class="s">&#34;Pong timeout&#34;</span><span class="p">)</span>
+				<span class="nx">err</span> <span class="p">=</span> <span class="nx">errors</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="s">&#34;pong timeout&#34;</span><span class="p">)</span>
+			<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+				<span class="nx">c</span><span class="p">.</span><span class="nf">stopPongTimer</span><span class="p">()</span>
+			<span class="p">}</span>
+		<span class="k">case</span> <span class="o">&lt;-</span><span class="nx">c</span><span class="p">.</span><span class="nx">pong</span><span class="p">:</span>
+			<span class="nx">c</span><span class="p">.</span><span class="nx">Logger</span><span class="p">.</span><span class="nf">Debug</span><span class="p">(</span><span class="s">&#34;Send Pong&#34;</span><span class="p">)</span>
+			<span class="nx">_n</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">cdc</span><span class="p">.</span><span class="nf">MarshalBinaryLengthPrefixedWriter</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">bufConnWriter</span><span class="p">,</span> <span class="nx">PacketPong</span><span class="p">{})</span>
+			<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+				<span class="k">break</span> <span class="nx">SELECTION</span>
+			<span class="p">}</span>
+			<span class="nx">c</span><span class="p">.</span><span class="nx">sendMonitor</span><span class="p">.</span><span class="nf">Update</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nx">_n</span><span class="p">))</span>
+			<span class="nx">c</span><span class="p">.</span><span class="nf">flush</span><span class="p">()</span>
+		<span class="k">case</span> <span class="o">&lt;-</span><span class="nx">c</span><span class="p">.</span><span class="nx">quitSendRoutine</span><span class="p">:</span>
+			<span class="nb">close</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">doneSendRoutine</span><span class="p">)</span>
+			<span class="k">break</span> <span class="nx">FOR_LOOP</span>
+		<span class="k">case</span> <span class="o">&lt;-</span><span class="nx">c</span><span class="p">.</span><span class="nx">send</span><span class="p">:</span>
+			<span class="c1">// Send some PacketMsgs
+</span><span class="c1"></span>			<span class="nx">eof</span> <span class="o">:=</span> <span class="nx">c</span><span class="p">.</span><span class="nf">sendSomePacketMsgs</span><span class="p">()</span>
+			<span class="k">if</span> <span class="p">!</span><span class="nx">eof</span> <span class="p">{</span>
+				<span class="c1">// Keep sendRoutine awake.
+</span><span class="c1"></span>				<span class="k">select</span> <span class="p">{</span>
+				<span class="k">case</span> <span class="nx">c</span><span class="p">.</span><span class="nx">send</span> <span class="o">&lt;-</span> <span class="kd">struct</span><span class="p">{}{}:</span>
+				<span class="k">default</span><span class="p">:</span>
+				<span class="p">}</span>
+			<span class="p">}</span>
+		<span class="p">}</span>
+
+		<span class="k">if</span> <span class="p">!</span><span class="nx">c</span><span class="p">.</span><span class="nf">IsRunning</span><span class="p">()</span> <span class="p">{</span>
+			<span class="k">break</span> <span class="nx">FOR_LOOP</span>
+		<span class="p">}</span>
+		<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="nx">c</span><span class="p">.</span><span class="nx">Logger</span><span class="p">.</span><span class="nf">Error</span><span class="p">(</span><span class="s">&#34;Connection failed @ sendRoutine&#34;</span><span class="p">,</span> <span class="s">&#34;conn&#34;</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="s">&#34;err&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+			<span class="nx">c</span><span class="p">.</span><span class="nf">stopForError</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+			<span class="k">break</span> <span class="nx">FOR_LOOP</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+
+	<span class="c1">// Cleanup
+</span><span class="c1"></span>	<span class="nx">c</span><span class="p">.</span><span class="nf">stopPongTimer</span><span class="p">()</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>上面有ping,pong，就是和别人通信是否稳定的，不进去看了。我们看下是如何发送出去自己的数据的。也就是c.send收到了内容的时候</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">MConnection</span><span class="p">)</span> <span class="nf">sendPacketMsg</span><span class="p">()</span> <span class="kt">bool</span> <span class="p">{</span>
+	<span class="c1">// 挑选一个channel，这个channel是最近发送比率最低的
+</span><span class="c1"></span>	<span class="o">...</span>
+
+	<span class="c1">// Nothing to send?
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">leastChannel</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="kc">true</span>
+	<span class="p">}</span>
+	<span class="c1">// c.Logger.Info(&#34;Found a msgPacket to send&#34;)
+</span><span class="c1"></span>
+	<span class="c1">// Make &amp; send a PacketMsg from this channel
+</span><span class="c1"></span>	<span class="nx">_n</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">leastChannel</span><span class="p">.</span><span class="nf">writePacketMsgTo</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">bufConnWriter</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">c</span><span class="p">.</span><span class="nx">Logger</span><span class="p">.</span><span class="nf">Error</span><span class="p">(</span><span class="s">&#34;Failed to write PacketMsg&#34;</span><span class="p">,</span> <span class="s">&#34;err&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+		<span class="nx">c</span><span class="p">.</span><span class="nf">stopForError</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+		<span class="k">return</span> <span class="kc">true</span>
+	<span class="p">}</span>
+	<span class="nx">c</span><span class="p">.</span><span class="nx">sendMonitor</span><span class="p">.</span><span class="nf">Update</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nx">_n</span><span class="p">))</span>
+	<span class="nx">c</span><span class="p">.</span><span class="nx">flushTimer</span><span class="p">.</span><span class="nf">Set</span><span class="p">()</span>
+	<span class="k">return</span> <span class="kc">false</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>然后我们沿着<code>writePacketMsgTo</code>看下去的话，会看到函数</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">ch</span> <span class="o">*</span><span class="nx">Channel</span><span class="p">)</span> <span class="nf">nextPacketMsg</span><span class="p">()</span> <span class="nx">PacketMsg</span> <span class="p">{</span>
+	<span class="nx">packet</span> <span class="o">:=</span> <span class="nx">PacketMsg</span><span class="p">{}</span>
+	<span class="nx">packet</span><span class="p">.</span><span class="nx">ChannelID</span> <span class="p">=</span> <span class="nb">byte</span><span class="p">(</span><span class="nx">ch</span><span class="p">.</span><span class="nx">desc</span><span class="p">.</span><span class="nx">ID</span><span class="p">)</span>
+	<span class="nx">maxSize</span> <span class="o">:=</span> <span class="nx">ch</span><span class="p">.</span><span class="nx">maxPacketMsgPayloadSize</span>
+	<span class="nx">packet</span><span class="p">.</span><span class="nx">Bytes</span> <span class="p">=</span> <span class="nx">ch</span><span class="p">.</span><span class="nx">sending</span><span class="p">[:</span><span class="nx">cmn</span><span class="p">.</span><span class="nf">MinInt</span><span class="p">(</span><span class="nx">maxSize</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nx">ch</span><span class="p">.</span><span class="nx">sending</span><span class="p">))]</span>
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">ch</span><span class="p">.</span><span class="nx">sending</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="nx">maxSize</span> <span class="p">{</span>
+		<span class="nx">packet</span><span class="p">.</span><span class="nx">EOF</span> <span class="p">=</span> <span class="nb">byte</span><span class="p">(</span><span class="mh">0x01</span><span class="p">)</span>
+		<span class="nx">ch</span><span class="p">.</span><span class="nx">sending</span> <span class="p">=</span> <span class="kc">nil</span>
+		<span class="nx">atomic</span><span class="p">.</span><span class="nf">AddInt32</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">ch</span><span class="p">.</span><span class="nx">sendQueueSize</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="c1">// decrement sendQueueSize
+</span><span class="c1"></span>	<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+		<span class="nx">packet</span><span class="p">.</span><span class="nx">EOF</span> <span class="p">=</span> <span class="nb">byte</span><span class="p">(</span><span class="mh">0x00</span><span class="p">)</span>
+		<span class="nx">ch</span><span class="p">.</span><span class="nx">sending</span> <span class="p">=</span> <span class="nx">ch</span><span class="p">.</span><span class="nx">sending</span><span class="p">[</span><span class="nx">cmn</span><span class="p">.</span><span class="nf">MinInt</span><span class="p">(</span><span class="nx">maxSize</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nx">ch</span><span class="p">.</span><span class="nx">sending</span><span class="p">)):]</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="nx">packet</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>很简单，就是如果这个包还没发送完，就从缓冲区里面继续读，继续发，如果发完了，队列就减少1.并且再发送的过程中设置结束变量。
+所以呢，整体的流程就是，有包的话就从缓冲区里面读出来，封装packet然后发出去，如果包多，就一直<code>sendSomePackets</code>.
+接下来再看看怎么收的。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span><span class="lnt">75
+</span><span class="lnt">76
+</span><span class="lnt">77
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">MConnection</span><span class="p">)</span> <span class="nf">recvRoutine</span><span class="p">()</span> <span class="p">{</span>
+	<span class="k">defer</span> <span class="nx">c</span><span class="p">.</span><span class="nf">_recover</span><span class="p">()</span>
+
+<span class="nx">FOR_LOOP</span><span class="p">:</span>
+	<span class="k">for</span> <span class="p">{</span>
+		<span class="c1">// Block until .recvMonitor says we can read.
+</span><span class="c1"></span>		<span class="nx">c</span><span class="p">.</span><span class="nx">recvMonitor</span><span class="p">.</span><span class="nf">Limit</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">_maxPacketMsgSize</span><span class="p">,</span> <span class="nx">atomic</span><span class="p">.</span><span class="nf">LoadInt64</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">c</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">RecvRate</span><span class="p">),</span> <span class="kc">true</span><span class="p">)</span>
+
+
+		<span class="c1">// Read packet type
+</span><span class="c1"></span>		<span class="kd">var</span> <span class="nx">packet</span> <span class="nx">Packet</span>
+		<span class="kd">var</span> <span class="nx">_n</span> <span class="kt">int64</span>
+		<span class="kd">var</span> <span class="nx">err</span> <span class="kt">error</span>
+		<span class="nx">_n</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">cdc</span><span class="p">.</span><span class="nf">UnmarshalBinaryLengthPrefixedReader</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">bufConnReader</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">packet</span><span class="p">,</span> <span class="nb">int64</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">_maxPacketMsgSize</span><span class="p">))</span>
+		<span class="nx">c</span><span class="p">.</span><span class="nx">recvMonitor</span><span class="p">.</span><span class="nf">Update</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nx">_n</span><span class="p">))</span>
+		<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="k">if</span> <span class="nx">c</span><span class="p">.</span><span class="nf">IsRunning</span><span class="p">()</span> <span class="p">{</span>
+				<span class="nx">c</span><span class="p">.</span><span class="nx">Logger</span><span class="p">.</span><span class="nf">Error</span><span class="p">(</span><span class="s">&#34;Connection failed @ recvRoutine (reading byte)&#34;</span><span class="p">,</span> <span class="s">&#34;conn&#34;</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="s">&#34;err&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+				<span class="nx">c</span><span class="p">.</span><span class="nf">stopForError</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+			<span class="p">}</span>
+			<span class="k">break</span> <span class="nx">FOR_LOOP</span>
+		<span class="p">}</span>
+
+		<span class="c1">// Read more depending on packet type.
+</span><span class="c1"></span>		<span class="k">switch</span> <span class="nx">pkt</span> <span class="o">:=</span> <span class="nx">packet</span><span class="p">.(</span><span class="kd">type</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">case</span> <span class="nx">PacketPing</span><span class="p">:</span>
+			<span class="c1">// TODO: prevent abuse, as they cause flush()&#39;s.
+</span><span class="c1"></span>			<span class="c1">// https://github.com/tendermint/tendermint/issues/1190
+</span><span class="c1"></span>			<span class="nx">c</span><span class="p">.</span><span class="nx">Logger</span><span class="p">.</span><span class="nf">Debug</span><span class="p">(</span><span class="s">&#34;Receive Ping&#34;</span><span class="p">)</span>
+			<span class="k">select</span> <span class="p">{</span>
+			<span class="k">case</span> <span class="nx">c</span><span class="p">.</span><span class="nx">pong</span> <span class="o">&lt;-</span> <span class="kd">struct</span><span class="p">{}{}:</span>
+			<span class="k">default</span><span class="p">:</span>
+				<span class="c1">// never block
+</span><span class="c1"></span>			<span class="p">}</span>
+		<span class="k">case</span> <span class="nx">PacketPong</span><span class="p">:</span>
+			<span class="nx">c</span><span class="p">.</span><span class="nx">Logger</span><span class="p">.</span><span class="nf">Debug</span><span class="p">(</span><span class="s">&#34;Receive Pong&#34;</span><span class="p">)</span>
+			<span class="k">select</span> <span class="p">{</span>
+			<span class="k">case</span> <span class="nx">c</span><span class="p">.</span><span class="nx">pongTimeoutCh</span> <span class="o">&lt;-</span> <span class="kc">false</span><span class="p">:</span>
+			<span class="k">default</span><span class="p">:</span>
+				<span class="c1">// never block
+</span><span class="c1"></span>			<span class="p">}</span>
+		<span class="k">case</span> <span class="nx">PacketMsg</span><span class="p">:</span>
+			<span class="nx">channel</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">channelsIdx</span><span class="p">[</span><span class="nx">pkt</span><span class="p">.</span><span class="nx">ChannelID</span><span class="p">]</span>
+			<span class="k">if</span> <span class="p">!</span><span class="nx">ok</span> <span class="o">||</span> <span class="nx">channel</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+				<span class="nx">err</span> <span class="o">:=</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;Unknown channel %X&#34;</span><span class="p">,</span> <span class="nx">pkt</span><span class="p">.</span><span class="nx">ChannelID</span><span class="p">)</span>
+				<span class="nx">c</span><span class="p">.</span><span class="nx">Logger</span><span class="p">.</span><span class="nf">Error</span><span class="p">(</span><span class="s">&#34;Connection failed @ recvRoutine&#34;</span><span class="p">,</span> <span class="s">&#34;conn&#34;</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="s">&#34;err&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+				<span class="nx">c</span><span class="p">.</span><span class="nf">stopForError</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+				<span class="k">break</span> <span class="nx">FOR_LOOP</span>
+			<span class="p">}</span>
+
+			<span class="nx">msgBytes</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">channel</span><span class="p">.</span><span class="nf">recvPacketMsg</span><span class="p">(</span><span class="nx">pkt</span><span class="p">)</span>
+			<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+				<span class="k">if</span> <span class="nx">c</span><span class="p">.</span><span class="nf">IsRunning</span><span class="p">()</span> <span class="p">{</span>
+					<span class="nx">c</span><span class="p">.</span><span class="nx">Logger</span><span class="p">.</span><span class="nf">Error</span><span class="p">(</span><span class="s">&#34;Connection failed @ recvRoutine&#34;</span><span class="p">,</span> <span class="s">&#34;conn&#34;</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="s">&#34;err&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+					<span class="nx">c</span><span class="p">.</span><span class="nf">stopForError</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+				<span class="p">}</span>
+				<span class="k">break</span> <span class="nx">FOR_LOOP</span>
+			<span class="p">}</span>
+			<span class="k">if</span> <span class="nx">msgBytes</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+				<span class="nx">c</span><span class="p">.</span><span class="nx">Logger</span><span class="p">.</span><span class="nf">Debug</span><span class="p">(</span><span class="s">&#34;Received bytes&#34;</span><span class="p">,</span> <span class="s">&#34;chID&#34;</span><span class="p">,</span> <span class="nx">pkt</span><span class="p">.</span><span class="nx">ChannelID</span><span class="p">,</span> <span class="s">&#34;msgBytes&#34;</span><span class="p">,</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">&#34;%X&#34;</span><span class="p">,</span> <span class="nx">msgBytes</span><span class="p">))</span>
+				<span class="c1">// NOTE: This means the reactor.Receive runs in the same thread as the p2p recv routine
+</span><span class="c1"></span>				<span class="nx">c</span><span class="p">.</span><span class="nf">onReceive</span><span class="p">(</span><span class="nx">pkt</span><span class="p">.</span><span class="nx">ChannelID</span><span class="p">,</span> <span class="nx">msgBytes</span><span class="p">)</span>
+			<span class="p">}</span>
+		<span class="k">default</span><span class="p">:</span>
+			<span class="nx">err</span> <span class="o">:=</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;Unknown message type %v&#34;</span><span class="p">,</span> <span class="nx">reflect</span><span class="p">.</span><span class="nf">TypeOf</span><span class="p">(</span><span class="nx">packet</span><span class="p">))</span>
+			<span class="nx">c</span><span class="p">.</span><span class="nx">Logger</span><span class="p">.</span><span class="nf">Error</span><span class="p">(</span><span class="s">&#34;Connection failed @ recvRoutine&#34;</span><span class="p">,</span> <span class="s">&#34;conn&#34;</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="s">&#34;err&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+			<span class="nx">c</span><span class="p">.</span><span class="nf">stopForError</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+			<span class="k">break</span> <span class="nx">FOR_LOOP</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+
+	<span class="c1">// Cleanup
+</span><span class="c1"></span>	<span class="nb">close</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">pong</span><span class="p">)</span>
+	<span class="k">for</span> <span class="k">range</span> <span class="nx">c</span><span class="p">.</span><span class="nx">pong</span> <span class="p">{</span>
+		<span class="c1">// Drain
+</span><span class="c1"></span>	<span class="p">}</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>对于ping和pong我们就不看了，就是检测连接的。主要看一下PacketMsg类型的处理。再最前面发的时候，我们看到包如果没发完，标志量EOF不是01，这个地方的<code>channel.recvPacketMsg(pkt)</code>就是把一个完整的封装起来的。然后我们发现了onReceive函数，还记得最开始说的回调函数吗？就是这！</p>
+
+<p>所以，MConnection的工作就是收发信息，channel是通信的渠道，发就调用底层的发出去，收就进行回调。那回调函数在哪呢？我们接下来继续看。</p>
+
+<h3 id="peer-1">peer</h3>
+
+<p>现在我们再看一个peer是怎么创建的</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">newPeer</span><span class="p">(</span>
+	<span class="nx">pc</span> <span class="nx">peerConn</span><span class="p">,</span>
+	<span class="nx">mConfig</span> <span class="nx">tmconn</span><span class="p">.</span><span class="nx">MConnConfig</span><span class="p">,</span>
+	<span class="nx">nodeInfo</span> <span class="nx">NodeInfo</span><span class="p">,</span>
+	<span class="nx">reactorsByCh</span> <span class="kd">map</span><span class="p">[</span><span class="kt">byte</span><span class="p">]</span><span class="nx">Reactor</span><span class="p">,</span>
+	<span class="nx">chDescs</span> <span class="p">[]</span><span class="o">*</span><span class="nx">tmconn</span><span class="p">.</span><span class="nx">ChannelDescriptor</span><span class="p">,</span>
+	<span class="nx">onPeerError</span> <span class="kd">func</span><span class="p">(</span><span class="nx">Peer</span><span class="p">,</span> <span class="kd">interface</span><span class="p">{}),</span>
+	<span class="nx">options</span> <span class="o">...</span><span class="nx">PeerOption</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">*</span><span class="nx">peer</span> <span class="p">{</span>
+	<span class="nx">p</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">peer</span><span class="p">{</span>
+		<span class="nx">peerConn</span><span class="p">:</span>      <span class="nx">pc</span><span class="p">,</span>
+		<span class="nx">nodeInfo</span><span class="p">:</span>      <span class="nx">nodeInfo</span><span class="p">,</span>
+		<span class="nx">channels</span><span class="p">:</span>      <span class="nx">nodeInfo</span><span class="p">.(</span><span class="nx">DefaultNodeInfo</span><span class="p">).</span><span class="nx">Channels</span><span class="p">,</span> <span class="c1">// TODO
+</span><span class="c1"></span>		<span class="nx">Data</span><span class="p">:</span>          <span class="nx">cmn</span><span class="p">.</span><span class="nf">NewCMap</span><span class="p">(),</span>
+		<span class="nx">metricsTicker</span><span class="p">:</span> <span class="nx">time</span><span class="p">.</span><span class="nf">NewTicker</span><span class="p">(</span><span class="nx">metricsTickerDuration</span><span class="p">),</span>
+		<span class="nx">metrics</span><span class="p">:</span>       <span class="nf">NopMetrics</span><span class="p">(),</span>
+	<span class="p">}</span>
+
+	<span class="nx">p</span><span class="p">.</span><span class="nx">mconn</span> <span class="p">=</span> <span class="nf">createMConnection</span><span class="p">(</span>
+		<span class="nx">pc</span><span class="p">.</span><span class="nx">conn</span><span class="p">,</span>
+		<span class="nx">p</span><span class="p">,</span>
+		<span class="nx">reactorsByCh</span><span class="p">,</span>
+		<span class="nx">chDescs</span><span class="p">,</span>
+		<span class="nx">onPeerError</span><span class="p">,</span>
+		<span class="nx">mConfig</span><span class="p">,</span>
+	<span class="p">)</span>
+	<span class="nx">p</span><span class="p">.</span><span class="nx">BaseService</span> <span class="p">=</span> <span class="o">*</span><span class="nx">cmn</span><span class="p">.</span><span class="nf">NewBaseService</span><span class="p">(</span><span class="kc">nil</span><span class="p">,</span> <span class="s">&#34;Peer&#34;</span><span class="p">,</span> <span class="nx">p</span><span class="p">)</span>
+	<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">option</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">options</span> <span class="p">{</span>
+		<span class="nf">option</span><span class="p">(</span><span class="nx">p</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="k">return</span> <span class="nx">p</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>等等回调函数呢？
+我们看下<code>createMConnection</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">createMConnection</span><span class="p">(</span>
+	<span class="nx">conn</span> <span class="nx">net</span><span class="p">.</span><span class="nx">Conn</span><span class="p">,</span>
+	<span class="nx">p</span> <span class="o">*</span><span class="nx">peer</span><span class="p">,</span>
+	<span class="nx">reactorsByCh</span> <span class="kd">map</span><span class="p">[</span><span class="kt">byte</span><span class="p">]</span><span class="nx">Reactor</span><span class="p">,</span>
+	<span class="nx">chDescs</span> <span class="p">[]</span><span class="o">*</span><span class="nx">tmconn</span><span class="p">.</span><span class="nx">ChannelDescriptor</span><span class="p">,</span>
+	<span class="nx">onPeerError</span> <span class="kd">func</span><span class="p">(</span><span class="nx">Peer</span><span class="p">,</span> <span class="kd">interface</span><span class="p">{}),</span>
+	<span class="nx">config</span> <span class="nx">tmconn</span><span class="p">.</span><span class="nx">MConnConfig</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">*</span><span class="nx">tmconn</span><span class="p">.</span><span class="nx">MConnection</span> <span class="p">{</span>
+
+	<span class="nx">onReceive</span> <span class="o">:=</span> <span class="kd">func</span><span class="p">(</span><span class="nx">chID</span> <span class="kt">byte</span><span class="p">,</span> <span class="nx">msgBytes</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="p">{</span>
+		<span class="nx">reactor</span> <span class="o">:=</span> <span class="nx">reactorsByCh</span><span class="p">[</span><span class="nx">chID</span><span class="p">]</span>
+		<span class="k">if</span> <span class="nx">reactor</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="c1">// Note that its ok to panic here as it&#39;s caught in the conn._recover,
+</span><span class="c1"></span>			<span class="c1">// which does onPeerError.
+</span><span class="c1"></span>			<span class="nb">panic</span><span class="p">(</span><span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">&#34;Unknown channel %X&#34;</span><span class="p">,</span> <span class="nx">chID</span><span class="p">))</span>
+		<span class="p">}</span>
+		<span class="nx">p</span><span class="p">.</span><span class="nx">metrics</span><span class="p">.</span><span class="nx">PeerReceiveBytesTotal</span><span class="p">.</span><span class="nf">With</span><span class="p">(</span><span class="s">&#34;peer_id&#34;</span><span class="p">,</span> <span class="nb">string</span><span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nf">ID</span><span class="p">())).</span><span class="nf">Add</span><span class="p">(</span><span class="nb">float64</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nx">msgBytes</span><span class="p">)))</span>
+		<span class="nx">reactor</span><span class="p">.</span><span class="nf">Receive</span><span class="p">(</span><span class="nx">chID</span><span class="p">,</span> <span class="nx">p</span><span class="p">,</span> <span class="nx">msgBytes</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="nx">onError</span> <span class="o">:=</span> <span class="kd">func</span><span class="p">(</span><span class="nx">r</span> <span class="kd">interface</span><span class="p">{})</span> <span class="p">{</span>
+		<span class="nf">onPeerError</span><span class="p">(</span><span class="nx">p</span><span class="p">,</span> <span class="nx">r</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="k">return</span> <span class="nx">tmconn</span><span class="p">.</span><span class="nf">NewMConnectionWithConfig</span><span class="p">(</span>
+		<span class="nx">conn</span><span class="p">,</span>
+		<span class="nx">chDescs</span><span class="p">,</span>
+		<span class="nx">onReceive</span><span class="p">,</span>
+		<span class="nx">onError</span><span class="p">,</span>
+		<span class="nx">config</span><span class="p">,</span>
+	<span class="p">)</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>看到了吧，在这里面,reactor的receive函数做进一步的处理。每一个channel就有一个对应的reactor来处理。
+需要注意的就是这创建了一个peer的基础服务。我们看一下peer怎么工作的</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="o">*</span><span class="nx">peer</span><span class="p">)</span> <span class="nf">OnStart</span><span class="p">()</span> <span class="kt">error</span> <span class="p">{</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">p</span><span class="p">.</span><span class="nx">BaseService</span><span class="p">.</span><span class="nf">OnStart</span><span class="p">();</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">err</span>
+	<span class="p">}</span>
+
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">p</span><span class="p">.</span><span class="nx">mconn</span><span class="p">.</span><span class="nf">Start</span><span class="p">();</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">err</span>
+	<span class="p">}</span>
+
+	<span class="k">go</span> <span class="nx">p</span><span class="p">.</span><span class="nf">metricsReporter</span><span class="p">()</span>
+	<span class="k">return</span> <span class="kc">nil</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>这里面启动的就是基本的服务，然后是通信服务，最后还有一个统计的服务。
+到这似乎就结束了。
+不对！MConnection是通过Peer维护的，所以收发得靠Peer来做。看看peer怎么发的</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="o">*</span><span class="nx">peer</span><span class="p">)</span> <span class="nf">Send</span><span class="p">(</span><span class="nx">chID</span> <span class="kt">byte</span><span class="p">,</span> <span class="nx">msgBytes</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+	<span class="k">if</span> <span class="p">!</span><span class="nx">p</span><span class="p">.</span><span class="nf">IsRunning</span><span class="p">()</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="kc">false</span>
+	<span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">!</span><span class="nx">p</span><span class="p">.</span><span class="nf">hasChannel</span><span class="p">(</span><span class="nx">chID</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="kc">false</span>
+	<span class="p">}</span>
+	<span class="nx">res</span> <span class="o">:=</span> <span class="nx">p</span><span class="p">.</span><span class="nx">mconn</span><span class="p">.</span><span class="nf">Send</span><span class="p">(</span><span class="nx">chID</span><span class="p">,</span> <span class="nx">msgBytes</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">res</span> <span class="p">{</span>
+		<span class="nx">p</span><span class="p">.</span><span class="nx">metrics</span><span class="p">.</span><span class="nx">PeerSendBytesTotal</span><span class="p">.</span><span class="nf">With</span><span class="p">(</span><span class="s">&#34;peer_id&#34;</span><span class="p">,</span> <span class="nb">string</span><span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nf">ID</span><span class="p">())).</span><span class="nf">Add</span><span class="p">(</span><span class="nb">float64</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nx">msgBytes</span><span class="p">)))</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="nx">res</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="o">*</span><span class="nx">peer</span><span class="p">)</span> <span class="nf">TrySend</span><span class="p">(</span><span class="nx">chID</span> <span class="kt">byte</span><span class="p">,</span> <span class="nx">msgBytes</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+	<span class="k">if</span> <span class="p">!</span><span class="nx">p</span><span class="p">.</span><span class="nf">IsRunning</span><span class="p">()</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="kc">false</span>
+	<span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">!</span><span class="nx">p</span><span class="p">.</span><span class="nf">hasChannel</span><span class="p">(</span><span class="nx">chID</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="kc">false</span>
+	<span class="p">}</span>
+	<span class="nx">res</span> <span class="o">:=</span> <span class="nx">p</span><span class="p">.</span><span class="nx">mconn</span><span class="p">.</span><span class="nf">TrySend</span><span class="p">(</span><span class="nx">chID</span><span class="p">,</span> <span class="nx">msgBytes</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">res</span> <span class="p">{</span>
+		<span class="nx">p</span><span class="p">.</span><span class="nx">metrics</span><span class="p">.</span><span class="nx">PeerSendBytesTotal</span><span class="p">.</span><span class="nf">With</span><span class="p">(</span><span class="s">&#34;peer_id&#34;</span><span class="p">,</span> <span class="nb">string</span><span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nf">ID</span><span class="p">())).</span><span class="nf">Add</span><span class="p">(</span><span class="nb">float64</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nx">msgBytes</span><span class="p">)))</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="nx">res</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>还是调用了底层的mconn的处理。收的处理还在reactor中，我们还没看到那一层。</p>
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">Hundred</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2019-02-22 02:40
+        
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">许可协议</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/%E5%8C%BA%E5%9D%97%E9%93%BE/">区块链</a>
+          <a href="/tags/%E6%BA%90%E7%A0%81/">源码</a>
+          <a href="/tags/tendermint/">tendermint</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/Tendermint%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0III/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">Tendermint源码学习III</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/Tendermint%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0I/">
+            <span class="next-text nav-default">Tendermint源码学习I</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+  
+  
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="#" class="iconfont icon-cnblogs" title="cnblogs"></a>
+      <a href="mailto:sdwangzhuo@gmail.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/hundredwz" class="iconfont icon-github" title="github"></a>
+      <a href="#" class="iconfont icon-juejin" title="juejin"></a>
+      <a href="#" class="iconfont icon-v2ex" title="v2ex"></a>
+      <a href="https://weibo.com/hundredwz" class="iconfont icon-weibo" title="weibo"></a>
+  <a href="https://hundredwz.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2013 - 
+    2020
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Hundred</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.min.js" integrity="sha256-jwCP0NAdCBloaIWTWHmW4i3snUNMHUNO+jr9rYd2iOI=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.locales.min.js" integrity="sha256-ZwofwC1Lf/faQCzN7nZtfijVV6hSwxjQMwXL4gn9qU8=" crossorigin="anonymous"></script>
+  <script><!-- NOTE: timeago.js uses the language code format like "zh_CN" (underscore and case sensitive) -->
+    var languageCode = "zh-CN".replace(/-/g, '_').replace(/_(.*)/, function ($0, $1) {return $0.replace($1, $1.toUpperCase());});
+    timeago().render(document.querySelectorAll('.timeago'), languageCode);
+    timeago.cancel();  
+  </script>
+<script type="text/javascript" src="/dist/even.26188efa.min.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+      showProcessingMessages: false,
+      messageStyle: 'none'
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"  integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-138883536-1', 'auto');
+	ga('set', 'anonymizeIp', true);
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+
+
+
+
+</body>
+</html>

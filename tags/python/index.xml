@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>python on A Lazy Coder</title>
+    <link>https://hundredwz.github.io/tags/python/</link>
+    <description>Recent content in python on A Lazy Coder</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Fri, 01 Dec 2017 07:37:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://hundredwz.github.io/tags/python/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>transpose理解</title>
+      <link>https://hundredwz.github.io/post/transpose%E7%90%86%E8%A7%A3/</link>
+      <pubDate>Fri, 01 Dec 2017 07:37:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/transpose%E7%90%86%E8%A7%A3/</guid>
+      <description>&lt;p&gt;最近要做一个作业，用到了numpy的transpose函数，感觉理解起来不是很容易，记录一下。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>爬历年作文</title>
+      <link>https://hundredwz.github.io/post/%E7%88%AC%E5%8E%86%E5%B9%B4%E4%BD%9C%E6%96%87/</link>
+      <pubDate>Fri, 18 Nov 2016 02:06:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/%E7%88%AC%E5%8E%86%E5%B9%B4%E4%BD%9C%E6%96%87/</guid>
+      <description>&lt;p&gt;哈哈，考研狗出来诈尸啦！
+由于最近在复习英语作文，虽然有了一本书，但是平时一直拿着也不方便，就想着从网上找别人整理好的。
+但是看了看，没有找到。
+正巧新东方有历年的，只是每次打开太麻烦，干脆整理下吧。
+一看，从05-15，有的还有多篇范文，粘贴太麻烦，图片还得一个一个保存，干脆爬成md文档生成html转pdf吧
+新东方不要怪我啊！我可没有做商业用途（手动滑稽）&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>网站搬家到github</title>
+      <link>https://hundredwz.github.io/post/%E7%BD%91%E7%AB%99%E6%90%AC%E5%AE%B6%E5%88%B0github/</link>
+      <pubDate>Wed, 03 Aug 2016 11:56:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/%E7%BD%91%E7%AB%99%E6%90%AC%E5%AE%B6%E5%88%B0github/</guid>
+      <description>&lt;p&gt;今天不想复习，用了半晚上的时间把typecho的网站搬到github pages上&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>python计算叉乘</title>
+      <link>https://hundredwz.github.io/post/python%E8%AE%A1%E7%AE%97%E5%8F%89%E4%B9%98/</link>
+      <pubDate>Tue, 15 Mar 2016 07:08:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/python%E8%AE%A1%E7%AE%97%E5%8F%89%E4%B9%98/</guid>
+      <description>&lt;p&gt;最近这几天在复习高数空间几何，本来没有什么，结果计算叉乘算的头都大了
+叉乘本来也没有什么技术含量，就是一直重复的计算感觉没有太大意义。
+想着这几天学了python，正好编着玩玩。再说好久都没更新了，更新下吧&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

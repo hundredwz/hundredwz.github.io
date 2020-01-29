@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>fabric on A Lazy Coder</title>
+    <link>https://hundredwz.github.io/tags/fabric/</link>
+    <description>Recent content in fabric on A Lazy Coder</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Tue, 27 Mar 2018 08:52:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://hundredwz.github.io/tags/fabric/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>e2e_cli分析</title>
+      <link>https://hundredwz.github.io/post/e2e_cli%E5%88%86%E6%9E%90/</link>
+      <pubDate>Tue, 27 Mar 2018 08:52:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/e2e_cli%E5%88%86%E6%9E%90/</guid>
+      <description>&lt;p&gt;经过了将近$\frac{3}{4}$年的浑水摸鱼，我在fabric的道路上越走越偏，也该记录点东西误导下后续的人们了。本片文章分析下我们最常使用的e2e_cli吧。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>fabric源码阅读7：fabric的启动III</title>
+      <link>https://hundredwz.github.io/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB7fabric%E7%9A%84%E5%90%AF%E5%8A%A8III/</link>
+      <pubDate>Tue, 21 Nov 2017 09:03:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB7fabric%E7%9A%84%E5%90%AF%E5%8A%A8III/</guid>
+      <description>&lt;p&gt;前面讨论了peer的启动，但都没有讨论完&lt;code&gt;peer node start&lt;/code&gt;的全过程。本文继续跟着讨论。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>fabric源码阅读6：fabric数据库I</title>
+      <link>https://hundredwz.github.io/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB6fabric%E6%95%B0%E6%8D%AE%E5%BA%93I/</link>
+      <pubDate>Tue, 21 Nov 2017 07:47:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB6fabric%E6%95%B0%E6%8D%AE%E5%BA%93I/</guid>
+      <description>&lt;p&gt;在上篇文章:&lt;a href=&#34;http://txiner.top/program/30.html&#34;&gt;fabric启动II&lt;/a&gt;中，我们大体上说到了peer的大体启动流程，但是并没有深入进去，现在我们追随&lt;code&gt;node start&lt;/code&gt;的脚步继续探索。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>fabric源码阅读5:fabric启动II</title>
+      <link>https://hundredwz.github.io/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB5fabric%E5%90%AF%E5%8A%A8II/</link>
+      <pubDate>Fri, 17 Nov 2017 09:08:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB5fabric%E5%90%AF%E5%8A%A8II/</guid>
+      <description>&lt;p&gt;在上一篇文章&lt;a href=&#34;http://txiner.top/program/29.html&#34;&gt;fabric源码阅读4：fabric启动I&lt;/a&gt;我们从操作者的角度分析了fabric的启动过程，这篇文章我们就尽量从开发者的角度来看fabric是怎么启动的。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>fabric源码阅读4：fabric启动I</title>
+      <link>https://hundredwz.github.io/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB4fabric%E5%90%AF%E5%8A%A8I/</link>
+      <pubDate>Tue, 14 Nov 2017 07:51:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB4fabric%E5%90%AF%E5%8A%A8I/</guid>
+      <description>&lt;p&gt;还记得我在上一篇&lt;a href=&#34;http://txiner.top/program/27.html&#34;&gt;PutState&amp;amp;GetState理解&lt;/a&gt;文章中留下了个疑问,猜测说fabric后台有个守护进程，对&lt;code&gt;chan&lt;/code&gt;进行监听什么的。但是只是猜测不行啊，还得从实际来证明。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>fabric源码阅读3：PutState&amp;amp;GetState理解</title>
+      <link>https://hundredwz.github.io/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB3PutStateampGetState%E7%90%86%E8%A7%A3/</link>
+      <pubDate>Thu, 09 Nov 2017 06:19:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB3PutStateampGetState%E7%90%86%E8%A7%A3/</guid>
+      <description>&lt;p&gt;最近还在继续看Fabric源码，发现自己还是差的太多了。估计可能是看的方式不太对。不过也慢慢的有了一点收获吧。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>proto文件学习</title>
+      <link>https://hundredwz.github.io/post/proto%E6%96%87%E4%BB%B6%E5%AD%A6%E4%B9%A0/</link>
+      <pubDate>Wed, 08 Nov 2017 07:00:40 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/proto%E6%96%87%E4%BB%B6%E5%AD%A6%E4%B9%A0/</guid>
+      <description>&lt;p&gt;最近在看fabric源码的时候看到了proto文件，以前没接触过，这次好好来看看.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>fabric源码阅读2：chaincode函数理解II</title>
+      <link>https://hundredwz.github.io/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB2chaincode%E5%87%BD%E6%95%B0%E7%90%86%E8%A7%A3II/</link>
+      <pubDate>Thu, 19 Oct 2017 07:14:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB2chaincode%E5%87%BD%E6%95%B0%E7%90%86%E8%A7%A3II/</guid>
+      <description>&lt;p&gt;上一篇讲了在chaincode端函数GetFuncAndParameters()的使用，但是在客户端这块使用还是有一点问题，就在此进一步解释下.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>fabric源码阅读1：chaincode函数理解I</title>
+      <link>https://hundredwz.github.io/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB1chaincode%E5%87%BD%E6%95%B0%E7%90%86%E8%A7%A3I/</link>
+      <pubDate>Mon, 16 Oct 2017 02:24:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB1chaincode%E5%87%BD%E6%95%B0%E7%90%86%E8%A7%A3I/</guid>
+      <description>&lt;p&gt;最近在开发chaincode的时候遇到了一个问题,使用GetFunctionAndParameters这个函数会返回一个函数以及参数，但是运行总是出了点问题。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>fabric安装使用</title>
+      <link>https://hundredwz.github.io/post/fabric%E5%AE%89%E8%A3%85%E4%BD%BF%E7%94%A8/</link>
+      <pubDate>Fri, 22 Sep 2017 13:36:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/fabric%E5%AE%89%E8%A3%85%E4%BD%BF%E7%94%A8/</guid>
+      <description>&lt;p&gt;最近在学习区块链，想着把自己所学到的东西都记录下来，希望能够写一系列文章吧。本篇文章是fabric的安装教程。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>围城 on A Lazy Coder</title>
+    <link>https://hundredwz.github.io/tags/%E5%9B%B4%E5%9F%8E/</link>
+    <description>Recent content in 围城 on A Lazy Coder</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Sun, 17 Dec 2017 03:25:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://hundredwz.github.io/tags/%E5%9B%B4%E5%9F%8E/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>相似的背景，不同的人生</title>
+      <link>https://hundredwz.github.io/post/%E7%9B%B8%E4%BC%BC%E7%9A%84%E8%83%8C%E6%99%AF%E4%B8%8D%E5%90%8C%E7%9A%84%E4%BA%BA%E7%94%9F/</link>
+      <pubDate>Sun, 17 Dec 2017 03:25:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/%E7%9B%B8%E4%BC%BC%E7%9A%84%E8%83%8C%E6%99%AF%E4%B8%8D%E5%90%8C%E7%9A%84%E4%BA%BA%E7%94%9F/</guid>
+      <description>&lt;p&gt;最近有幸拜读了钱钟书的《围城》和严歌苓的《陆犯焉识》，故事中主人公所处的历史背景是有重叠的，两个人的经历都是相似的，但是私以为两个人走的是两种不同的人生。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

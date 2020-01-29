@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>servlet on A Lazy Coder</title>
+    <link>https://hundredwz.github.io/tags/servlet/</link>
+    <description>Recent content in servlet on A Lazy Coder</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Fri, 06 Nov 2015 07:20:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://hundredwz.github.io/tags/servlet/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Servlet乱码</title>
+      <link>https://hundredwz.github.io/post/Servlet%E4%B9%B1%E7%A0%81/</link>
+      <pubDate>Fri, 06 Nov 2015 07:20:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Servlet%E4%B9%B1%E7%A0%81/</guid>
+      <description>&lt;p&gt;最近学长分配了一个小任务，让做个微信公众号，想想就是一个servlet就够了，就开始做吧，结果不做没发现，一做发现问题太多了。 其中问题最大的就是中文乱码问题。&lt;/p&gt;
+
+&lt;p&gt;和学长研究了一下午都没找到具体什么地方出的问题，各种百度，什么方法都尝试过了，结果都解决不了。&lt;/p&gt;
+
+&lt;p&gt;甚至怕由于jdk的io不对又重新从官网下载了jdk。真心无语了！&lt;/p&gt;
+
+&lt;p&gt;最后无奈，我脱离了idea，试了试eclipse，然后发现乱码问题竟然神奇的解决啦！&lt;/p&gt;
+
+&lt;p&gt;想想eclipse绝对比idea高明不到那去啊，凭什么idea就不行？&lt;/p&gt;
+
+&lt;p&gt;最后发现错的很无语！&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

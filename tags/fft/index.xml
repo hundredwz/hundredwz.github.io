@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>fft on A Lazy Coder</title>
+    <link>https://hundredwz.github.io/tags/fft/</link>
+    <description>Recent content in fft on A Lazy Coder</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Wed, 09 Dec 2015 15:05:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://hundredwz.github.io/tags/fft/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>快速傅里叶变换 java实现</title>
+      <link>https://hundredwz.github.io/post/%E5%BF%AB%E9%80%9F%E5%82%85%E9%87%8C%E5%8F%B6%E5%8F%98%E6%8D%A2-java%E5%AE%9E%E7%8E%B0/</link>
+      <pubDate>Wed, 09 Dec 2015 15:05:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/%E5%BF%AB%E9%80%9F%E5%82%85%E9%87%8C%E5%8F%B6%E5%8F%98%E6%8D%A2-java%E5%AE%9E%E7%8E%B0/</guid>
+      <description>&lt;p&gt;昨天晚上数字信号处理粗略的复习了下，感觉快速傅里叶变换对于使用挺重要的，就想着编程实现它。
+今天上午没课，想着一上午实现吧，结果到晚上才编出来。
+反正是出结果了，我也不管结果对不对了，反正原理算是差不多了解了。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>掌握比特币II:支付方式 - A Lazy Coder</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="Hundred" /><meta name="description" content="今天了解了下比特币的支付方式，发现以前的了解太麻烦了，今天就多查了查资料弄明白点。
+" /><meta name="keywords" content="Blockchain, Golang, Fabric, Ethereum, Code" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.56.1 with even 4.0.0" />
+
+
+<link rel="canonical" href="https://hundredwz.github.io/post/%E6%8E%8C%E6%8F%A1%E6%AF%94%E7%89%B9%E5%B8%81II%E6%94%AF%E4%BB%98%E6%96%B9%E5%BC%8F/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<link href="/dist/even.c2a46f00.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+<link rel="stylesheet" href="/css/reset-even.css">
+
+
+<meta property="og:title" content="掌握比特币II:支付方式" />
+<meta property="og:description" content="今天了解了下比特币的支付方式，发现以前的了解太麻烦了，今天就多查了查资料弄明白点。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://hundredwz.github.io/post/%E6%8E%8C%E6%8F%A1%E6%AF%94%E7%89%B9%E5%B8%81II%E6%94%AF%E4%BB%98%E6%96%B9%E5%BC%8F/" />
+<meta property="article:published_time" content="2018-07-12T03:11:00+00:00" />
+<meta property="article:modified_time" content="2018-07-12T03:11:00+00:00" />
+<meta itemprop="name" content="掌握比特币II:支付方式">
+<meta itemprop="description" content="今天了解了下比特币的支付方式，发现以前的了解太麻烦了，今天就多查了查资料弄明白点。">
+
+
+<meta itemprop="datePublished" content="2018-07-12T03:11:00&#43;00:00" />
+<meta itemprop="dateModified" content="2018-07-12T03:11:00&#43;00:00" />
+<meta itemprop="wordCount" content="2107">
+
+
+
+<meta itemprop="keywords" content="区块链,比特币,支付," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="掌握比特币II:支付方式"/>
+<meta name="twitter:description" content="今天了解了下比特币的支付方式，发现以前的了解太麻烦了，今天就多查了查资料弄明白点。"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">A Lazy Coder</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">首页</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">归档</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">分类</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/friends/">
+        <li class="mobile-menu-item">Friends</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">A Lazy Coder</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">首页</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">归档</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">分类</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/friends/">Friends</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">掌握比特币II:支付方式</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2018-07-12 03:11 </span>
+        <div class="post-category">
+            <a href="/categories/tool/"> tool </a>
+            </div>
+          <span class="more-meta"> 约 2107 字 </span>
+          <span class="more-meta"> 预计阅读 5 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#前言">前言</a></li>
+<li><a href="#简介">简介</a></li>
+<li><a href="#p2pkh">P2PKH</a></li>
+<li><a href="#multisig">MultiSig</a></li>
+<li><a href="#p2sh">P2SH</a></li>
+<li><a href="#区别">区别</a></li>
+<li><a href="#结束">结束</a></li>
+</ul></li>
+</ul>
+</nav>
+  </div>
+</div>
+  <div class="post-outdated">
+    <div class="hint">
+      <p>【注意】最后更新于 <span class="timeago" datetime="2018-07-12T03:11:00" title="July 12, 2018">July 12, 2018</span>，文中内容可能已过时，请谨慎使用。</p>
+    </div>
+  </div>
+    <div class="post-content">
+      <p>今天了解了下比特币的支付方式，发现以前的了解太麻烦了，今天就多查了查资料弄明白点。</p>
+
+<h2 id="前言">前言</h2>
+
+<p>首先我要吐槽下，比特币的国内相关资料真的是很无奈，全是互相抄，而且有的内容就像机翻，完全理解不了啥意思。</p>
+
+<h2 id="简介">简介</h2>
+
+<p>首先我们解释几个常见的词。
+P2PKH:Pay-to-Public-Key-Hash，就是指向一个公钥哈希付款。
+用户的公钥地址具体的计算方式不做介绍了，是通过多次哈希计算最后编码得到的。当然，每个用户的地址最前面是一个1，是因为加了一个0x00的前缀编码出来的。
+MultiSig:多重签名。也就是说一笔交易需要好几个人来共同确认才能使用。
+P2SH:Pay-to-Script-Hash,就是指向一个脚本付款。
+这个的含义可以理解成原来向一个人转账，只要那个人证明他是他，就可以收到了。情况太简单，无法满足复杂的逻辑，因此复杂的需求可以使用本方式进行支付。</p>
+
+<h2 id="p2pkh">P2PKH</h2>
+
+<p>前面我们简单介绍了下P2PKH，现在我们详细介绍下P2PKH的工作原理。
+粗略了解支付方式的人都知道，这种支付方式是小王说给小宁转10块钱，小宁拿出来她身份证，证明了她是她，就可以把钱拿走了。
+可是具体的工作流程呢？
+第一步，小王转账，不能随便让人取走，有一个对钱的锁定脚本</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">DUP HASH160 PUSHDATA<span class="o">(</span>目标公钥哈希<span class="o">)</span> EQUALVERIFY CHECKSIG</code></pre></td></tr></table>
+</div>
+</div>
+<p>第二步，小宁要取钱，需要把这个脚本解锁</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">PUSHDATA<span class="o">(</span>签名<span class="o">)</span> PUSHDATA<span class="o">(</span>公钥<span class="o">)</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>如果一切都正确，小宁就可以取走钱了。
+接下来是具体的工作流程</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">//先运行解锁脚本
+<span class="o">[]</span> //初始状态，栈为空
+<span class="o">[</span>小宁签名<span class="o">]</span> //PUSHDATA<span class="o">(</span>签名<span class="o">)</span>，小宁用自己的私钥获得一个自己身份的签名
+<span class="o">[</span>小宁签名，小宁公钥<span class="o">]</span> //PUSHDATA<span class="o">(</span>公钥<span class="o">)</span>,小宁把自己的公钥放入栈
+//开始执行锁定脚本的内容
+<span class="o">[</span>小宁签名，小宁公钥，小宁公钥<span class="o">]</span> //DUP复制一遍公钥，栈里面两个公钥了
+<span class="o">[</span>小宁签名，小宁公钥，小宁公钥哈希<span class="o">]</span> //HASH160取出小宁的公钥，计算出哈希放入栈
+<span class="o">[</span>小宁签名，小宁公钥，小宁公钥哈希，目标公钥哈希<span class="o">]</span> //PUSHDATA<span class="o">(</span>目标公钥哈希<span class="o">)</span>，将小王在转账的时候指定的用户地址放入栈
+<span class="o">[</span>小宁签名，小宁公钥，True<span class="o">]</span> //EQUALVERIFY，对比验证了下，小宁的公钥地址没错
+<span class="o">[</span>True<span class="o">]</span> //CHECKSIG 对比了小宁刚来的时候提供的私钥签名和公钥内容，发现一致
+<span class="o">[]</span> //结束，小宁获得了10块钱</code></pre></td></tr></table>
+</div>
+</div>
+<p>看着挺简单，但是很有效。小宁花钱让人相信，可是小王花钱就有问题啦。
+小宁给小王转账的时候发现，小王总是拿着钱偷偷的买吃的，没有其他人看着他。P2PKH就不够用了。</p>
+
+<h2 id="multisig">MultiSig</h2>
+
+<p>小宁想，如果小王在取钱的时候，需要其他几个人一块来通过，才能取到钱，就好了。所以，以后小王每次取钱都拉着大脸猫等人一块去了。</p>
+
+<h2 id="p2sh">P2SH</h2>
+
+<p>P2SH是在MultiSig之后提出的，可以实现它的功能，当然，还支持更多的功能。在这，我们继续以转账为例子。
+首先，小宁跟小王商量好了，小王取钱，必须得找到懒熊，大脸猫等人一块才行。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">HASH160 PUSHDATA<span class="o">(</span>目标脚本哈希<span class="o">)</span> EQUAL</code></pre></td></tr></table>
+</div>
+</div>
+<p>当然，具体商量的内容小宁不用单独提供，就提供个哈希就好了。小王想取钱，商量的内容拿出来。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="m">2</span> PUSHDATA<span class="o">(</span>公钥A<span class="o">)</span> PUSHDATA<span class="o">(</span>公钥B<span class="o">)</span> PUSHDATA<span class="o">(</span>公钥C<span class="o">)</span> <span class="m">3</span> CHECKMULTISIG</code></pre></td></tr></table>
+</div>
+</div>
+<p>这个就是小宁小王商量好的内容，小王要拿出来才能取钱。小王这次准备拿出来自己的签名以及大脸猫的签名一块来取钱。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="m">0</span> PUSHDATA<span class="o">(</span>签名D<span class="o">)</span> PUSHDATA<span class="o">(</span>签名E<span class="o">)</span> PUSHDATA<span class="o">(</span>脚本<span class="o">)</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>接下来是具体的执行内容</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">//先执行解锁脚本
+<span class="o">[]</span> //初始化，栈为空
+<span class="o">[</span><span class="m">0</span><span class="o">]</span> //将数字0入栈，当然，这个0没有什么实际用处
+<span class="o">[</span><span class="m">0</span> 小王签名<span class="o">]</span> //PUSHDATA<span class="o">(</span>签名D<span class="o">)</span> 小王将自己的签名放入栈
+<span class="o">[</span><span class="m">0</span> 小王签名 大脸猫签名<span class="o">]</span> //PUSHDATA<span class="o">(</span>签名E<span class="o">)</span> 拉着大脸猫一块来背锅，将大脸猫的身份证明放入栈
+<span class="o">[</span><span class="m">0</span> 小王签名 大脸猫签名 脚本<span class="o">]</span> //将脚本内容放入堆栈
+<span class="o">[</span><span class="m">0</span> 小王签名 大脸猫签名 脚本哈希<span class="o">]</span> //HASH160取出脚本，计算脚本哈希
+<span class="o">[</span><span class="m">0</span> 小王签名 大脸猫签名 脚本哈希 目标脚本哈希<span class="o">]</span> //PUSHDATA<span class="o">(</span>目标脚本哈希<span class="o">)</span> 小宁和小王商量好的目标脚本哈希值放入栈
+<span class="o">[</span><span class="m">0</span> 小王签名 大脸猫签名 True<span class="o">]</span> //EQUAL验证脚本内容是商量好的内容，正确的话执行脚本的内容
+<span class="o">[</span><span class="m">0</span> 小王签名 大脸猫签名 <span class="m">2</span><span class="o">]</span> //脚本中的数字2入栈 表示有两个签名
+... //脚本执行，数据入栈
+<span class="o">[</span><span class="m">0</span> 小王签名 大脸猫签名 <span class="m">2</span> 小王公钥 大脸猫公钥 懒熊公钥 <span class="m">3</span><span class="o">]</span> // 已经全部入栈，3表示有3个公钥
+<span class="o">[</span><span class="m">0</span> 小王签名 大脸猫签名 <span class="m">2</span> 小王公钥 大脸猫公钥 懒熊公钥<span class="o">]</span> //CHECKMULTISIG执行，取出3，下一步取出3个公钥
+<span class="o">[</span><span class="m">0</span> 小王签名 大脸猫签名 <span class="m">2</span><span class="o">]</span> //取出2，下一步取出两个签名
+<span class="o">[</span><span class="m">0</span><span class="o">]</span> //进行签名和公钥的验证，决定是否符合条件
+<span class="o">[]</span> //CHECKMULTISIG的bug，会多读取一个数字，0取出，结束</code></pre></td></tr></table>
+</div>
+</div>
+<p>这么一看，转账灵活了许多，可以使用多重签名来转账，也可以实现一些其他的转账交易。</p>
+
+<h2 id="区别">区别</h2>
+
+<p>这两个支付方式的名称实际取得很形象，一个相当于直接转给了公钥地址，一个是没有直接转给一个人，而是转给了脚本，需要执行了脚本才能取出钱</p>
+
+<h2 id="结束">结束</h2>
+
+<p>本文为了方便理解，使用例子的方式介绍，其中名称均为化名，请勿猜测实际含义。</p>
+
+<p>参考文献
+1. <a href="https://0dayzh.gitbooks.io/bitcoin_developer_guide/content/p2pkh_script_validation.html">P2PKH脚本验证</a>
+2. <a href="https://zhuanlan.zhihu.com/p/30949559">P2SH地址与MultiSig</a>
+3. <a href="https://en.bitcoin.it/wiki/Pay_to_script_hash">Pay_to_script_hash</a>
+4. <a href="https://www.soroushjp.com/2014/12/20/bitcoin-multisig-the-hard-way-understanding-raw-multisignature-bitcoin-transactions/">Bitcoin multisig the hard way:</a></p>
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">Hundred</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2018-07-12 03:11
+        
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">许可协议</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/%E5%8C%BA%E5%9D%97%E9%93%BE/">区块链</a>
+          <a href="/tags/%E6%AF%94%E7%89%B9%E5%B8%81/">比特币</a>
+          <a href="/tags/%E6%94%AF%E4%BB%98/">支付</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/%E6%8E%8C%E6%8F%A1%E6%AF%94%E7%89%B9%E5%B8%81III%E8%8A%82%E7%82%B9%E5%8A%9F%E8%83%BDI/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">掌握比特币III:节点功能I</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/%E6%8E%8C%E6%8F%A1%E6%AF%94%E7%89%B9%E5%B8%81I%E9%92%B1%E5%8C%85%E5%8A%9F%E8%83%BD%E5%AD%A6%E4%B9%A0/">
+            <span class="next-text nav-default">掌握比特币I：钱包功能学习</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+  
+  
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="#" class="iconfont icon-cnblogs" title="cnblogs"></a>
+      <a href="mailto:sdwangzhuo@gmail.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/hundredwz" class="iconfont icon-github" title="github"></a>
+      <a href="#" class="iconfont icon-juejin" title="juejin"></a>
+      <a href="#" class="iconfont icon-v2ex" title="v2ex"></a>
+      <a href="https://weibo.com/hundredwz" class="iconfont icon-weibo" title="weibo"></a>
+  <a href="https://hundredwz.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2013 - 
+    2020
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Hundred</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.min.js" integrity="sha256-jwCP0NAdCBloaIWTWHmW4i3snUNMHUNO+jr9rYd2iOI=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.locales.min.js" integrity="sha256-ZwofwC1Lf/faQCzN7nZtfijVV6hSwxjQMwXL4gn9qU8=" crossorigin="anonymous"></script>
+  <script><!-- NOTE: timeago.js uses the language code format like "zh_CN" (underscore and case sensitive) -->
+    var languageCode = "zh-CN".replace(/-/g, '_').replace(/_(.*)/, function ($0, $1) {return $0.replace($1, $1.toUpperCase());});
+    timeago().render(document.querySelectorAll('.timeago'), languageCode);
+    timeago.cancel();  
+  </script>
+<script type="text/javascript" src="/dist/even.26188efa.min.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+      showProcessingMessages: false,
+      messageStyle: 'none'
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"  integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-138883536-1', 'auto');
+	ga('set', 'anonymizeIp', true);
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+
+
+
+
+</body>
+</html>

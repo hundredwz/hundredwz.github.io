@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>接口 on A Lazy Coder</title>
+    <link>https://hundredwz.github.io/tags/%E6%8E%A5%E5%8F%A3/</link>
+    <description>Recent content in 接口 on A Lazy Coder</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Fri, 13 Apr 2018 08:50:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://hundredwz.github.io/tags/%E6%8E%A5%E5%8F%A3/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Raft造轮子III</title>
+      <link>https://hundredwz.github.io/post/Raft%E9%80%A0%E8%BD%AE%E5%AD%90III/</link>
+      <pubDate>Fri, 13 Apr 2018 08:50:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Raft%E9%80%A0%E8%BD%AE%E5%AD%90III/</guid>
+      <description>&lt;p&gt;我们之前定义了raft通信的基本数据格式以及rpc模式也生成了数据内容，这篇文章就要开始具体的操作了。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Tendermint I - A Lazy Coder</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="Hundred" /><meta name="description" content="由于新型肺炎，不得不宅在家里面，闲着也是闲着，不如再认真地过一遍Tendermint源码吧。之前看的比较粗略，理解的也不够深。正好毕设使用了" /><meta name="keywords" content="Blockchain, Golang, Fabric, Ethereum, Code" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.56.1 with even 4.0.0" />
+
+
+<link rel="canonical" href="https://hundredwz.github.io/post/Tendermint-I/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<link href="/dist/even.c2a46f00.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+<link rel="stylesheet" href="/css/reset-even.css">
+
+
+<meta property="og:title" content="Tendermint I" />
+<meta property="og:description" content="由于新型肺炎，不得不宅在家里面，闲着也是闲着，不如再认真地过一遍Tendermint源码吧。之前看的比较粗略，理解的也不够深。正好毕设使用了" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://hundredwz.github.io/post/Tendermint-I/" />
+<meta property="article:published_time" content="2020-01-29T03:05:57+00:00" />
+<meta property="article:modified_time" content="2020-01-29T03:05:57+00:00" />
+<meta itemprop="name" content="Tendermint I">
+<meta itemprop="description" content="由于新型肺炎，不得不宅在家里面，闲着也是闲着，不如再认真地过一遍Tendermint源码吧。之前看的比较粗略，理解的也不够深。正好毕设使用了">
+
+
+<meta itemprop="datePublished" content="2020-01-29T03:05:57&#43;00:00" />
+<meta itemprop="dateModified" content="2020-01-29T03:05:57&#43;00:00" />
+<meta itemprop="wordCount" content="1324">
+
+
+
+<meta itemprop="keywords" content="tendermint,blockchain,sourcecode,区块链," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Tendermint I"/>
+<meta name="twitter:description" content="由于新型肺炎，不得不宅在家里面，闲着也是闲着，不如再认真地过一遍Tendermint源码吧。之前看的比较粗略，理解的也不够深。正好毕设使用了"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">A Lazy Coder</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">首页</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">归档</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">分类</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/friends/">
+        <li class="mobile-menu-item">Friends</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">A Lazy Coder</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">首页</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">归档</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">分类</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/friends/">Friends</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">Tendermint I</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2020-01-29 03:05 </span>
+        <div class="post-category">
+            <a href="/categories/program/"> program </a>
+            </div>
+          <span class="more-meta"> 约 1324 字 </span>
+          <span class="more-meta"> 预计阅读 3 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#系统的启动">系统的启动</a></li>
+<li><a href="#根指令">根指令</a></li>
+<li><a href="#环境解析">环境解析</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+  </div>
+</div>
+    <div class="post-content">
+      
+
+<p>由于新型肺炎，不得不宅在家里面，闲着也是闲着，不如再认真地过一遍Tendermint源码吧。之前看的比较粗略，理解的也不够深。正好毕设使用了Tendermint平台作为底层支持，能够深入了解下也挺好的。</p>
+
+<h3 id="系统的启动">系统的启动</h3>
+
+<p>我们可以知道，tendermint最基本的启动流程通常是</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">tendermint init
+tendermint node</code></pre></td></tr></table>
+</div>
+</div>
+<p>在根目录，通过linux命令查找main函数可以得以下结果</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># grep -r &#34;func main()&#34; .</span>
+./abci/cmd/abci-cli/main.go:func main<span class="o">()</span> <span class="o">{</span>
+./abci/tests/benchmarks/parallel/parallel.go:func main<span class="o">()</span> <span class="o">{</span>
+./abci/tests/benchmarks/simple/simple.go:func main<span class="o">()</span> <span class="o">{</span>
+./abci/tests/test_app/main.go:func main<span class="o">()</span> <span class="o">{</span>
+./abci/types/protoreplace/protoreplace.go:func main<span class="o">()</span> <span class="o">{</span>
+./cmd/contract_tests/main.go:func main<span class="o">()</span> <span class="o">{</span>
+./cmd/priv_val_server/main.go:func main<span class="o">()</span> <span class="o">{</span>
+./cmd/tendermint/main.go:func main<span class="o">()</span> <span class="o">{</span>
+./docs/guides/go-built-in.md:func main<span class="o">()</span> <span class="o">{</span>
+./docs/guides/go-built-in.md:func main<span class="o">()</span> <span class="o">{</span>
+./docs/guides/go.md:func main<span class="o">()</span> <span class="o">{</span>
+./docs/guides/go.md:func main<span class="o">()</span> <span class="o">{</span>
+./libs/autofile/cmd/logjack.go:func main<span class="o">()</span> <span class="o">{</span>
+./rpc/lib/test/main.go:func main<span class="o">()</span> <span class="o">{</span>
+./scripts/json2wal/main.go:func main<span class="o">()</span> <span class="o">{</span>
+./scripts/privValUpgrade.go:func main<span class="o">()</span> <span class="o">{</span>
+./scripts/wal2json/main.go:func main<span class="o">()</span> <span class="o">{</span>
+./test/app/grpc_client.go:func main<span class="o">()</span> <span class="o">{</span>
+./tools/tm-signer-harness/main.go:func main<span class="o">()</span> <span class="o">{</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>我们容易得知系统的启动入口函数在<code>cmd/tendermint/main.go</code>中</p>
+
+<p>main函数比较简单，首先指定了根指令<code>rootCmd</code>，然后给根指令添加了一系列的二级指令，包括</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">cmd</span><span class="p">.</span><span class="nx">GenValidatorCmd</span><span class="p">,</span> <span class="c1">//对于验证者生成所需要的密钥对，指令为tendermint gen_validator
+</span><span class="c1"></span><span class="nx">cmd</span><span class="p">.</span><span class="nx">InitFilesCmd</span><span class="p">,</span> <span class="c1">// 生成一个全新的tendermint实例所需要的文件，指令为tendermint init
+</span><span class="c1"></span><span class="nx">cmd</span><span class="p">.</span><span class="nx">ProbeUpnpCmd</span><span class="p">,</span> 
+<span class="nx">cmd</span><span class="p">.</span><span class="nx">LiteCmd</span><span class="p">,</span> 
+<span class="nx">cmd</span><span class="p">.</span><span class="nx">ReplayCmd</span><span class="p">,</span>
+<span class="nx">cmd</span><span class="p">.</span><span class="nx">ReplayConsoleCmd</span><span class="p">,</span>
+<span class="nx">cmd</span><span class="p">.</span><span class="nx">ResetAllCmd</span><span class="p">,</span>
+<span class="nx">cmd</span><span class="p">.</span><span class="nx">ResetPrivValidatorCmd</span><span class="p">,</span>
+<span class="nx">cmd</span><span class="p">.</span><span class="nx">ShowValidatorCmd</span><span class="p">,</span>
+<span class="nx">cmd</span><span class="p">.</span><span class="nx">TestnetFilesCmd</span><span class="p">,</span>
+<span class="nx">cmd</span><span class="p">.</span><span class="nx">ShowNodeIDCmd</span><span class="p">,</span>
+<span class="nx">cmd</span><span class="p">.</span><span class="nx">GenNodeKeyCmd</span><span class="p">,</span>
+<span class="nx">cmd</span><span class="p">.</span><span class="nx">VersionCmd</span><span class="p">,</span>
+<span class="nx">debug</span><span class="p">.</span><span class="nx">DebugCmd</span><span class="p">,</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>还有一个</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">nodeFunc</span> <span class="o">:=</span> <span class="nx">nm</span><span class="p">.</span><span class="nx">DefaultNewNode</span>
+<span class="nx">rootCmd</span><span class="p">.</span><span class="nf">AddCommand</span><span class="p">(</span><span class="nx">cmd</span><span class="p">.</span><span class="nf">NewRunNodeCmd</span><span class="p">(</span><span class="nx">nodeFunc</span><span class="p">))</span> <span class="o">//</span> <span class="nx">启动一个节点</span><span class="err">，</span><span class="nx">指令为tendermint</span> <span class="nx">node</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>最后通过tendermint自己封装的cli库解析环境指令，然后处理命令行，执行对应的执行。</p>
+
+<h3 id="根指令">根指令</h3>
+
+<p>系统main入口很简单，在执行我们的启动指令前，tendermint处理了什么呢？</p>
+
+<p>从<code>rootCmd</code>定义中我们可以看到，定义了一个<code>PersistentPreRunE</code>函数，具体内容为</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span><span class="p">(</span><span class="nx">cmd</span> <span class="o">*</span><span class="nx">cobra</span><span class="p">.</span><span class="nx">Command</span><span class="p">,</span> <span class="nx">args</span> <span class="p">[]</span><span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">if</span> <span class="nx">cmd</span><span class="p">.</span><span class="nf">Name</span><span class="p">()</span> <span class="o">==</span> <span class="nx">VersionCmd</span><span class="p">.</span><span class="nf">Name</span><span class="p">()</span> <span class="p">{</span>
+			<span class="k">return</span> <span class="kc">nil</span>
+		<span class="p">}</span>
+		<span class="nx">config</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nf">ParseConfig</span><span class="p">()</span>
+		<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="k">return</span> <span class="nx">err</span>
+		<span class="p">}</span>
+		<span class="k">if</span> <span class="nx">config</span><span class="p">.</span><span class="nx">LogFormat</span> <span class="o">==</span> <span class="nx">cfg</span><span class="p">.</span><span class="nx">LogFormatJSON</span> <span class="p">{</span>
+			<span class="nx">logger</span> <span class="p">=</span> <span class="nx">log</span><span class="p">.</span><span class="nf">NewTMJSONLogger</span><span class="p">(</span><span class="nx">log</span><span class="p">.</span><span class="nf">NewSyncWriter</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Stdout</span><span class="p">))</span>
+		<span class="p">}</span>
+		<span class="nx">logger</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">tmflags</span><span class="p">.</span><span class="nf">ParseLogLevel</span><span class="p">(</span><span class="nx">config</span><span class="p">.</span><span class="nx">LogLevel</span><span class="p">,</span> <span class="nx">logger</span><span class="p">,</span> <span class="nx">cfg</span><span class="p">.</span><span class="nf">DefaultLogLevel</span><span class="p">())</span>
+		<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="k">return</span> <span class="nx">err</span>
+		<span class="p">}</span>
+		<span class="k">if</span> <span class="nx">viper</span><span class="p">.</span><span class="nf">GetBool</span><span class="p">(</span><span class="nx">cli</span><span class="p">.</span><span class="nx">TraceFlag</span><span class="p">)</span> <span class="p">{</span>
+			<span class="nx">logger</span> <span class="p">=</span> <span class="nx">log</span><span class="p">.</span><span class="nf">NewTracingLogger</span><span class="p">(</span><span class="nx">logger</span><span class="p">)</span>
+		<span class="p">}</span>
+		<span class="nx">logger</span> <span class="p">=</span> <span class="nx">logger</span><span class="p">.</span><span class="nf">With</span><span class="p">(</span><span class="s">&#34;module&#34;</span><span class="p">,</span> <span class="s">&#34;main&#34;</span><span class="p">)</span>
+		<span class="k">return</span> <span class="kc">nil</span>
+	<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>可以得知，如果调用的指令是版本查询，则无需处理配置文件，直接进行后续的版本查询操作即可，预执行指令也可以结束了。</p>
+
+<p>如果不是版本查询，需要首先解析相关配置文件</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">ParseConfig</span><span class="p">()</span> <span class="p">(</span><span class="o">*</span><span class="nx">cfg</span><span class="p">.</span><span class="nx">Config</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+	<span class="nx">conf</span> <span class="o">:=</span> <span class="nx">cfg</span><span class="p">.</span><span class="nf">DefaultConfig</span><span class="p">()</span>
+	<span class="nx">err</span> <span class="o">:=</span> <span class="nx">viper</span><span class="p">.</span><span class="nf">Unmarshal</span><span class="p">(</span><span class="nx">conf</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
+	<span class="p">}</span>
+	<span class="nx">conf</span><span class="p">.</span><span class="nf">SetRoot</span><span class="p">(</span><span class="nx">conf</span><span class="p">.</span><span class="nx">RootDir</span><span class="p">)</span>
+	<span class="nx">cfg</span><span class="p">.</span><span class="nf">EnsureRoot</span><span class="p">(</span><span class="nx">conf</span><span class="p">.</span><span class="nx">RootDir</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">conf</span><span class="p">.</span><span class="nf">ValidateBasic</span><span class="p">();</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;error in config file: %v&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="nx">conf</span><span class="p">,</span> <span class="nx">err</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>本部分比较简单，只是从系统中读取了默认的配置，然后将配置写入到viper中方便后续的全局调用。</p>
+
+<p>处理完配置后，接下来<code>rootCmd</code>进行日志的配置，我们可以得知日志处理文件在<code>libs</code>中，我们后续进行深入的探索，目前只知道是对不同的日志级别进行配置。</p>
+
+<h3 id="环境解析">环境解析</h3>
+
+<p>我们现在要看最后这一句话，完成了系统启动前的最后一步配置</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">cmd</span> <span class="o">:=</span> <span class="nx">cli</span><span class="p">.</span><span class="nf">PrepareBaseCmd</span><span class="p">(</span><span class="nx">rootCmd</span><span class="p">,</span> <span class="s">&#34;TM&#34;</span><span class="p">,</span> <span class="nx">os</span><span class="p">.</span><span class="nf">ExpandEnv</span><span class="p">(</span><span class="nx">filepath</span><span class="p">.</span><span class="nf">Join</span><span class="p">(</span><span class="s">&#34;$HOME&#34;</span><span class="p">,</span> <span class="nx">cfg</span><span class="p">.</span><span class="nx">DefaultTendermintDir</span><span class="p">)))</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>其中默认的Tendermint路径为<code>.tendermint</code>，然后系统具体做了什么呢？</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">PrepareBaseCmd</span><span class="p">(</span><span class="nx">cmd</span> <span class="o">*</span><span class="nx">cobra</span><span class="p">.</span><span class="nx">Command</span><span class="p">,</span> <span class="nx">envPrefix</span><span class="p">,</span> <span class="nx">defaultHome</span> <span class="kt">string</span><span class="p">)</span> <span class="nx">Executor</span> <span class="p">{</span>
+	<span class="nx">cobra</span><span class="p">.</span><span class="nf">OnInitialize</span><span class="p">(</span><span class="kd">func</span><span class="p">()</span> <span class="p">{</span> <span class="nf">initEnv</span><span class="p">(</span><span class="nx">envPrefix</span><span class="p">)</span> <span class="p">})</span>
+	<span class="nx">cmd</span><span class="p">.</span><span class="nf">PersistentFlags</span><span class="p">().</span><span class="nf">StringP</span><span class="p">(</span><span class="nx">HomeFlag</span><span class="p">,</span> <span class="s">&#34;&#34;</span><span class="p">,</span> <span class="nx">defaultHome</span><span class="p">,</span> <span class="s">&#34;directory for config and data&#34;</span><span class="p">)</span>
+	<span class="nx">cmd</span><span class="p">.</span><span class="nf">PersistentFlags</span><span class="p">().</span><span class="nf">Bool</span><span class="p">(</span><span class="nx">TraceFlag</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="s">&#34;print out full stack trace on errors&#34;</span><span class="p">)</span>
+	<span class="nx">cmd</span><span class="p">.</span><span class="nx">PersistentPreRunE</span> <span class="p">=</span> <span class="nf">concatCobraCmdFuncs</span><span class="p">(</span><span class="nx">bindFlagsLoadViper</span><span class="p">,</span> <span class="nx">cmd</span><span class="p">.</span><span class="nx">PersistentPreRunE</span><span class="p">)</span>
+	<span class="k">return</span> <span class="nx">Executor</span><span class="p">{</span><span class="nx">cmd</span><span class="p">,</span> <span class="nx">os</span><span class="p">.</span><span class="nx">Exit</span><span class="p">}</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>似乎有一些乱，可以一句一句的分析。</p>
+
+<ol>
+<li>初始化系统环境变量，把系统中的关于Tendermint的环境变量如<code>TMROOT</code>换成<code>TM_ROOT</code>,同时配置到viper中。</li>
+<li>获取系统中配置的<code>home</code>的值，指的是存储系统中config和data的路径</li>
+<li>获取系统中配置的<code>trace</code>的值，指的是对于错误是否输出全部信息</li>
+<li>这段分两个逻辑，一个是组合所有的预处理程序，一个是解析配置文件。其中解析配置文件是读取config文件写入到viper中，组合是直接遍历程序写入。</li>
+</ol>
+
+<p>通过完成以上最基本的配置和日志的处理，节点启动前的准备就结束了。</p>
+
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">Hundred</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2020-01-29 03:05
+        
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">许可协议</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/tendermint/">tendermint</a>
+          <a href="/tags/blockchain/">blockchain</a>
+          <a href="/tags/sourcecode/">sourcecode</a>
+          <a href="/tags/%E5%8C%BA%E5%9D%97%E9%93%BE/">区块链</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/Tendermint-II/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">Tendermint II</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/%E4%B8%80%E9%81%93%E9%97%AE%E9%A2%98%E5%BC%95%E5%8F%91%E7%9A%84golang%E8%B0%83%E5%BA%A6/">
+            <span class="next-text nav-default">一道问题引发的golang调度</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+  
+  
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="#" class="iconfont icon-cnblogs" title="cnblogs"></a>
+      <a href="mailto:sdwangzhuo@gmail.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/hundredwz" class="iconfont icon-github" title="github"></a>
+      <a href="#" class="iconfont icon-juejin" title="juejin"></a>
+      <a href="#" class="iconfont icon-v2ex" title="v2ex"></a>
+      <a href="https://weibo.com/hundredwz" class="iconfont icon-weibo" title="weibo"></a>
+  <a href="https://hundredwz.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2013 - 
+    2020
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Hundred</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.min.js" integrity="sha256-jwCP0NAdCBloaIWTWHmW4i3snUNMHUNO+jr9rYd2iOI=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.locales.min.js" integrity="sha256-ZwofwC1Lf/faQCzN7nZtfijVV6hSwxjQMwXL4gn9qU8=" crossorigin="anonymous"></script>
+  <script><!-- NOTE: timeago.js uses the language code format like "zh_CN" (underscore and case sensitive) -->
+    var languageCode = "zh-CN".replace(/-/g, '_').replace(/_(.*)/, function ($0, $1) {return $0.replace($1, $1.toUpperCase());});
+    timeago().render(document.querySelectorAll('.timeago'), languageCode);
+    timeago.cancel();  
+  </script>
+<script type="text/javascript" src="/dist/even.26188efa.min.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+      showProcessingMessages: false,
+      messageStyle: 'none'
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"  integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-138883536-1', 'auto');
+	ga('set', 'anonymizeIp', true);
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>boltdb阅读I - A Lazy Coder</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="Hundred" /><meta name="description" content="最近这两天闲了一些，准备好好学一下golang。
+" /><meta name="keywords" content="Blockchain, Golang, Fabric, Ethereum, Code" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.56.1 with even 4.0.0" />
+
+
+<link rel="canonical" href="https://hundredwz.github.io/post/boltdb%E9%98%85%E8%AF%BBI/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<link href="/dist/even.c2a46f00.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+<link rel="stylesheet" href="/css/reset-even.css">
+
+
+<meta property="og:title" content="boltdb阅读I" />
+<meta property="og:description" content="最近这两天闲了一些，准备好好学一下golang。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://hundredwz.github.io/post/boltdb%E9%98%85%E8%AF%BBI/" />
+<meta property="article:published_time" content="2018-10-14T02:44:00+00:00" />
+<meta property="article:modified_time" content="2018-10-14T02:44:00+00:00" />
+<meta itemprop="name" content="boltdb阅读I">
+<meta itemprop="description" content="最近这两天闲了一些，准备好好学一下golang。">
+
+
+<meta itemprop="datePublished" content="2018-10-14T02:44:00&#43;00:00" />
+<meta itemprop="dateModified" content="2018-10-14T02:44:00&#43;00:00" />
+<meta itemprop="wordCount" content="931">
+
+
+
+<meta itemprop="keywords" content="golang,boltdb,源码," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="boltdb阅读I"/>
+<meta name="twitter:description" content="最近这两天闲了一些，准备好好学一下golang。"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">A Lazy Coder</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">首页</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">归档</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">分类</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/friends/">
+        <li class="mobile-menu-item">Friends</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">A Lazy Coder</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">首页</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">归档</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">分类</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/friends/">Friends</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">boltdb阅读I</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2018-10-14 02:44 </span>
+        <div class="post-category">
+            <a href="/categories/program/"> program </a>
+            </div>
+          <span class="more-meta"> 约 931 字 </span>
+          <span class="more-meta"> 预计阅读 2 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#open">Open</a>
+<ul>
+<li><a href="#实例化">实例化</a></li>
+<li><a href="#创建">创建</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+  </div>
+</div>
+  <div class="post-outdated">
+    <div class="hint">
+      <p>【注意】最后更新于 <span class="timeago" datetime="2018-10-14T02:44:00" title="October 14, 2018">October 14, 2018</span>，文中内容可能已过时，请谨慎使用。</p>
+    </div>
+  </div>
+    <div class="post-content">
+      <p>最近这两天闲了一些，准备好好学一下golang。</p>
+
+<p>学习一门语言最好的办法就是通过项目学习，所以我就找了个评价比较高代码不太大的项目 <a href="https://github.com/boltdb/bolt">boltdb</a>，开始学习。</p>
+
+<h3 id="open">Open</h3>
+
+<p>为了方便理解，我们假设执行Open是这一句话</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">db</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">bolt</span><span class="p">.</span><span class="nf">Open</span><span class="p">(</span><span class="s">&#34;my.db&#34;</span><span class="p">,</span> <span class="mo">0600</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">bolt</span><span class="p">.</span><span class="nx">Options</span><span class="p">{</span><span class="nx">Timeout</span><span class="p">:</span> <span class="mi">1</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">})</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>系统首先创建一个数据库的结构体</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">DB</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">StrictMode</span> <span class="kt">bool</span>
+	<span class="nx">NoSync</span> <span class="kt">bool</span>
+	<span class="nx">NoGrowSync</span> <span class="kt">bool</span>
+	<span class="nx">MmapFlags</span> <span class="kt">int</span>
+	<span class="nx">MaxBatchSize</span> <span class="kt">int</span>
+	<span class="nx">MaxBatchDelay</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Duration</span>
+	<span class="nx">AllocSize</span> <span class="kt">int</span>
+	<span class="nx">path</span>     <span class="kt">string</span>
+	<span class="nx">file</span>     <span class="o">*</span><span class="nx">os</span><span class="p">.</span><span class="nx">File</span>
+	<span class="nx">lockfile</span> <span class="o">*</span><span class="nx">os</span><span class="p">.</span><span class="nx">File</span> 
+	<span class="nx">dataref</span>  <span class="p">[]</span><span class="kt">byte</span>   
+	<span class="nx">data</span>     <span class="o">*</span><span class="p">[</span><span class="nx">maxMapSize</span><span class="p">]</span><span class="kt">byte</span>
+	<span class="nx">datasz</span>   <span class="kt">int</span>
+	<span class="nx">filesz</span>   <span class="kt">int</span> 
+	<span class="nx">meta0</span>    <span class="o">*</span><span class="nx">meta</span>
+	<span class="nx">meta1</span>    <span class="o">*</span><span class="nx">meta</span>
+	<span class="nx">pageSize</span> <span class="kt">int</span>
+	<span class="nx">opened</span>   <span class="kt">bool</span>
+	<span class="nx">rwtx</span>     <span class="o">*</span><span class="nx">Tx</span>
+	<span class="nx">txs</span>      <span class="p">[]</span><span class="o">*</span><span class="nx">Tx</span>
+	<span class="nx">freelist</span> <span class="o">*</span><span class="nx">freelist</span>
+	<span class="nx">stats</span>    <span class="nx">Stats</span>
+	<span class="nx">pagePool</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">Pool</span>
+	<span class="nx">batchMu</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">Mutex</span>
+	<span class="nx">batch</span>   <span class="o">*</span><span class="nx">batch</span>
+	<span class="nx">rwlock</span>   <span class="nx">sync</span><span class="p">.</span><span class="nx">Mutex</span>   
+	<span class="nx">metalock</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">Mutex</span>  
+	<span class="nx">mmaplock</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">RWMutex</span> 
+	<span class="nx">statlock</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">RWMutex</span>
+	<span class="nx">ops</span> <span class="kd">struct</span> <span class="p">{</span>
+		<span class="nx">writeAt</span> <span class="kd">func</span><span class="p">(</span><span class="nx">b</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">,</span> <span class="nx">off</span> <span class="kt">int64</span><span class="p">)</span> <span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="nx">readOnly</span> <span class="kt">bool</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<h4 id="实例化">实例化</h4>
+
+<p>这个结构体变量有点多，我们按照程序顺序解释我们遇到的程序。
+首先默认设置这个db已经Open，然后如果没有配置的话，就设置不超时，我们设置的超时时间为1s，也就是如果1s没有操作的话，就结束了。
+其他的我们都没配置，都是变量的默认值。
+首先在数据库变大的时候先不同步。
+Options里面的<code>MmapFlags</code>是为了大量读取数据所使用的，然而默认配置并没有设置，也就是说这个默认是关闭的。
+除此之外，还配置了默认执行<code>Batch</code>的大小，延时还有分配的大小。
+最后根据是否配置数据库为只读模式，配置接下来的操作方式<code>flag</code>为<code>os.O_RDWR</code>或者<code>os.O_RDONLY</code>。我们没有指定<code>ReadOnly</code>，所以数据库是读写模式。
+到此，系统默认数据库已经配置完毕。</p>
+
+<h4 id="创建">创建</h4>
+
+<p>接下来的系统创建就很简单了，直接根据我们以上的配置和文件路径创建文件即可</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">db</span><span class="p">.</span><span class="nx">file</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">os</span><span class="p">.</span><span class="nf">OpenFile</span><span class="p">(</span><span class="nx">db</span><span class="p">.</span><span class="nx">path</span><span class="p">,</span> <span class="nx">flag</span><span class="p">|</span><span class="nx">os</span><span class="p">.</span><span class="nx">O_CREATE</span><span class="p">,</span> <span class="nx">mode</span><span class="p">)</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>然后系统为了防止一个数据库同时被两个进程使用，为文件创建了一个锁，保证在读写模式的时候，只会有一个进程在调用。
+然后我们的数据库支持按指定便宜存储，所以定了了一个<code>writeat</code>函数。
+最后我们要为程序指定一个PageSize，这样是为了高效的从系统读取写入数据。
+这块的逻辑也很简单，整体顺序就是看下文件是否是首次创建的，如果不是的话就读去文件的meta数据，读取出来设置的meta数据，有错误的话就用系统的默认PageSize。
+如果是第一次创建，就对本文件进行初始化操作。具体的初始化操作涉及系统的操作，我们留到以后分析。
+然后就可以配置数据库的分页池，把上数据库文件直接映射到内存上，然后读取freelist（还不是太理解含义）
+到目前为止，数据库实例化成功。</p>
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">Hundred</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2018-10-14 02:44
+        
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">许可协议</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/golang/">golang</a>
+          <a href="/tags/boltdb/">boltdb</a>
+          <a href="/tags/%E6%BA%90%E7%A0%81/">源码</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/boltdb%E9%98%85%E8%AF%BBII/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">boltdb阅读II</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/%E5%8D%81%E5%B9%B4%E7%9A%84%E6%9C%9F%E8%AE%B8/">
+            <span class="next-text nav-default">十年的期许</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+  
+  
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="#" class="iconfont icon-cnblogs" title="cnblogs"></a>
+      <a href="mailto:sdwangzhuo@gmail.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/hundredwz" class="iconfont icon-github" title="github"></a>
+      <a href="#" class="iconfont icon-juejin" title="juejin"></a>
+      <a href="#" class="iconfont icon-v2ex" title="v2ex"></a>
+      <a href="https://weibo.com/hundredwz" class="iconfont icon-weibo" title="weibo"></a>
+  <a href="https://hundredwz.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2013 - 
+    2020
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Hundred</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.min.js" integrity="sha256-jwCP0NAdCBloaIWTWHmW4i3snUNMHUNO+jr9rYd2iOI=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.locales.min.js" integrity="sha256-ZwofwC1Lf/faQCzN7nZtfijVV6hSwxjQMwXL4gn9qU8=" crossorigin="anonymous"></script>
+  <script><!-- NOTE: timeago.js uses the language code format like "zh_CN" (underscore and case sensitive) -->
+    var languageCode = "zh-CN".replace(/-/g, '_').replace(/_(.*)/, function ($0, $1) {return $0.replace($1, $1.toUpperCase());});
+    timeago().render(document.querySelectorAll('.timeago'), languageCode);
+    timeago.cancel();  
+  </script>
+<script type="text/javascript" src="/dist/even.26188efa.min.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+      showProcessingMessages: false,
+      messageStyle: 'none'
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"  integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-138883536-1', 'auto');
+	ga('set', 'anonymizeIp', true);
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>分布式 on A Lazy Coder</title>
+    <link>https://hundredwz.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F/</link>
+    <description>Recent content in 分布式 on A Lazy Coder</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Tue, 17 Apr 2018 08:25:40 +0000</lastBuildDate>
+    
+	<atom:link href="https://hundredwz.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Raft造轮子VI</title>
+      <link>https://hundredwz.github.io/post/Raft%E9%80%A0%E8%BD%AE%E5%AD%90VI/</link>
+      <pubDate>Tue, 17 Apr 2018 08:25:40 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Raft%E9%80%A0%E8%BD%AE%E5%AD%90VI/</guid>
+      <description>&lt;p&gt;我们上一篇说了领导的选举，本篇讨论日志和心跳包的处理。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Raft造轮子V</title>
+      <link>https://hundredwz.github.io/post/Raft%E9%80%A0%E8%BD%AE%E5%AD%90V/</link>
+      <pubDate>Tue, 17 Apr 2018 06:59:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Raft%E9%80%A0%E8%BD%AE%E5%AD%90V/</guid>
+      <description>&lt;p&gt;我们上一篇文章分析了一个节点作为主动发起方，向别的节点请求投票的信息，本篇就分析下接收方的工作流程。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Raft造轮子IV</title>
+      <link>https://hundredwz.github.io/post/Raft%E9%80%A0%E8%BD%AE%E5%AD%90IV/</link>
+      <pubDate>Tue, 17 Apr 2018 06:15:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Raft%E9%80%A0%E8%BD%AE%E5%AD%90IV/</guid>
+      <description>&lt;p&gt;经过上一篇文章关于一些基础“接口”的定义，我们本篇开始操作核心，节点。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Raft造轮子II</title>
+      <link>https://hundredwz.github.io/post/Raft%E9%80%A0%E8%BD%AE%E5%AD%90II/</link>
+      <pubDate>Fri, 13 Apr 2018 07:35:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Raft%E9%80%A0%E8%BD%AE%E5%AD%90II/</guid>
+      <description>&lt;p&gt;读过文章之后，我们虽然不知道具体的程序要怎么动笔，但是让我们说出来怎么选举领导人，怎么复制日志，对大家来说问题不大了。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Raft造轮子I</title>
+      <link>https://hundredwz.github.io/post/Raft%E9%80%A0%E8%BD%AE%E5%AD%90I/</link>
+      <pubDate>Fri, 13 Apr 2018 07:02:24 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Raft%E9%80%A0%E8%BD%AE%E5%AD%90I/</guid>
+      <description>&lt;p&gt;前一段时间在学习raft算法，看完后感觉相对paxos来说没有那么复杂,就萌生了要造个轮子的想法。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>paxos算法 V</title>
+      <link>https://hundredwz.github.io/post/paxos%E7%AE%97%E6%B3%95-V/</link>
+      <pubDate>Fri, 19 Jan 2018 08:17:44 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/paxos%E7%AE%97%E6%B3%95-V/</guid>
+      <description>&lt;p&gt;我们之前在介绍paxos协议的时候,都是一直在说的神权阶段.通过法案都是一条一条的通过,不会有多条法案同步行进.如今Paxon改革换代,进入了国会阶段,协议也因此有了些变化.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>paxos算法 IV</title>
+      <link>https://hundredwz.github.io/post/paxos%E7%AE%97%E6%B3%95-IV/</link>
+      <pubDate>Wed, 17 Jan 2018 08:47:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/paxos%E7%AE%97%E6%B3%95-IV/</guid>
+      <description>&lt;p&gt;上一篇我们说到了paxos协议的初始协议，可以满足paxos的三大定理。但是依然具有很大的弊端。所以Paxon人民砥砺前进，再创辉煌。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>paxos算法 III</title>
+      <link>https://hundredwz.github.io/post/paxos%E7%AE%97%E6%B3%95-III/</link>
+      <pubDate>Tue, 16 Jan 2018 13:10:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/paxos%E7%AE%97%E6%B3%95-III/</guid>
+      <description>&lt;p&gt;本文继续研讨paxos算法。目前本人读到了paxos协议的实现部分，相对来说还是比较好理解的。当然，应用容易与否我们以后再进行深入探讨。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Paxos算法 II</title>
+      <link>https://hundredwz.github.io/post/Paxos%E7%AE%97%E6%B3%95-II/</link>
+      <pubDate>Mon, 15 Jan 2018 13:04:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Paxos%E7%AE%97%E6%B3%95-II/</guid>
+      <description>&lt;p&gt;本片内容就要正经的讨论下paxos算法了。很复杂，不好理解。我还没读完。
+只看到了基础的三定理，推导一致性的证明第一步。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>paxos算法I</title>
+      <link>https://hundredwz.github.io/post/paxos%E7%AE%97%E6%B3%95I/</link>
+      <pubDate>Fri, 12 Jan 2018 02:19:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/paxos%E7%AE%97%E6%B3%95I/</guid>
+      <description>&lt;p&gt;paxos算法也是分布式中比较久远也比较基本的算法了。还不是太好理解。本篇文章主要考虑简略的介绍下paxos算法。从容易理解的角度来解释下。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

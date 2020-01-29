@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>一道问题引发的golang调度 - A Lazy Coder</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="Hundred" /><meta name="description" content="说实话，网上对于golang调度的文章很多，但是大部分都是从理论上来描述，描写的精确一点的也依然不够直观。今天跟同学在讨论一道题目的时候又好好的理解了下golang的调度。感觉有所收获，记录一下。
+" /><meta name="keywords" content="Blockchain, Golang, Fabric, Ethereum, Code" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.56.1 with even 4.0.0" />
+
+
+<link rel="canonical" href="https://hundredwz.github.io/post/%E4%B8%80%E9%81%93%E9%97%AE%E9%A2%98%E5%BC%95%E5%8F%91%E7%9A%84golang%E8%B0%83%E5%BA%A6/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<link href="/dist/even.c2a46f00.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+<link rel="stylesheet" href="/css/reset-even.css">
+
+
+<meta property="og:title" content="一道问题引发的golang调度" />
+<meta property="og:description" content="说实话，网上对于golang调度的文章很多，但是大部分都是从理论上来描述，描写的精确一点的也依然不够直观。今天跟同学在讨论一道题目的时候又好好的理解了下golang的调度。感觉有所收获，记录一下。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://hundredwz.github.io/post/%E4%B8%80%E9%81%93%E9%97%AE%E9%A2%98%E5%BC%95%E5%8F%91%E7%9A%84golang%E8%B0%83%E5%BA%A6/" />
+<meta property="article:published_time" content="2019-09-06T01:54:03+00:00" />
+<meta property="article:modified_time" content="2019-09-06T01:54:03+00:00" />
+<meta itemprop="name" content="一道问题引发的golang调度">
+<meta itemprop="description" content="说实话，网上对于golang调度的文章很多，但是大部分都是从理论上来描述，描写的精确一点的也依然不够直观。今天跟同学在讨论一道题目的时候又好好的理解了下golang的调度。感觉有所收获，记录一下。">
+
+
+<meta itemprop="datePublished" content="2019-09-06T01:54:03&#43;00:00" />
+<meta itemprop="dateModified" content="2019-09-06T01:54:03&#43;00:00" />
+<meta itemprop="wordCount" content="3004">
+
+
+
+<meta itemprop="keywords" content="" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="一道问题引发的golang调度"/>
+<meta name="twitter:description" content="说实话，网上对于golang调度的文章很多，但是大部分都是从理论上来描述，描写的精确一点的也依然不够直观。今天跟同学在讨论一道题目的时候又好好的理解了下golang的调度。感觉有所收获，记录一下。"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">A Lazy Coder</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">首页</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">归档</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">分类</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/friends/">
+        <li class="mobile-menu-item">Friends</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">A Lazy Coder</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">首页</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">归档</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">分类</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/friends/">Friends</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">一道问题引发的golang调度</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2019-09-06 01:54 </span>
+        
+          <span class="more-meta"> 约 3004 字 </span>
+          <span class="more-meta"> 预计阅读 6 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#问题">问题</a></li>
+<li><a href="#golang调度">golang调度</a>
+<ul>
+<li>
+<ul>
+<li><a href="#创建">创建</a>
+<ul>
+<li><a href="#调度">调度</a></li>
+</ul></li>
+<li><a href="#相关结论">相关结论</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+  </div>
+</div>
+    <div class="post-content">
+      <p>说实话，网上对于golang调度的文章很多，但是大部分都是从理论上来描述，描写的精确一点的也依然不够直观。今天跟同学在讨论一道题目的时候又好好的理解了下golang的调度。感觉有所收获，记录一下。</p>
+
+<h3 id="问题">问题</h3>
+
+<p>在问题开始之前，我们先出一个题目，交替打印数字和字母。</p>
+
+<p>在网上搜索，以及大部分用户自己想，都会写出来类似于以下的代码</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">ch1</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">int</span><span class="p">)</span>
+	<span class="nx">ch2</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">string</span><span class="p">)</span>
+	<span class="nx">str</span> <span class="o">:=</span> <span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="kt">string</span><span class="p">{</span><span class="s">&#34;a&#34;</span><span class="p">,</span> <span class="s">&#34;b&#34;</span><span class="p">,</span> <span class="s">&#34;c&#34;</span><span class="p">,</span> <span class="s">&#34;d&#34;</span><span class="p">,</span> <span class="s">&#34;e&#34;</span><span class="p">}</span>
+	<span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+		<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">5</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+			<span class="nx">ch1</span> <span class="o">&lt;-</span> <span class="nx">i</span>
+			<span class="nx">fmt</span><span class="p">.</span><span class="nf">Print</span><span class="p">(</span><span class="nx">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+			<span class="o">&lt;-</span><span class="nx">ch2</span>
+		<span class="p">}</span>
+	<span class="p">}()</span>
+
+	<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">v</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">str</span> <span class="p">{</span>
+		<span class="o">&lt;-</span><span class="nx">ch1</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Print</span><span class="p">(</span><span class="nx">v</span><span class="p">)</span>
+		<span class="nx">ch2</span> <span class="o">&lt;-</span> <span class="nx">v</span>
+	<span class="p">}</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>看着似乎没有什么问题：main被阻塞，直到协程中写入数据。</p>
+
+<p>协程中写入数据的同时会打印结果，然后阻塞，等main中写入数据。</p>
+
+<p>可是，我们运行这段函数10000次，看看结果</p>
+
+<p>中间偶尔出现了这么几个结果</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">1a2b3c4d5e
+...
+a1b2c3d4e5
+1a2b3c4d5e
+...
+1a2bc34d5e
+...
+1a2b3cde45</pre></td></tr></table>
+</div>
+</div>
+<p>为什么会有这个结果？为什么a还能比1先打印出来？</p>
+
+<p>我们稍后解释，先说一遍原理。</p>
+
+<h3 id="golang调度">golang调度</h3>
+
+<p>网上对于golang调度差不多都是这个图，我们也拿过来借鉴一下</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">+---------+                                 +---------+
+|         |                                 |         |
+|   M     |                                 |   M     |
+|         |                                 |         |
+|         |                                 |         |
++----+----+                                 +----+----+
+     ^             本 地 G 队 列                     ^              本 地 G 队 列
+     |                                           |
+  +--+---+              &lt;---+                 +--+---+              &lt;---+
+  |      |       +-----+                      |      |       +-----+
+  |  P   +&lt;------+  G  |                      |  P   +&lt;------+  G  |
+  |      |       |     |                      |      |       |     |
+  +--^---+       +--^--+                      +--^---+       +--^--+
+     |              |                            |              |
+  +--+--+        +--+--+                      +--+--+        +--+--+
+  |  G  |        |  G  |                      |  G  |        |  G  |
+  |     |        |     |                      |     |        |     |
+  +-----+        +--^--+                      +-----+        +--^--+
+                    |                                           |
+                    |                                           |
+                 +--+---+                                    +--+---+
+                 |   G  |                                    |   G  |
+                 |      |                                    |      |
+                 +------+                                    +------+</pre></td></tr></table>
+</div>
+</div>
+<p>G就是我们的go routine， 对应我们代码中的每一个协程；</p>
+
+<p>P就是Processer，是用来调度G，实现M运行G的处理器；</p>
+
+<p>M就是Machine，代表的是物理机的每一个真实的线程。</p>
+
+<p>我们每通过<code>go</code>关键字创建一个协程，就会被放到一个队列里面。然后每当M运行完一个G的时候，P会从本地队列里面取出来一个新的G，然后让M运行。</p>
+
+<p>似乎很简单，可是G是怎么被放给P的？P和M是怎么交互的呢？</p>
+
+<h5 id="创建">创建</h5>
+
+<p>我们都知道，直接</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">go do_something()</pre></td></tr></table>
+</div>
+</div>
+<p>就可以直接启动一个协程，这个协程是怎么启动的呢？</p>
+
+<p>我们先看下图</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">+---------+                                 +---------+
+|         |                                 |         |
+|   M     |                                 |   M     |
+|         |                                 |         |
+|         |                                 |         |
++----+----+                                 +----+----+
+     ^             本 地 G 队 列                     ^              本 地 G 队 列
+     |                                           |
+  +--+---+              &lt;---+                 +--+---+              &lt;---+
+  |      |       +-----+                      |      |       +-----+
+  |  P   +&lt;------+  G  |                      |  P   +&lt;------+  G  |
+  |      |       |     |                      |      |       |     |
+  +--^---+       +--^--+                      +--^---+       +--^--+
+     |              |                            |              |
+  +--+--+        +--+--+                      +--+--+        +--+--+
+  |  G  |        |  G  |                      |  G  |        |  G  |
+  |     |        |     |                      |     |        |     |
+  +-----+        +--^--+                      +-----+        +--^--+
+                    |                                           |
+                    |                                           |
+                 +--+---+                                    +--+---+
+                 |   G  |                                    |   G  |
+                 |      |                                    |      |
+                 +------+                                    +------+
+
+
+                                                      全 局 队 列
+
+
+             +-------+    +-------+    +-------+   +-------+
+             |       |    |       |    |       |   |       |
+             |   G   |    |   G   |    |   G   |   |   G   |
+             |       |    |       |    |       |   |       |
+             +-------+    +-------+    +-------+   +-------+</pre></td></tr></table>
+</div>
+</div>
+<p>我们可以看到，每一个P都会有一个本地队列，保存着一系列的G，把G交给M来运行。</p>
+
+<p>在新启动一个G的时候，golang会将G加入到一个P的队列中，等着被执行。</p>
+
+<p>现在，用户启动了100w个goroutine，怎么办？如果用户只指定了两个P,那确实没办法，只好等着了。但是如果用户指定了较多的P呢？</p>
+
+<p>现在系统检测到存在较多的G之后，会调用一个函数来创建一个新的M</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">void</span> <span class="nf">newm</span><span class="p">(</span><span class="nf">void</span> <span class="p">(</span><span class="o">*</span><span class="nx">fn</span><span class="p">)(</span><span class="nx">void</span><span class="p">),</span> <span class="nx">P</span> <span class="o">*</span><span class="nx">p</span><span class="p">)</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>但是这个M是有go的调度器来操作的，我们是没办法自己创建的。创建成功后，系统会给这个M分配一个P，接下来就是M和P的交互了。</p>
+
+<p>P会从自己的队列里面拿出来一个G给M，让M执行。但是有可能这个P里面也是没有G的。那怎么办呢？</p>
+
+<p>会首先检查全局队列，看看里面有没有G，放到自己的队列里面运行。如果全局队列里面没有，那就去其他P的队列里面抢一半的G过来，让自己运行。反正别的P里面的G也是运行不到，拿过来还能直接运行一会。</p>
+
+<p>可是，也有可能一直获取不到新的G，那就证明确实没有几个G了，M就取消和P的关联，M进入空闲状态。</p>
+
+<p>以上的前提是，系统中存在一个空闲的P，这个P没有和M绑定，这样系统可以创建新的M，使得更多的G可以被并发的执行。</p>
+
+<p>我们提到，会有P从全局队列里面取G来运行，可是全局队列里面的G是怎么来的呢？</p>
+
+<p>从刚刚我们提到的可以得知，新的协程会被存到P里面去，当协程越来越多的时候，本地P的队列就会满了，那么就会截取本地P一半的协程，扔到全局队里里面，留给其他的P使用。</p>
+
+<p>此外，还有一种方式能够进入到全局队列中，我们稍后会提到。</p>
+
+<h6 id="调度">调度</h6>
+
+<p>我们看到了一个P是怎么把G运行起来的，可是会存在一个情况，就是一个G在M上面运行，一直运行，不释放了！程序没有被阻塞的地方？这可怎么办？难道其他的协程要等到这个协程运行完才运行？那可不知道等到猴年马月啦！</p>
+
+<p>系统在启动的时候，会启动一个后台监测程序sysmon，来监管着每一个程序的运行状态，如果发现一个协程运行的时间超过了10ms，会执行<code>preemptone</code>函数将当前协程的<code>preempt</code>设置为<code>true</code>，<code>stackguard0</code>设置为<code>stackPreempt</code></p>
+
+<p>后续当这个协程发生外部程序调用时（非内联函数的使用），调度器检测到这个标志，就会将这个协程从M上取下来，让P选择其他的M使用。</p>
+
+<p>具体能取下来的情况是什么呢？</p>
+
+<ul>
+<li>IO 操作</li>
+<li>Channel 阻塞</li>
+<li>system call</li>
+<li>运行较长时间</li>
+</ul>
+
+<p>当发生以上几种情况的时候，会把G停住，换个新的G来运行。</p>
+
+<p>如果执行了一个内联函数，那么，这个G就不会下来了，因为这个程序根本没有往外面调用，所以，根本没有机会去停止，保存运行时，导致换不了。</p>
+
+<p>现在假设在M0上的G运行了一个不释放CPU的操作</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="o">+--------------+</span>       <span class="o">+--------------+</span>                  <span class="o">+--------------+</span>
+<span class="p">|</span>              <span class="p">|</span>       <span class="p">|</span>              <span class="p">|</span>                  <span class="p">|</span>              <span class="p">|</span>
+<span class="p">|</span>              <span class="p">|</span>       <span class="p">|</span>              <span class="p">|</span>                  <span class="p">|</span>              <span class="p">|</span>
+<span class="p">|</span>              <span class="p">|</span>       <span class="p">|</span>              <span class="p">|</span>                  <span class="p">|</span>              <span class="p">|</span>
+<span class="p">|</span>     <span class="nx">M0</span>       <span class="p">|</span>       <span class="p">|</span>     <span class="nx">M1</span>       <span class="p">|</span>                  <span class="p">|</span>     <span class="nx">M2</span>       <span class="p">|</span>
+<span class="p">|</span>              <span class="p">|</span>       <span class="p">|</span>              <span class="p">|</span>                  <span class="p">|</span>              <span class="p">|</span>
+<span class="p">|</span>              <span class="p">|</span>       <span class="p">|</span>              <span class="p">|</span>                  <span class="p">|</span>              <span class="p">|</span>
+<span class="o">+------</span><span class="p">^</span><span class="o">-------+</span>       <span class="o">+-------+------+</span>                  <span class="o">+-------+------+</span>
+       <span class="p">|</span>                       <span class="p">^</span>                                 <span class="p">^</span>
+       <span class="p">|</span>                       <span class="p">|</span>                                 <span class="p">|</span>
+       <span class="p">|</span>                       <span class="p">|</span>                                 <span class="p">|</span>
+       <span class="p">|</span>                   <span class="o">+---+-----+</span>                       <span class="o">+---+-----+</span>
+       <span class="p">|</span>                   <span class="p">|</span>         <span class="p">|</span>       <span class="o">+--------+</span>      <span class="p">|</span>         <span class="p">|</span>       <span class="o">+--------+</span>
+       <span class="p">|</span>                   <span class="p">|</span>   <span class="nx">P1</span>    <span class="o">&lt;-------+</span>        <span class="p">|</span>      <span class="p">|</span>   <span class="nx">P0</span>    <span class="o">&lt;-------+</span>        <span class="p">|</span>
+       <span class="p">|</span>                   <span class="p">|</span>         <span class="p">|</span>       <span class="p">|</span>   <span class="nx">G</span>    <span class="p">|</span>      <span class="p">|</span>         <span class="p">|</span>       <span class="p">|</span>   <span class="nx">G</span>    <span class="p">|</span>
+   <span class="o">+---+----+</span>              <span class="o">+---</span><span class="p">^</span><span class="o">-----+</span>       <span class="p">|</span>        <span class="p">|</span>      <span class="o">+---</span><span class="p">^</span><span class="o">-----+</span>       <span class="p">|</span>        <span class="p">|</span>
+   <span class="p">|</span>        <span class="p">|</span>                  <span class="p">|</span>             <span class="o">+--------+</span>          <span class="p">|</span>             <span class="o">+--------+</span>
+   <span class="p">|</span>        <span class="p">|</span>                  <span class="p">|</span>                 <span class="p">^</span><span class="o">+</span>              <span class="p">|</span>                 <span class="p">^</span><span class="o">+</span>
+   <span class="p">|</span>   <span class="nx">G</span>    <span class="p">|</span>                <span class="o">+-+-----+</span>            <span class="p">|</span>            <span class="o">+-+-----+</span>            <span class="p">|</span>
+   <span class="p">|</span>        <span class="p">|</span>                <span class="p">|</span>       <span class="p">|</span>       <span class="o">+----+---+</span>        <span class="p">|</span>       <span class="p">|</span>       <span class="o">+----+---+</span>
+   <span class="o">+--------+</span>                <span class="p">|</span>   <span class="nx">G</span>   <span class="p">|</span>       <span class="p">|</span>        <span class="p">|</span>        <span class="p">|</span>   <span class="nx">G</span>   <span class="p">|</span>       <span class="p">|</span>        <span class="p">|</span>
+                             <span class="p">|</span>       <span class="p">|</span>       <span class="p">|</span>   <span class="nx">G</span>    <span class="p">|</span>        <span class="p">|</span>       <span class="p">|</span>       <span class="p">|</span>   <span class="nx">G</span>    <span class="p">|</span>
+                             <span class="o">+-------+</span>       <span class="p">|</span>        <span class="p">|</span>        <span class="o">+-------+</span>       <span class="p">|</span>        <span class="p">|</span>
+                                             <span class="o">+---</span><span class="p">^</span><span class="o">----+</span>                        <span class="o">+---</span><span class="p">^</span><span class="o">----+</span>
+                                                 <span class="p">|</span>                                 <span class="p">|</span>
+                                             <span class="o">+---+----+</span>                        <span class="o">+---+----+</span>
+                                             <span class="p">|</span>        <span class="p">|</span>                        <span class="p">|</span>        <span class="p">|</span>
+                                             <span class="p">|</span>   <span class="nx">G</span>    <span class="p">|</span>                        <span class="p">|</span>   <span class="nx">G</span>    <span class="p">|</span>
+                                             <span class="p">|</span>        <span class="p">|</span>                        <span class="p">|</span>        <span class="p">|</span>
+                                             <span class="o">+--------+</span>                        <span class="o">+--------+</span>
+
+     <span class="o">+----------+</span>         <span class="o">+----------+</span>         <span class="o">+----------+</span>          <span class="o">+----------+</span>
+     <span class="p">|</span>          <span class="p">|</span>         <span class="p">|</span>          <span class="p">|</span>         <span class="p">|</span>          <span class="p">|</span>          <span class="p">|</span>          <span class="p">|</span>
+     <span class="p">|</span>    <span class="nx">G</span>     <span class="p">^</span>         <span class="p">|</span>    <span class="nx">G</span>     <span class="o">&lt;---------+</span>    <span class="nx">G</span>     <span class="o">+&lt;---------+</span>    <span class="nx">G</span>     <span class="p">|</span>
+     <span class="p">|</span>          <span class="o">+---------+</span>          <span class="p">|</span>         <span class="p">|</span>          <span class="p">|</span>          <span class="p">|</span>          <span class="p">|</span>
+     <span class="p">|</span>          <span class="p">|</span>         <span class="p">|</span>          <span class="p">|</span>         <span class="p">|</span>          <span class="p">|</span>          <span class="p">|</span>          <span class="p">|</span>
+     <span class="o">+----------+</span>         <span class="o">+----------+</span>         <span class="o">+----------+</span>          <span class="o">+----------+</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>通过这个操作后，在M0上面的P0会脱离挂载，找到一个新的M2，挂载上去，运行剩下的协程。</p>
+
+<p>当M0上面的协程阻塞结束之后，G该怎么办呢？没有P没法运行呀！</p>
+
+<p>那就会把G放到全局队列里面去，等着别的P来检出来。</p>
+
+<h5 id="相关结论">相关结论</h5>
+
+<p>通过上面的一些介绍，尤其是画的神一般的ascii图，我们可以知道，P的数目是我们是可以手动指定的，默认就是CPU的个数。</p>
+
+<p>当默认是多个P的时候，那么会有G挂靠在多个P上，也就是多个M上（为了方便描述，可以假定这几个协程是并行执行的）。所以，两个协程之间，并不是标准的阻塞，另一个才运行的。而是，只要有可用的M资源，就一定会执行起来。</p>
+
+<p>所以，我们看开头的文章，在协程1往通道写入数据的时候，协程2已经不再阻塞，如果协程1协程2在两个P上面的话，那么实际是并行执行的。只是由于都是是用的stdout写出数据，才导致顺序是我们想要的结果。</p>
+
+<p>我们再看一个考察点挺多的问题</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="kd">var</span> <span class="nx">i</span> <span class="kt">byte</span>
+	<span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+		<span class="k">for</span> <span class="nx">i</span> <span class="p">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;=</span> <span class="mi">255</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+
+		<span class="p">}</span>
+	<span class="p">}()</span>
+
+	<span class="nx">runtime</span><span class="p">.</span><span class="nf">Gosched</span><span class="p">()</span>
+	<span class="nx">runtime</span><span class="p">.</span><span class="nf">GC</span><span class="p">()</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;end&#34;</span><span class="p">)</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>这个程序，无论是单核还是多核，都永远不会结束。为什么呢？</p>
+
+<p>首先<code>byte</code>相当<code>uint8</code>，所以，for循环始终执行，就是相当于</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+		<span class="k">for</span> <span class="p">{</span>
+
+		<span class="p">}</span>
+	<span class="p">}()</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>现在，我们强制执行了<code>runtime.Gosched()</code>让这个程序停止下，换给其他的协程使用，然后执行<code>runtime.GC()</code>，垃圾回收，结束程序执行。</p>
+
+<p>我们知道，golang垃圾回收三色标记法，需要stop the world，stop the world的前提是能够把当前的状态全部保存起来。可是这个协程一直在M上运行，停不下来啊！</p>
+
+<p>导致无法GC，卡住了。</p>
+
+<p>如果我们把程序改成非内联的呢？</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">func main() {
+	go func() {
+		for  {
+			fmt.Println(&#34;a&#34;)
+		}
+	}()
+
+	runtime.Gosched()
+	runtime.GC()
+	fmt.Println(&#34;end&#34;)
+}</pre></td></tr></table>
+</div>
+</div>
+<p>完美退出。</p>
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">Hundred</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2019-09-06 01:54
+        
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">许可协议</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+<footer class="post-footer">
+      
+      <nav class="post-nav">
+        <a class="prev" href="/post/Tendermint-I/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">Tendermint I</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/ethereum%E5%88%86%E7%89%87/">
+            <span class="next-text nav-default">Ethereum分片</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+  
+  
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="#" class="iconfont icon-cnblogs" title="cnblogs"></a>
+      <a href="mailto:sdwangzhuo@gmail.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/hundredwz" class="iconfont icon-github" title="github"></a>
+      <a href="#" class="iconfont icon-juejin" title="juejin"></a>
+      <a href="#" class="iconfont icon-v2ex" title="v2ex"></a>
+      <a href="https://weibo.com/hundredwz" class="iconfont icon-weibo" title="weibo"></a>
+  <a href="https://hundredwz.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2013 - 
+    2020
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Hundred</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.min.js" integrity="sha256-jwCP0NAdCBloaIWTWHmW4i3snUNMHUNO+jr9rYd2iOI=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.locales.min.js" integrity="sha256-ZwofwC1Lf/faQCzN7nZtfijVV6hSwxjQMwXL4gn9qU8=" crossorigin="anonymous"></script>
+  <script><!-- NOTE: timeago.js uses the language code format like "zh_CN" (underscore and case sensitive) -->
+    var languageCode = "zh-CN".replace(/-/g, '_').replace(/_(.*)/, function ($0, $1) {return $0.replace($1, $1.toUpperCase());});
+    timeago().render(document.querySelectorAll('.timeago'), languageCode);
+    timeago.cancel();  
+  </script>
+<script type="text/javascript" src="/dist/even.26188efa.min.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+      showProcessingMessages: false,
+      messageStyle: 'none'
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"  integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-138883536-1', 'auto');
+	ga('set', 'anonymizeIp', true);
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Tendermint阅读X - A Lazy Coder</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="Hundred" /><meta name="description" content="我们要开始看最难的了，共识模块，这块事区块链的核心，也是流程多到让人痛苦，我们就尽力的看一看吧。
+" /><meta name="keywords" content="Blockchain, Golang, Fabric, Ethereum, Code" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.56.1 with even 4.0.0" />
+
+
+<link rel="canonical" href="https://hundredwz.github.io/post/Tendermint%E9%98%85%E8%AF%BBX/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<link href="/dist/even.c2a46f00.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+<link rel="stylesheet" href="/css/reset-even.css">
+
+
+<meta property="og:title" content="Tendermint阅读X" />
+<meta property="og:description" content="我们要开始看最难的了，共识模块，这块事区块链的核心，也是流程多到让人痛苦，我们就尽力的看一看吧。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://hundredwz.github.io/post/Tendermint%E9%98%85%E8%AF%BBX/" />
+<meta property="article:published_time" content="2019-03-08T06:26:00+00:00" />
+<meta property="article:modified_time" content="2019-03-08T06:26:00+00:00" />
+<meta itemprop="name" content="Tendermint阅读X">
+<meta itemprop="description" content="我们要开始看最难的了，共识模块，这块事区块链的核心，也是流程多到让人痛苦，我们就尽力的看一看吧。">
+
+
+<meta itemprop="datePublished" content="2019-03-08T06:26:00&#43;00:00" />
+<meta itemprop="dateModified" content="2019-03-08T06:26:00&#43;00:00" />
+<meta itemprop="wordCount" content="1053">
+
+
+
+<meta itemprop="keywords" content="区块链,golang,源码,tendermint," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Tendermint阅读X"/>
+<meta name="twitter:description" content="我们要开始看最难的了，共识模块，这块事区块链的核心，也是流程多到让人痛苦，我们就尽力的看一看吧。"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">A Lazy Coder</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">首页</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">归档</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">分类</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/friends/">
+        <li class="mobile-menu-item">Friends</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">A Lazy Coder</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">首页</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">归档</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">分类</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/friends/">Friends</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">Tendermint阅读X</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2019-03-08 06:26 </span>
+        <div class="post-category">
+            <a href="/categories/program/"> program </a>
+            </div>
+          <span class="more-meta"> 约 1053 字 </span>
+          <span class="more-meta"> 预计阅读 3 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    
+  </div>
+</div>
+    <div class="post-content">
+      <p>我们要开始看最难的了，共识模块，这块事区块链的核心，也是流程多到让人痛苦，我们就尽力的看一看吧。</p>
+
+<p>首先看一下，ConsensusState的定义</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">ConsensusState</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">cmn</span><span class="p">.</span><span class="nx">BaseService</span>
+
+	<span class="c1">// 对于本peer的一些配置
+</span><span class="c1"></span>	<span class="nx">config</span>        <span class="o">*</span><span class="nx">cfg</span><span class="p">.</span><span class="nx">ConsensusConfig</span>
+	<span class="nx">privValidator</span> <span class="nx">types</span><span class="p">.</span><span class="nx">PrivValidator</span> <span class="c1">// for signing votes
+</span><span class="c1"></span>
+	<span class="c1">// 对于区块进行的处理，包括区块执行，区块存储，内存池和证据池
+</span><span class="c1"></span>	<span class="nx">blockExec</span>  <span class="o">*</span><span class="nx">sm</span><span class="p">.</span><span class="nx">BlockExecutor</span>
+	<span class="nx">blockStore</span> <span class="nx">sm</span><span class="p">.</span><span class="nx">BlockStore</span>
+	<span class="nx">mempool</span>    <span class="nx">sm</span><span class="p">.</span><span class="nx">Mempool</span>
+	<span class="nx">evpool</span>     <span class="nx">sm</span><span class="p">.</span><span class="nx">EvidencePool</span>
+
+	<span class="c1">// 关于共识的内部状态
+</span><span class="c1"></span>	<span class="nx">mtx</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">RWMutex</span>
+	<span class="nx">cstypes</span><span class="p">.</span><span class="nx">RoundState</span>
+	<span class="nx">triggeredTimeoutPrecommit</span> <span class="kt">bool</span>
+	<span class="nx">state</span>                     <span class="nx">sm</span><span class="p">.</span><span class="nx">State</span> <span class="c1">// State until height-1.
+</span><span class="c1"></span>
+    <span class="c1">// 共识状态可能会受到一下三个更新改变，包括对等节点的消息，自身的变化以及超时
+</span><span class="c1"></span>	<span class="nx">peerMsgQueue</span>     <span class="kd">chan</span> <span class="nx">msgInfo</span>
+	<span class="nx">internalMsgQueue</span> <span class="kd">chan</span> <span class="nx">msgInfo</span>
+	<span class="nx">timeoutTicker</span>    <span class="nx">TimeoutTicker</span>
+
+	<span class="c1">// 状态信息队列
+</span><span class="c1"></span>	<span class="nx">statsMsgQueue</span> <span class="kd">chan</span> <span class="nx">msgInfo</span>
+
+	<span class="c1">// 事件通知器
+</span><span class="c1"></span>	<span class="nx">eventBus</span> <span class="o">*</span><span class="nx">types</span><span class="p">.</span><span class="nx">EventBus</span>
+
+	<span class="c1">// WAL，崩溃回复处理之类的
+</span><span class="c1"></span>	<span class="nx">wal</span>          <span class="nx">WAL</span>
+	<span class="nx">replayMode</span>   <span class="kt">bool</span> <span class="c1">// so we don&#39;t log signing errors during replay
+</span><span class="c1"></span>	<span class="nx">doWALCatchup</span> <span class="kt">bool</span> <span class="c1">// determines if we even try to do the catchup
+</span><span class="c1"></span>
+	<span class="c1">// for tests where we want to limit the number of transitions the state makes
+</span><span class="c1"></span>	<span class="nx">nSteps</span> <span class="kt">int</span>
+
+	<span class="c1">// some functions can be overwritten for testing
+</span><span class="c1"></span>	<span class="nx">decideProposal</span> <span class="kd">func</span><span class="p">(</span><span class="nx">height</span> <span class="kt">int64</span><span class="p">,</span> <span class="nx">round</span> <span class="kt">int</span><span class="p">)</span>
+	<span class="nx">doPrevote</span>      <span class="kd">func</span><span class="p">(</span><span class="nx">height</span> <span class="kt">int64</span><span class="p">,</span> <span class="nx">round</span> <span class="kt">int</span><span class="p">)</span>
+	<span class="nx">setProposal</span>    <span class="kd">func</span><span class="p">(</span><span class="nx">proposal</span> <span class="o">*</span><span class="nx">types</span><span class="p">.</span><span class="nx">Proposal</span><span class="p">)</span> <span class="kt">error</span>
+
+	<span class="c1">// closed when we finish shutting down
+</span><span class="c1"></span>	<span class="nx">done</span> <span class="kd">chan</span> <span class="kd">struct</span><span class="p">{}</span>
+
+	<span class="c1">// synchronous pubsub between consensus state and reactor.
+</span><span class="c1"></span>	<span class="c1">// state only emits EventNewRoundStep and EventVote
+</span><span class="c1"></span>	<span class="nx">evsw</span> <span class="nx">tmevents</span><span class="p">.</span><span class="nx">EventSwitch</span>
+
+	<span class="c1">// for reporting metrics
+</span><span class="c1"></span>	<span class="nx">metrics</span> <span class="o">*</span><span class="nx">Metrics</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>我们对部分变量进行了注释，共识主要是处理投票，提案，对信息达成一致，提交区块，和abci程序进行通信等功能。
+实现的功能挺多的，我们再仔细看一下怎么新建的共识。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">NewConsensusState</span><span class="p">(</span>
+	<span class="nx">config</span> <span class="o">*</span><span class="nx">cfg</span><span class="p">.</span><span class="nx">ConsensusConfig</span><span class="p">,</span>
+	<span class="nx">state</span> <span class="nx">sm</span><span class="p">.</span><span class="nx">State</span><span class="p">,</span>
+	<span class="nx">blockExec</span> <span class="o">*</span><span class="nx">sm</span><span class="p">.</span><span class="nx">BlockExecutor</span><span class="p">,</span>
+	<span class="nx">blockStore</span> <span class="nx">sm</span><span class="p">.</span><span class="nx">BlockStore</span><span class="p">,</span>
+	<span class="nx">mempool</span> <span class="nx">sm</span><span class="p">.</span><span class="nx">Mempool</span><span class="p">,</span>
+	<span class="nx">evpool</span> <span class="nx">sm</span><span class="p">.</span><span class="nx">EvidencePool</span><span class="p">,</span>
+	<span class="nx">options</span> <span class="o">...</span><span class="nx">StateOption</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">*</span><span class="nx">ConsensusState</span> <span class="p">{</span>
+	<span class="nx">cs</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">ConsensusState</span><span class="p">{</span>
+		<span class="nx">config</span><span class="p">:</span>           <span class="nx">config</span><span class="p">,</span>
+		<span class="nx">blockExec</span><span class="p">:</span>        <span class="nx">blockExec</span><span class="p">,</span>
+		<span class="nx">blockStore</span><span class="p">:</span>       <span class="nx">blockStore</span><span class="p">,</span>
+		<span class="nx">mempool</span><span class="p">:</span>          <span class="nx">mempool</span><span class="p">,</span>
+		<span class="nx">peerMsgQueue</span><span class="p">:</span>     <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="nx">msgInfo</span><span class="p">,</span> <span class="nx">msgQueueSize</span><span class="p">),</span>
+		<span class="nx">internalMsgQueue</span><span class="p">:</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="nx">msgInfo</span><span class="p">,</span> <span class="nx">msgQueueSize</span><span class="p">),</span>
+		<span class="nx">timeoutTicker</span><span class="p">:</span>    <span class="nf">NewTimeoutTicker</span><span class="p">(),</span>
+		<span class="nx">statsMsgQueue</span><span class="p">:</span>    <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="nx">msgInfo</span><span class="p">,</span> <span class="nx">msgQueueSize</span><span class="p">),</span>
+		<span class="nx">done</span><span class="p">:</span>             <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kd">struct</span><span class="p">{}),</span>
+		<span class="nx">doWALCatchup</span><span class="p">:</span>     <span class="kc">true</span><span class="p">,</span>
+		<span class="nx">wal</span><span class="p">:</span>              <span class="nx">nilWAL</span><span class="p">{},</span>
+		<span class="nx">evpool</span><span class="p">:</span>           <span class="nx">evpool</span><span class="p">,</span>
+		<span class="nx">evsw</span><span class="p">:</span>             <span class="nx">tmevents</span><span class="p">.</span><span class="nf">NewEventSwitch</span><span class="p">(),</span>
+		<span class="nx">metrics</span><span class="p">:</span>          <span class="nf">NopMetrics</span><span class="p">(),</span>
+	<span class="p">}</span>
+	<span class="c1">// set function defaults (may be overwritten before calling Start)
+</span><span class="c1"></span>	<span class="nx">cs</span><span class="p">.</span><span class="nx">decideProposal</span> <span class="p">=</span> <span class="nx">cs</span><span class="p">.</span><span class="nx">defaultDecideProposal</span>
+	<span class="nx">cs</span><span class="p">.</span><span class="nx">doPrevote</span> <span class="p">=</span> <span class="nx">cs</span><span class="p">.</span><span class="nx">defaultDoPrevote</span>
+	<span class="nx">cs</span><span class="p">.</span><span class="nx">setProposal</span> <span class="p">=</span> <span class="nx">cs</span><span class="p">.</span><span class="nx">defaultSetProposal</span>
+
+	<span class="nx">cs</span><span class="p">.</span><span class="nf">updateToState</span><span class="p">(</span><span class="nx">state</span><span class="p">)</span>
+
+	<span class="c1">// Don&#39;t call scheduleRound0 yet.
+</span><span class="c1"></span>	<span class="c1">// We do that upon Start().
+</span><span class="c1"></span>	<span class="nx">cs</span><span class="p">.</span><span class="nf">reconstructLastCommit</span><span class="p">(</span><span class="nx">state</span><span class="p">)</span>
+	<span class="nx">cs</span><span class="p">.</span><span class="nx">BaseService</span> <span class="p">=</span> <span class="o">*</span><span class="nx">cmn</span><span class="p">.</span><span class="nf">NewBaseService</span><span class="p">(</span><span class="kc">nil</span><span class="p">,</span> <span class="s">&#34;ConsensusState&#34;</span><span class="p">,</span> <span class="nx">cs</span><span class="p">)</span>
+	<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">option</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">options</span> <span class="p">{</span>
+		<span class="nf">option</span><span class="p">(</span><span class="nx">cs</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="nx">cs</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>里面有两个挺重要的函数，一个是把共识更新到当前状态，另一个事是建最后一次的提交。
+先看一下是如何更新到当前状态的</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">cs</span> <span class="o">*</span><span class="nx">ConsensusState</span><span class="p">)</span> <span class="nf">updateToState</span><span class="p">(</span><span class="nx">state</span> <span class="nx">sm</span><span class="p">.</span><span class="nx">State</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// 指定高度H和状态记录的高度不一致
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">cs</span><span class="p">.</span><span class="nx">CommitRound</span> <span class="p">&gt;</span> <span class="o">-</span><span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="mi">0</span> <span class="p">&lt;</span> <span class="nx">cs</span><span class="p">.</span><span class="nx">Height</span> <span class="o">&amp;&amp;</span> <span class="nx">cs</span><span class="p">.</span><span class="nx">Height</span> <span class="o">!=</span> <span class="nx">state</span><span class="p">.</span><span class="nx">LastBlockHeight</span> <span class="p">{</span>
+		<span class="nx">cmn</span><span class="p">.</span><span class="nf">PanicSanity</span><span class="p">(</span><span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">&#34;updateToState() expected state height of %v but found %v&#34;</span><span class="p">,</span>
+			<span class="nx">cs</span><span class="p">.</span><span class="nx">Height</span><span class="p">,</span> <span class="nx">state</span><span class="p">.</span><span class="nx">LastBlockHeight</span><span class="p">))</span>
+	<span class="p">}</span>
+	<span class="k">if</span> <span class="p">!</span><span class="nx">cs</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nf">IsEmpty</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="nx">cs</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">LastBlockHeight</span><span class="o">+</span><span class="mi">1</span> <span class="o">!=</span> <span class="nx">cs</span><span class="p">.</span><span class="nx">Height</span> <span class="p">{</span>
+		<span class="c1">// This might happen when someone else is mutating cs.state.
+</span><span class="c1"></span>		<span class="c1">// Someone forgot to pass in state.Copy() somewhere?!
+</span><span class="c1"></span>		<span class="nx">cmn</span><span class="p">.</span><span class="nf">PanicSanity</span><span class="p">(</span><span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">&#34;Inconsistent cs.state.LastBlockHeight+1 %v vs cs.Height %v&#34;</span><span class="p">,</span>
+			<span class="nx">cs</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">LastBlockHeight</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="nx">cs</span><span class="p">.</span><span class="nx">Height</span><span class="p">))</span>
+	<span class="p">}</span>
+
+	<span class="c1">// If state isn&#39;t further out than cs.state, just ignore.
+</span><span class="c1"></span>	<span class="c1">// This happens when SwitchToConsensus() is called in the reactor.
+</span><span class="c1"></span>	<span class="c1">// We don&#39;t want to reset e.g. the Votes, but we still want to
+</span><span class="c1"></span>	<span class="c1">// signal the new round step, because other services (eg. mempool)
+</span><span class="c1"></span>	<span class="c1">// depend on having an up-to-date peer state!
+</span><span class="c1"></span>	<span class="k">if</span> <span class="p">!</span><span class="nx">cs</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nf">IsEmpty</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">state</span><span class="p">.</span><span class="nx">LastBlockHeight</span> <span class="o">&lt;=</span> <span class="nx">cs</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">LastBlockHeight</span><span class="p">)</span> <span class="p">{</span>
+		<span class="nx">cs</span><span class="p">.</span><span class="nx">Logger</span><span class="p">.</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;Ignoring updateToState()&#34;</span><span class="p">,</span> <span class="s">&#34;newHeight&#34;</span><span class="p">,</span> <span class="nx">state</span><span class="p">.</span><span class="nx">LastBlockHeight</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#34;oldHeight&#34;</span><span class="p">,</span> <span class="nx">cs</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">LastBlockHeight</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+		<span class="nx">cs</span><span class="p">.</span><span class="nf">newStep</span><span class="p">()</span>
+		<span class="k">return</span>
+	<span class="p">}</span>
+
+	<span class="c1">// Reset fields based on state.
+</span><span class="c1"></span>	<span class="nx">validators</span> <span class="o">:=</span> <span class="nx">state</span><span class="p">.</span><span class="nx">Validators</span>
+	<span class="nx">lastPrecommits</span> <span class="o">:=</span> <span class="p">(</span><span class="o">*</span><span class="nx">types</span><span class="p">.</span><span class="nx">VoteSet</span><span class="p">)(</span><span class="kc">nil</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">cs</span><span class="p">.</span><span class="nx">CommitRound</span> <span class="p">&gt;</span> <span class="o">-</span><span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="nx">cs</span><span class="p">.</span><span class="nx">Votes</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">if</span> <span class="p">!</span><span class="nx">cs</span><span class="p">.</span><span class="nx">Votes</span><span class="p">.</span><span class="nf">Precommits</span><span class="p">(</span><span class="nx">cs</span><span class="p">.</span><span class="nx">CommitRound</span><span class="p">).</span><span class="nf">HasTwoThirdsMajority</span><span class="p">()</span> <span class="p">{</span>
+			<span class="nx">cmn</span><span class="p">.</span><span class="nf">PanicSanity</span><span class="p">(</span><span class="s">&#34;updateToState(state) called but last Precommit round didn&#39;t have +2/3&#34;</span><span class="p">)</span>
+		<span class="p">}</span>
+		<span class="nx">lastPrecommits</span> <span class="p">=</span> <span class="nx">cs</span><span class="p">.</span><span class="nx">Votes</span><span class="p">.</span><span class="nf">Precommits</span><span class="p">(</span><span class="nx">cs</span><span class="p">.</span><span class="nx">CommitRound</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="c1">// Next desired block height
+</span><span class="c1"></span>	<span class="nx">height</span> <span class="o">:=</span> <span class="nx">state</span><span class="p">.</span><span class="nx">LastBlockHeight</span> <span class="o">+</span> <span class="mi">1</span>
+
+	<span class="c1">// RoundState fields
+</span><span class="c1"></span>	<span class="nx">cs</span><span class="p">.</span><span class="nf">updateHeight</span><span class="p">(</span><span class="nx">height</span><span class="p">)</span>
+	<span class="nx">cs</span><span class="p">.</span><span class="nf">updateRoundStep</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nx">cstypes</span><span class="p">.</span><span class="nx">RoundStepNewHeight</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">cs</span><span class="p">.</span><span class="nx">CommitTime</span><span class="p">.</span><span class="nf">IsZero</span><span class="p">()</span> <span class="p">{</span>
+		<span class="c1">// &#34;Now&#34; makes it easier to sync up dev nodes.
+</span><span class="c1"></span>		<span class="c1">// We add timeoutCommit to allow transactions
+</span><span class="c1"></span>		<span class="c1">// to be gathered for the first block.
+</span><span class="c1"></span>		<span class="c1">// And alternative solution that relies on clocks:
+</span><span class="c1"></span>		<span class="c1">//  cs.StartTime = state.LastBlockTime.Add(timeoutCommit)
+</span><span class="c1"></span>		<span class="nx">cs</span><span class="p">.</span><span class="nx">StartTime</span> <span class="p">=</span> <span class="nx">cs</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nf">Commit</span><span class="p">(</span><span class="nx">tmtime</span><span class="p">.</span><span class="nf">Now</span><span class="p">())</span>
+	<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+		<span class="nx">cs</span><span class="p">.</span><span class="nx">StartTime</span> <span class="p">=</span> <span class="nx">cs</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nf">Commit</span><span class="p">(</span><span class="nx">cs</span><span class="p">.</span><span class="nx">CommitTime</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="nx">cs</span><span class="p">.</span><span class="nx">Validators</span> <span class="p">=</span> <span class="nx">validators</span>
+	<span class="nx">cs</span><span class="p">.</span><span class="nx">Proposal</span> <span class="p">=</span> <span class="kc">nil</span>
+	<span class="nx">cs</span><span class="p">.</span><span class="nx">ProposalBlock</span> <span class="p">=</span> <span class="kc">nil</span>
+	<span class="nx">cs</span><span class="p">.</span><span class="nx">ProposalBlockParts</span> <span class="p">=</span> <span class="kc">nil</span>
+	<span class="nx">cs</span><span class="p">.</span><span class="nx">LockedRound</span> <span class="p">=</span> <span class="o">-</span><span class="mi">1</span>
+	<span class="nx">cs</span><span class="p">.</span><span class="nx">LockedBlock</span> <span class="p">=</span> <span class="kc">nil</span>
+	<span class="nx">cs</span><span class="p">.</span><span class="nx">LockedBlockParts</span> <span class="p">=</span> <span class="kc">nil</span>
+	<span class="nx">cs</span><span class="p">.</span><span class="nx">ValidRound</span> <span class="p">=</span> <span class="o">-</span><span class="mi">1</span>
+	<span class="nx">cs</span><span class="p">.</span><span class="nx">ValidBlock</span> <span class="p">=</span> <span class="kc">nil</span>
+	<span class="nx">cs</span><span class="p">.</span><span class="nx">ValidBlockParts</span> <span class="p">=</span> <span class="kc">nil</span>
+	<span class="nx">cs</span><span class="p">.</span><span class="nx">Votes</span> <span class="p">=</span> <span class="nx">cstypes</span><span class="p">.</span><span class="nf">NewHeightVoteSet</span><span class="p">(</span><span class="nx">state</span><span class="p">.</span><span class="nx">ChainID</span><span class="p">,</span> <span class="nx">height</span><span class="p">,</span> <span class="nx">validators</span><span class="p">)</span>
+	<span class="nx">cs</span><span class="p">.</span><span class="nx">CommitRound</span> <span class="p">=</span> <span class="o">-</span><span class="mi">1</span>
+	<span class="nx">cs</span><span class="p">.</span><span class="nx">LastCommit</span> <span class="p">=</span> <span class="nx">lastPrecommits</span>
+	<span class="nx">cs</span><span class="p">.</span><span class="nx">LastValidators</span> <span class="p">=</span> <span class="nx">state</span><span class="p">.</span><span class="nx">LastValidators</span>
+
+	<span class="nx">cs</span><span class="p">.</span><span class="nx">state</span> <span class="p">=</span> <span class="nx">state</span>
+
+	<span class="c1">// Finally, broadcast RoundState
+</span><span class="c1"></span>	<span class="nx">cs</span><span class="p">.</span><span class="nf">newStep</span><span class="p">()</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>太难了，先放着</p>
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">Hundred</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2019-03-08 06:26
+        
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">许可协议</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/%E5%8C%BA%E5%9D%97%E9%93%BE/">区块链</a>
+          <a href="/tags/golang/">golang</a>
+          <a href="/tags/%E6%BA%90%E7%A0%81/">源码</a>
+          <a href="/tags/tendermint/">tendermint</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/Tendermint%E9%98%85%E8%AF%BBXI/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">Tendermint阅读XI</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/Tendermint%E9%98%85%E8%AF%BBIX/">
+            <span class="next-text nav-default">Tendermint阅读IX</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+  
+  
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="#" class="iconfont icon-cnblogs" title="cnblogs"></a>
+      <a href="mailto:sdwangzhuo@gmail.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/hundredwz" class="iconfont icon-github" title="github"></a>
+      <a href="#" class="iconfont icon-juejin" title="juejin"></a>
+      <a href="#" class="iconfont icon-v2ex" title="v2ex"></a>
+      <a href="https://weibo.com/hundredwz" class="iconfont icon-weibo" title="weibo"></a>
+  <a href="https://hundredwz.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2013 - 
+    2020
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Hundred</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.min.js" integrity="sha256-jwCP0NAdCBloaIWTWHmW4i3snUNMHUNO+jr9rYd2iOI=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.locales.min.js" integrity="sha256-ZwofwC1Lf/faQCzN7nZtfijVV6hSwxjQMwXL4gn9qU8=" crossorigin="anonymous"></script>
+  <script><!-- NOTE: timeago.js uses the language code format like "zh_CN" (underscore and case sensitive) -->
+    var languageCode = "zh-CN".replace(/-/g, '_').replace(/_(.*)/, function ($0, $1) {return $0.replace($1, $1.toUpperCase());});
+    timeago().render(document.querySelectorAll('.timeago'), languageCode);
+    timeago.cancel();  
+  </script>
+<script type="text/javascript" src="/dist/even.26188efa.min.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+      showProcessingMessages: false,
+      messageStyle: 'none'
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"  integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-138883536-1', 'auto');
+	ga('set', 'anonymizeIp', true);
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+
+
+
+
+</body>
+</html>

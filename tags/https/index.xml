@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>https on A Lazy Coder</title>
+    <link>https://hundredwz.github.io/tags/https/</link>
+    <description>Recent content in https on A Lazy Coder</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Fri, 02 Mar 2018 03:15:16 +0000</lastBuildDate>
+    
+	<atom:link href="https://hundredwz.github.io/tags/https/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>网站开启https</title>
+      <link>https://hundredwz.github.io/post/%E7%BD%91%E7%AB%99%E5%BC%80%E5%90%AFhttps/</link>
+      <pubDate>Fri, 02 Mar 2018 03:15:16 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/%E7%BD%91%E7%AB%99%E5%BC%80%E5%90%AFhttps/</guid>
+      <description>&lt;p&gt;最近看到别人的网站都是https的小绿锁了，有些羡慕，就想着跟着安装下吧。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

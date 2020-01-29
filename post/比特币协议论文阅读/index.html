@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>比特币协议论文阅读 - A Lazy Coder</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="Hundred" /><meta name="description" content="前一阵出差了一趟，这几天把Garay的The Bitcoin Backbone Protocol:Analysis and Applications读完了，有了些新的收获。
+" /><meta name="keywords" content="Blockchain, Golang, Fabric, Ethereum, Code" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.56.1 with even 4.0.0" />
+
+
+<link rel="canonical" href="https://hundredwz.github.io/post/%E6%AF%94%E7%89%B9%E5%B8%81%E5%8D%8F%E8%AE%AE%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<link href="/dist/even.c2a46f00.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+<link rel="stylesheet" href="/css/reset-even.css">
+
+
+<meta property="og:title" content="比特币协议论文阅读" />
+<meta property="og:description" content="前一阵出差了一趟，这几天把Garay的The Bitcoin Backbone Protocol:Analysis and Applications读完了，有了些新的收获。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://hundredwz.github.io/post/%E6%AF%94%E7%89%B9%E5%B8%81%E5%8D%8F%E8%AE%AE%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/" />
+<meta property="article:published_time" content="2018-06-13T06:16:28+00:00" />
+<meta property="article:modified_time" content="2018-06-13T06:16:28+00:00" />
+<meta itemprop="name" content="比特币协议论文阅读">
+<meta itemprop="description" content="前一阵出差了一趟，这几天把Garay的The Bitcoin Backbone Protocol:Analysis and Applications读完了，有了些新的收获。">
+
+
+<meta itemprop="datePublished" content="2018-06-13T06:16:28&#43;00:00" />
+<meta itemprop="dateModified" content="2018-06-13T06:16:28&#43;00:00" />
+<meta itemprop="wordCount" content="961">
+
+
+
+<meta itemprop="keywords" content="区块链,论文,比特币,协议," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="比特币协议论文阅读"/>
+<meta name="twitter:description" content="前一阵出差了一趟，这几天把Garay的The Bitcoin Backbone Protocol:Analysis and Applications读完了，有了些新的收获。"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">A Lazy Coder</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">首页</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">归档</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">分类</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/friends/">
+        <li class="mobile-menu-item">Friends</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">A Lazy Coder</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">首页</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">归档</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">分类</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/friends/">Friends</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">比特币协议论文阅读</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2018-06-13 06:16 </span>
+        <div class="post-category">
+            <a href="/categories/essay/"> essay </a>
+            </div>
+          <span class="more-meta"> 约 961 字 </span>
+          <span class="more-meta"> 预计阅读 2 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#符号定义">符号定义</a></li>
+<li><a href="#common-prefix">common prefix</a></li>
+<li><a href="#chain-quality">chain quality</a></li>
+<li><a href="#账本属性">账本属性</a></li>
+<li><a href="#三个算法">三个算法</a></li>
+<li><a href="#其他">其他</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+  </div>
+</div>
+  <div class="post-outdated">
+    <div class="hint">
+      <p>【注意】最后更新于 <span class="timeago" datetime="2018-06-13T06:16:28" title="June 13, 2018">June 13, 2018</span>，文中内容可能已过时，请谨慎使用。</p>
+    </div>
+  </div>
+    <div class="post-content">
+      <p>前一阵出差了一趟，这几天把Garay的The Bitcoin Backbone Protocol:Analysis and Applications读完了，有了些新的收获。</p>
+
+<p>在我们之前的文章中，实际上好多的名词或者定义都可以认为是从这篇文章借鉴过来的。我有些概念看完之后依然不是非常理解，先记录下一些印象比较深刻的内容吧。</p>
+
+<h3 id="符号定义">符号定义</h3>
+
+<ol>
+<li>$\gamma$ 就是指诚实节点所具有的的算力</li>
+<li>$\beta$ 是指恶意节点所具有的的算力</li>
+<li>$f$ 指的是计算出问题所需要的次数（占整体算力的比例）</li>
+</ol>
+
+<h3 id="common-prefix">common prefix</h3>
+
+<p>前缀属性，就是指我除去了$\lambda$个最后面的区块后，不同节点间的链的内容是一致的
+假设$\gamma &gt; \lambda \beta$,然后$\lambda^{2}-f\lambda+1\ge 1$,其中$\lambda \in [1,\infty)$，这样诚实节点会拥有一样的前缀。
+如果$f\to 0$，也就是说$\lambda \gets 1$，就是说不需要什么计算就可以得到结果，那么诚实节点和恶意节点的比例几乎相同
+如果$f\to 1$，根据证明$\lambda \gets \phi$，实际上意思就是说恶意节点几乎没有。</p>
+
+<h3 id="chain-quality">chain quality</h3>
+
+<p>就是指所有的区块中，由诚实节点所产生的区块的数目，根据在common prefix定义的内容，我们可以知道诚实节点贡献的区块的数目至少是$(1-\frac{1}{\lambda})$，所以我们就知道，在实际系统中$\lambda$越大越好</p>
+
+<h3 id="账本属性">账本属性</h3>
+
+<p>我们定义了两个基本属性，保证了账本的两个基本属性persistence和liveness
+这两个和common prefix与chain quality是有联系的，大体对应关系就是common prefix对应persistence,chain quality对应liveness
+persistence的含义是指一个交易所在的区块后面有了$k$个区块，这笔交易一定会被所有诚实节点承认。
+liveness是指如果一笔交易由诚实节点生成，那么$k$个区块之后，这笔交易一定能够记录下来。</p>
+
+<h3 id="三个算法">三个算法</h3>
+
+<p>定义了账本的基础属性后，论文还对区块链的核心算法进行了理论上的归纳总结。分别是Chain Validation、Chain Comparison以及Proof of Work。
+这三个算法实际上和我们理解的常见的算法内容是一样的，只是更加学术，然后对于后面的理论比较容易应用。</p>
+
+<h3 id="其他">其他</h3>
+
+<p>论文还对一些其他的内容进行了讲解，我还有些头大，以后再看一遍论文说不定就理解啦。</p>
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">Hundred</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2018-06-13 06:16
+        
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">许可协议</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/%E5%8C%BA%E5%9D%97%E9%93%BE/">区块链</a>
+          <a href="/tags/%E8%AE%BA%E6%96%87/">论文</a>
+          <a href="/tags/%E6%AF%94%E7%89%B9%E5%B8%81/">比特币</a>
+          <a href="/tags/%E5%8D%8F%E8%AE%AE/">协议</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/golang%E8%AF%BB%E5%8F%96mysql%E4%B8%ADdatetime%E6%A0%BC%E5%BC%8F/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">golang读取mysql中datetime格式</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/%E6%B7%B7%E5%90%88%E5%85%B1%E8%AF%86Pass%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">
+            <span class="next-text nav-default">混合共识Pass论文阅读</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+  
+  
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="#" class="iconfont icon-cnblogs" title="cnblogs"></a>
+      <a href="mailto:sdwangzhuo@gmail.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/hundredwz" class="iconfont icon-github" title="github"></a>
+      <a href="#" class="iconfont icon-juejin" title="juejin"></a>
+      <a href="#" class="iconfont icon-v2ex" title="v2ex"></a>
+      <a href="https://weibo.com/hundredwz" class="iconfont icon-weibo" title="weibo"></a>
+  <a href="https://hundredwz.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2013 - 
+    2020
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Hundred</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.min.js" integrity="sha256-jwCP0NAdCBloaIWTWHmW4i3snUNMHUNO+jr9rYd2iOI=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.locales.min.js" integrity="sha256-ZwofwC1Lf/faQCzN7nZtfijVV6hSwxjQMwXL4gn9qU8=" crossorigin="anonymous"></script>
+  <script><!-- NOTE: timeago.js uses the language code format like "zh_CN" (underscore and case sensitive) -->
+    var languageCode = "zh-CN".replace(/-/g, '_').replace(/_(.*)/, function ($0, $1) {return $0.replace($1, $1.toUpperCase());});
+    timeago().render(document.querySelectorAll('.timeago'), languageCode);
+    timeago.cancel();  
+  </script>
+<script type="text/javascript" src="/dist/even.26188efa.min.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+      showProcessingMessages: false,
+      messageStyle: 'none'
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"  integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-138883536-1', 'auto');
+	ga('set', 'anonymizeIp', true);
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+
+
+
+
+</body>
+</html>

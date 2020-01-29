@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>fabric源码阅读6：fabric数据库I - A Lazy Coder</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="Hundred" /><meta name="description" content="在上篇文章:fabric启动II中，我们大体上说到了peer的大体启动流程，但是并没有深入进去，现在我们追随node start的脚步继续探索。
+" /><meta name="keywords" content="Blockchain, Golang, Fabric, Ethereum, Code" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.56.1 with even 4.0.0" />
+
+
+<link rel="canonical" href="https://hundredwz.github.io/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB6fabric%E6%95%B0%E6%8D%AE%E5%BA%93I/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<link href="/dist/even.c2a46f00.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+<link rel="stylesheet" href="/css/reset-even.css">
+
+
+<meta property="og:title" content="fabric源码阅读6：fabric数据库I" />
+<meta property="og:description" content="在上篇文章:fabric启动II中，我们大体上说到了peer的大体启动流程，但是并没有深入进去，现在我们追随node start的脚步继续探索。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://hundredwz.github.io/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB6fabric%E6%95%B0%E6%8D%AE%E5%BA%93I/" />
+<meta property="article:published_time" content="2017-11-21T07:47:00+00:00" />
+<meta property="article:modified_time" content="2017-11-21T07:47:00+00:00" />
+<meta itemprop="name" content="fabric源码阅读6：fabric数据库I">
+<meta itemprop="description" content="在上篇文章:fabric启动II中，我们大体上说到了peer的大体启动流程，但是并没有深入进去，现在我们追随node start的脚步继续探索。">
+
+
+<meta itemprop="datePublished" content="2017-11-21T07:47:00&#43;00:00" />
+<meta itemprop="dateModified" content="2017-11-21T07:47:00&#43;00:00" />
+<meta itemprop="wordCount" content="1865">
+
+
+
+<meta itemprop="keywords" content="fabric,go,leveldb," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="fabric源码阅读6：fabric数据库I"/>
+<meta name="twitter:description" content="在上篇文章:fabric启动II中，我们大体上说到了peer的大体启动流程，但是并没有深入进去，现在我们追随node start的脚步继续探索。"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">A Lazy Coder</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">首页</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">归档</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">分类</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/friends/">
+        <li class="mobile-menu-item">Friends</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">A Lazy Coder</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">首页</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">归档</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">分类</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/friends/">Friends</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">fabric源码阅读6：fabric数据库I</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2017-11-21 07:47 </span>
+        <div class="post-category">
+            <a href="/categories/program/"> program </a>
+            </div>
+          <span class="more-meta"> 约 1865 字 </span>
+          <span class="more-meta"> 预计阅读 4 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+<ul>
+<li><a href="#前言">前言</a></li>
+<li><a href="#ledger">ledger</a></li>
+<li><a href="#provider">provider</a>
+<ul>
+<li>
+<ul>
+<li><a href="#idstore">idStore</a></li>
+<li><a href="#blockstoreprovider">blockStoreProvider</a></li>
+<li><a href="#vdbprovider">vdbProvider</a></li>
+<li><a href="#historydbprovider">historydbProvider</a></li>
+<li><a href="#生成对象">生成对象</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#小结">小结</a></li>
+</ul>
+</nav>
+  </div>
+</div>
+  <div class="post-outdated">
+    <div class="warn">
+      <p>【注意】最后更新于 <span class="timeago" datetime="2017-11-21T07:47:00" title="November 21, 2017">November 21, 2017</span>，文中内容可能已过时，请谨慎使用。</p>
+    </div>
+  </div>
+    <div class="post-content">
+      <p>在上篇文章:<a href="http://txiner.top/program/30.html">fabric启动II</a>中，我们大体上说到了peer的大体启动流程，但是并没有深入进去，现在我们追随<code>node start</code>的脚步继续探索。</p>
+
+<h1 id="前言">前言</h1>
+
+<p>这篇不是侧重于fabric的启动，而是数据库的创建与应用，因为内容太多了。启动到时候再分一篇文章来说。
+在<code>peer/node/start.go</code>中是这么创建对应的start指令</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">var</span> <span class="nx">nodeStartCmd</span> <span class="p">=</span> <span class="o">&amp;</span><span class="nx">cobra</span><span class="p">.</span><span class="nx">Command</span><span class="p">{</span>
+	<span class="nx">Use</span><span class="p">:</span>   <span class="s">&#34;start&#34;</span><span class="p">,</span>
+	<span class="nx">Short</span><span class="p">:</span> <span class="s">&#34;Starts the node.&#34;</span><span class="p">,</span>
+	<span class="nx">Long</span><span class="p">:</span>  <span class="s">`Starts a node that interacts with the network.`</span><span class="p">,</span>
+	<span class="nx">RunE</span><span class="p">:</span> <span class="kd">func</span><span class="p">(</span><span class="nx">cmd</span> <span class="o">*</span><span class="nx">cobra</span><span class="p">.</span><span class="nx">Command</span><span class="p">,</span> <span class="nx">args</span> <span class="p">[]</span><span class="kt">string</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nf">serve</span><span class="p">(</span><span class="nx">args</span><span class="p">)</span>
+	<span class="p">},</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>可以看到，会调用serve函数，这个函数第二句话就是</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">ledgermgmt</span><span class="p">.</span><span class="nf">Initialize</span><span class="p">()</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>这个就得进去看了。</p>
+
+<h1 id="ledger">ledger</h1>
+
+<p>通过import很容易找到对应的文件是<code>core/ledger/ledgermgmt/ledger_mgmt.go</code>文件，只执行了一次，使用了锁进行初始化。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">initialize</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">logger</span><span class="p">.</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;Initializing ledger mgmt&#34;</span><span class="p">)</span>
+	<span class="nx">lock</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
+	<span class="k">defer</span> <span class="nx">lock</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+	<span class="nx">initialized</span> <span class="p">=</span> <span class="kc">true</span>
+	<span class="nx">openedLedgers</span> <span class="p">=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="nx">ledger</span><span class="p">.</span><span class="nx">PeerLedger</span><span class="p">)</span>
+	<span class="nx">provider</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">kvledger</span><span class="p">.</span><span class="nf">NewProvider</span><span class="p">()</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nb">panic</span><span class="p">(</span><span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;Error in instantiating ledger provider: %s&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">))</span>
+	<span class="p">}</span>
+	<span class="nx">ledgerProvider</span> <span class="p">=</span> <span class="nx">provider</span>
+	<span class="nx">logger</span><span class="p">.</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;ledger mgmt initialized&#34;</span><span class="p">)</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>现在就来分析下吧。首先，初始化变量<code>initialized</code>为<code>true</code>，记录已经初始化了。然后为<code>openedLedgers</code>创建了一个map映射，应该是账本美容与什么的映射关系。最后创建了一个provider，提供对数据库的操作。
+重点来了！！！
+除了provider都是直接在这初始化了，看看provider是怎么创建的呗！</p>
+
+<h1 id="provider">provider</h1>
+
+<p>这段代码比较长，分开来看
+函数体是</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">NewProvider</span><span class="p">()</span> <span class="p">(</span><span class="nx">ledger</span><span class="p">.</span><span class="nx">PeerLedgerProvider</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>不需要参数，返回一个PeerLedgerProvider是一个接口</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">PeerLedgerProvider</span> <span class="kd">interface</span> <span class="p">{</span>	
+
+	<span class="nf">Create</span><span class="p">(</span><span class="nx">genesisBlock</span> <span class="o">*</span><span class="nx">common</span><span class="p">.</span><span class="nx">Block</span><span class="p">)</span> <span class="p">(</span><span class="nx">PeerLedger</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+
+	<span class="nf">Open</span><span class="p">(</span><span class="nx">ledgerID</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="nx">PeerLedger</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+
+	<span class="nf">Exists</span><span class="p">(</span><span class="nx">ledgerID</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="kt">bool</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+
+	<span class="nf">List</span><span class="p">()</span> <span class="p">([]</span><span class="kt">string</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+
+	<span class="nf">Close</span><span class="p">()</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>实现这几个方法就可以。很好，根据最后面的return，返回的就是本文件中的<code>Provider</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Provider</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">idStore</span>            <span class="o">*</span><span class="nx">idStore</span>
+	<span class="nx">blockStoreProvider</span> <span class="nx">blkstorage</span><span class="p">.</span><span class="nx">BlockStoreProvider</span>
+	<span class="nx">vdbProvider</span>        <span class="nx">statedb</span><span class="p">.</span><span class="nx">VersionedDBProvider</span>
+	<span class="nx">historydbProvider</span>  <span class="nx">historydb</span><span class="p">.</span><span class="nx">HistoryDBProvider</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>这里面的都是对应的变量，对不同的数据库进行操作。
+1. <code>idSore</code>是记录的账本的id，对不同的数据库操作都需要输入ID才能找到
+2. <code>blockStoreProvider</code>就是咱们的核心了，区块的数据库操作
+3. <code>vdbProvider</code>是fabric相关的状态数据库
+4. <code>historydbProvider</code>是历史状态数据库</p>
+
+<h3 id="idstore">idStore</h3>
+
+<p>函数内容第一句是</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">idStore</span> <span class="o">:=</span> <span class="nf">openIDStore</span><span class="p">(</span><span class="nx">ledgerconfig</span><span class="p">.</span><span class="nf">GetLedgerProviderPath</span><span class="p">())</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>就是创建这个Id数据库。
+先看下提供的这个<code>GetLedgerProviderPath</code>。
+最终这计划就是执行的</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">GetRootPath</span><span class="p">()</span> <span class="kt">string</span> <span class="p">{</span>
+	<span class="nx">sysPath</span> <span class="o">:=</span> <span class="nx">config</span><span class="p">.</span><span class="nf">GetPath</span><span class="p">(</span><span class="s">&#34;peer.fileSystemPath&#34;</span><span class="p">)</span>
+	<span class="k">return</span> <span class="nx">filepath</span><span class="p">.</span><span class="nf">Join</span><span class="p">(</span><span class="nx">sysPath</span><span class="p">,</span> <span class="s">&#34;ledgersData&#34;</span><span class="p">)</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>我们在上一篇中说过了viper的相关内容。会最后到core.yaml文件中查找<code>peer.fileSystemPath</code>。但是直接查找是找不到的，为何？
+因为viper在初始化的时候设置了<code>SetEnvPrefix(cmdRoot)</code>会自动追加前缀，找到了文件路径是<code>/var/hyperledger/production/ledgerData/ledgerProvider</code>这个路径下面。</p>
+
+<h3 id="blockstoreprovider">blockStoreProvider</h3>
+
+<p>这个首先创建了一堆属性</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go">	<span class="nx">attrsToIndex</span> <span class="o">:=</span> <span class="p">[]</span><span class="nx">blkstorage</span><span class="p">.</span><span class="nx">IndexableAttr</span><span class="p">{</span>
+		<span class="nx">blkstorage</span><span class="p">.</span><span class="nx">IndexableAttrBlockHash</span><span class="p">,</span>
+		<span class="nx">blkstorage</span><span class="p">.</span><span class="nx">IndexableAttrBlockNum</span><span class="p">,</span>
+		<span class="nx">blkstorage</span><span class="p">.</span><span class="nx">IndexableAttrTxID</span><span class="p">,</span>
+		<span class="nx">blkstorage</span><span class="p">.</span><span class="nx">IndexableAttrBlockNumTranNum</span><span class="p">,</span>
+		<span class="nx">blkstorage</span><span class="p">.</span><span class="nx">IndexableAttrBlockTxID</span><span class="p">,</span>
+		<span class="nx">blkstorage</span><span class="p">.</span><span class="nx">IndexableAttrTxValidationCode</span><span class="p">,</span>
+	<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>这几个变量都是写死的变量内容。就是这几个内容</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// IndexableAttr represents an indexable attribute
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">IndexableAttr</span> <span class="kt">string</span>
+
+<span class="c1">// constants for indexable attributes
+</span><span class="c1"></span><span class="kd">const</span> <span class="p">(</span>
+	<span class="nx">IndexableAttrBlockNum</span>         <span class="p">=</span> <span class="nf">IndexableAttr</span><span class="p">(</span><span class="s">&#34;BlockNum&#34;</span><span class="p">)</span>
+	<span class="nx">IndexableAttrBlockHash</span>        <span class="p">=</span> <span class="nf">IndexableAttr</span><span class="p">(</span><span class="s">&#34;BlockHash&#34;</span><span class="p">)</span>
+	<span class="nx">IndexableAttrTxID</span>             <span class="p">=</span> <span class="nf">IndexableAttr</span><span class="p">(</span><span class="s">&#34;TxID&#34;</span><span class="p">)</span>
+	<span class="nx">IndexableAttrBlockNumTranNum</span>  <span class="p">=</span> <span class="nf">IndexableAttr</span><span class="p">(</span><span class="s">&#34;BlockNumTranNum&#34;</span><span class="p">)</span>
+	<span class="nx">IndexableAttrBlockTxID</span>        <span class="p">=</span> <span class="nf">IndexableAttr</span><span class="p">(</span><span class="s">&#34;BlockTxID&#34;</span><span class="p">)</span>
+	<span class="nx">IndexableAttrTxValidationCode</span> <span class="p">=</span> <span class="nf">IndexableAttr</span><span class="p">(</span><span class="s">&#34;TxValidationCode&#34;</span><span class="p">)</span>
+<span class="p">)</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>就是写到数据库的字段吧。没有太多好说的。
+然后就是创建具体的<code>provider</code>了。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go">	<span class="nx">indexConfig</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">blkstorage</span><span class="p">.</span><span class="nx">IndexConfig</span><span class="p">{</span><span class="nx">AttrsToIndex</span><span class="p">:</span> <span class="nx">attrsToIndex</span><span class="p">}</span>
+	<span class="nx">blockStoreProvider</span> <span class="o">:=</span> <span class="nx">fsblkstorage</span><span class="p">.</span><span class="nf">NewProvider</span><span class="p">(</span>
+		<span class="nx">fsblkstorage</span><span class="p">.</span><span class="nf">NewConf</span><span class="p">(</span><span class="nx">ledgerconfig</span><span class="p">.</span><span class="nf">GetBlockStorePath</span><span class="p">(),</span> <span class="nx">ledgerconfig</span><span class="p">.</span><span class="nf">GetMaxBlockfileSize</span><span class="p">()),</span>
+		<span class="nx">indexConfig</span><span class="p">)</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>乍一看，很乱。实际一看 ，还是很乱。
+<code>indexConfig</code>就是一个结构体变量，存储这些字段。
+下面这一句是创建具体的provider了。<code>NewConf</code>传入了两个参数，一个是存储的路径，讨论<code>idStore</code>的时候就说过方法了，区块的大小可以查看到是64M。所以啊！你想往区块写太多数据还是做不到的。
+具体的<code>provider</code>是这个内容</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">FsBlockstoreProvider</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">conf</span>            <span class="o">*</span><span class="nx">Conf</span>
+	<span class="nx">indexConfig</span>     <span class="o">*</span><span class="nx">blkstorage</span><span class="p">.</span><span class="nx">IndexConfig</span>
+	<span class="nx">leveldbProvider</span> <span class="o">*</span><span class="nx">leveldbhelper</span><span class="p">.</span><span class="nx">Provider</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>后面我们也会发现，剩下的provider也会有这个<code>leveldbProvider</code>.实质上就是一个对应自己的内容+操作数据库。</p>
+
+<h3 id="vdbprovider">vdbProvider</h3>
+
+<p>这个是状态数据库</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go">	<span class="kd">var</span> <span class="nx">vdbProvider</span> <span class="nx">statedb</span><span class="p">.</span><span class="nx">VersionedDBProvider</span>
+	<span class="k">if</span> <span class="p">!</span><span class="nx">ledgerconfig</span><span class="p">.</span><span class="nf">IsCouchDBEnabled</span><span class="p">()</span> <span class="p">{</span>
+		<span class="nx">logger</span><span class="p">.</span><span class="nf">Debug</span><span class="p">(</span><span class="s">&#34;Constructing leveldb VersionedDBProvider&#34;</span><span class="p">)</span>
+		<span class="nx">vdbProvider</span> <span class="p">=</span> <span class="nx">stateleveldb</span><span class="p">.</span><span class="nf">NewVersionedDBProvider</span><span class="p">()</span>
+	<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+		<span class="nx">logger</span><span class="p">.</span><span class="nf">Debug</span><span class="p">(</span><span class="s">&#34;Constructing CouchDB VersionedDBProvider&#34;</span><span class="p">)</span>
+		<span class="kd">var</span> <span class="nx">err</span> <span class="kt">error</span>
+		<span class="nx">vdbProvider</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">statecouchdb</span><span class="p">.</span><span class="nf">NewVersionedDBProvider</span><span class="p">()</span>
+		<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
+		<span class="p">}</span>
+	<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>提供了两种存储结构，一个是couchDB，一个是levelDB，我们就继续用levelDB进行分析。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">NewVersionedDBProvider</span><span class="p">()</span> <span class="o">*</span><span class="nx">VersionedDBProvider</span> <span class="p">{</span>
+	<span class="nx">dbPath</span> <span class="o">:=</span> <span class="nx">ledgerconfig</span><span class="p">.</span><span class="nf">GetStateLevelDBPath</span><span class="p">()</span>
+	<span class="nx">logger</span><span class="p">.</span><span class="nf">Debugf</span><span class="p">(</span><span class="s">&#34;constructing VersionedDBProvider dbPath=%s&#34;</span><span class="p">,</span> <span class="nx">dbPath</span><span class="p">)</span>
+	<span class="nx">dbProvider</span> <span class="o">:=</span> <span class="nx">leveldbhelper</span><span class="p">.</span><span class="nf">NewProvider</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">leveldbhelper</span><span class="p">.</span><span class="nx">Conf</span><span class="p">{</span><span class="nx">DBPath</span><span class="p">:</span> <span class="nx">dbPath</span><span class="p">})</span>
+	<span class="k">return</span> <span class="o">&amp;</span><span class="nx">VersionedDBProvider</span><span class="p">{</span><span class="nx">dbProvider</span><span class="p">}</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>这个就一个内容，对levelDB的操作提供者。</p>
+
+<h3 id="historydbprovider">historydbProvider</h3>
+
+<p>这个内容跟<code>vdbProvider</code>内容很像，都是从配置文件中读取数据库的存储位置，然后生成操作对象，返还回去。没有太多可以分析的。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">NewHistoryDBProvider</span><span class="p">()</span> <span class="o">*</span><span class="nx">HistoryDBProvider</span> <span class="p">{</span>
+	<span class="nx">dbPath</span> <span class="o">:=</span> <span class="nx">ledgerconfig</span><span class="p">.</span><span class="nf">GetHistoryLevelDBPath</span><span class="p">()</span>
+	<span class="nx">logger</span><span class="p">.</span><span class="nf">Debugf</span><span class="p">(</span><span class="s">&#34;constructing HistoryDBProvider dbPath=%s&#34;</span><span class="p">,</span> <span class="nx">dbPath</span><span class="p">)</span>
+	<span class="nx">dbProvider</span> <span class="o">:=</span> <span class="nx">leveldbhelper</span><span class="p">.</span><span class="nf">NewProvider</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">leveldbhelper</span><span class="p">.</span><span class="nx">Conf</span><span class="p">{</span><span class="nx">DBPath</span><span class="p">:</span> <span class="nx">dbPath</span><span class="p">})</span>
+	<span class="k">return</span> <span class="o">&amp;</span><span class="nx">HistoryDBProvider</span><span class="p">{</span><span class="nx">dbProvider</span><span class="p">}</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<h3 id="生成对象">生成对象</h3>
+
+<p>以上四个类型的数据库都有了，就是合并到<code>provider</code>中，然后返回就好了。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">provider</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">Provider</span><span class="p">{</span><span class="nx">idStore</span><span class="p">,</span> <span class="nx">blockStoreProvider</span><span class="p">,</span> <span class="nx">vdbProvider</span><span class="p">,</span> <span class="nx">historydbProvider</span><span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>等等！还有一句话</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">provider</span><span class="p">.</span><span class="nf">recoverUnderConstructionLedger</span><span class="p">()</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>这句话是干什么的？
+这个就是担心在创建过程中，由于突发原因，导致创建中断了。就把数据内容恢复出来。</p>
+
+<h1 id="小结">小结</h1>
+
+<p>本文主要分析了数据库的启动过程，还有很多没有看到，等后续的分析把。</p>
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">Hundred</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2017-11-21 07:47
+        
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">许可协议</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/fabric/">fabric</a>
+          <a href="/tags/go/">go</a>
+          <a href="/tags/leveldb/">leveldb</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB7fabric%E7%9A%84%E5%90%AF%E5%8A%A8III/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">fabric源码阅读7：fabric的启动III</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB5fabric%E5%90%AF%E5%8A%A8II/">
+            <span class="next-text nav-default">fabric源码阅读5:fabric启动II</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+  
+  
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="#" class="iconfont icon-cnblogs" title="cnblogs"></a>
+      <a href="mailto:sdwangzhuo@gmail.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/hundredwz" class="iconfont icon-github" title="github"></a>
+      <a href="#" class="iconfont icon-juejin" title="juejin"></a>
+      <a href="#" class="iconfont icon-v2ex" title="v2ex"></a>
+      <a href="https://weibo.com/hundredwz" class="iconfont icon-weibo" title="weibo"></a>
+  <a href="https://hundredwz.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2013 - 
+    2020
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Hundred</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.min.js" integrity="sha256-jwCP0NAdCBloaIWTWHmW4i3snUNMHUNO+jr9rYd2iOI=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.locales.min.js" integrity="sha256-ZwofwC1Lf/faQCzN7nZtfijVV6hSwxjQMwXL4gn9qU8=" crossorigin="anonymous"></script>
+  <script><!-- NOTE: timeago.js uses the language code format like "zh_CN" (underscore and case sensitive) -->
+    var languageCode = "zh-CN".replace(/-/g, '_').replace(/_(.*)/, function ($0, $1) {return $0.replace($1, $1.toUpperCase());});
+    timeago().render(document.querySelectorAll('.timeago'), languageCode);
+    timeago.cancel();  
+  </script>
+<script type="text/javascript" src="/dist/even.26188efa.min.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+      showProcessingMessages: false,
+      messageStyle: 'none'
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"  integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-138883536-1', 'auto');
+	ga('set', 'anonymizeIp', true);
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+
+
+
+
+</body>
+</html>

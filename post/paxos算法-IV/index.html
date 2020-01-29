@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>paxos算法 IV - A Lazy Coder</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="Hundred" /><meta name="description" content="上一篇我们说到了paxos协议的初始协议，可以满足paxos的三大定理。但是依然具有很大的弊端。所以Paxon人民砥砺前进，再创辉煌。
+" /><meta name="keywords" content="Blockchain, Golang, Fabric, Ethereum, Code" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.56.1 with even 4.0.0" />
+
+
+<link rel="canonical" href="https://hundredwz.github.io/post/paxos%E7%AE%97%E6%B3%95-IV/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<link href="/dist/even.c2a46f00.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+<link rel="stylesheet" href="/css/reset-even.css">
+
+
+<meta property="og:title" content="paxos算法 IV" />
+<meta property="og:description" content="上一篇我们说到了paxos协议的初始协议，可以满足paxos的三大定理。但是依然具有很大的弊端。所以Paxon人民砥砺前进，再创辉煌。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://hundredwz.github.io/post/paxos%E7%AE%97%E6%B3%95-IV/" />
+<meta property="article:published_time" content="2018-01-17T08:47:00+00:00" />
+<meta property="article:modified_time" content="2018-01-17T08:47:00+00:00" />
+<meta itemprop="name" content="paxos算法 IV">
+<meta itemprop="description" content="上一篇我们说到了paxos协议的初始协议，可以满足paxos的三大定理。但是依然具有很大的弊端。所以Paxon人民砥砺前进，再创辉煌。">
+
+
+<meta itemprop="datePublished" content="2018-01-17T08:47:00&#43;00:00" />
+<meta itemprop="dateModified" content="2018-01-17T08:47:00&#43;00:00" />
+<meta itemprop="wordCount" content="1691">
+
+
+
+<meta itemprop="keywords" content="paxos,分布式," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="paxos算法 IV"/>
+<meta name="twitter:description" content="上一篇我们说到了paxos协议的初始协议，可以满足paxos的三大定理。但是依然具有很大的弊端。所以Paxon人民砥砺前进，再创辉煌。"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">A Lazy Coder</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">首页</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">归档</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">分类</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/friends/">
+        <li class="mobile-menu-item">Friends</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">A Lazy Coder</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">首页</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">归档</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">分类</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/friends/">Friends</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">paxos算法 IV</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2018-01-17 08:47 </span>
+        <div class="post-category">
+            <a href="/categories/program/"> program </a>
+            </div>
+          <span class="more-meta"> 约 1691 字 </span>
+          <span class="more-meta"> 预计阅读 4 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#基本协议">基本协议</a>
+<ul>
+<li><a href="#介绍">介绍</a></li>
+<li><a href="#过程">过程</a>
+<ul>
+<li><a href="#第一步">第一步</a></li>
+<li><a href="#第二步">第二步</a></li>
+<li><a href="#第三步">第三步</a></li>
+<li><a href="#第四步">第四步</a></li>
+<li><a href="#第五步">第五步</a></li>
+<li><a href="#第六步">第六步</a></li>
+</ul></li>
+<li><a href="#结论">结论</a></li>
+</ul></li>
+<li><a href="#完整协议">完整协议</a>
+<ul>
+<li><a href="#ballot创建">ballot创建</a></li>
+<li><a href="#leader的选举">leader的选举</a></li>
+<li><a href="#结论-1">结论</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+  </div>
+</div>
+  <div class="post-outdated">
+    <div class="warn">
+      <p>【注意】最后更新于 <span class="timeago" datetime="2018-01-17T08:47:00" title="January 17, 2018">January 17, 2018</span>，文中内容可能已过时，请谨慎使用。</p>
+    </div>
+  </div>
+    <div class="post-content">
+      <p>上一篇我们说到了paxos协议的初始协议，可以满足paxos的三大定理。但是依然具有很大的弊端。所以Paxon人民砥砺前进，再创辉煌。</p>
+
+<p>我们上文说到Paxon发现需要记录很多内容，对于协议做了进一步的约束，来保证效率的同时减少数据量。</p>
+
+<h2 id="基本协议">基本协议</h2>
+
+<p>根据上文，我们知道初始协议具有弊端，每个牧师都需要记录他创建的$B_{bal}$，以及他所参与投票的每一个$vote$，还有，他给其他牧师发送的$LastVote$。这些产生的数据量都比较大，所以数学家们为了提升效率，对这个过程做了更多的限制，也使得效率得到了提升。</p>
+
+<h3 id="介绍">介绍</h3>
+
+<p>首先，牧师只需要记录以下几点信息
+1. $lastTried[p]$议员上次尝试创建的投票，如果没有的话，就记录为$-\infty$
+2. $prevVote[p]$议员投票的$B<em>{bal}$最大的投票，如果没有参与的话，就记录$-\infty$
+3. $nextBal[p]$议员p发送过的$lastVote(b,v)$中最大的b值，如果没有的话，就记录$-\infty$
+由于变成只需要记录这三点信息，因此议员p在创建新的投票的时候，只需要跟$lastTried[p]$对比就好了。
+除此之外，原来的协议要求议员q不在$[B</em>{bal},b]$之间产生新的投票，现在规则加强了，只要投票序号小于$b$就不会变更法案。</p>
+
+<h3 id="过程">过程</h3>
+
+<p>废话少说，我们现在看下新的这几步变成了什么。</p>
+
+<h4 id="第一步">第一步</h4>
+
+<p>首先议员p创建一个新的投票，先定义出投票序号$b$，具体的内容先不确定，b要大于$lastTried[p]$，，然后更新$lastTried[p]=b$，发送$NextBallot[p]$给议员集合。</p>
+
+<h4 id="第二步">第二步</h4>
+
+<p>议员q收到了p发来的$NextBallot[b]$,如果$b&gt;nextBal[q]$的话，q就把$lastVote(b,v)$发送给p，同时设置$nextBal[q]=b$，当然，发送给p的v就是$prevVote[q]$
+如果$b&lt;nextBal[q]$的话，$NextBallot(b)$就直接忽略了。</p>
+
+<h4 id="第三步">第三步</h4>
+
+<p>议员p收到了$LastVote(b,v)$,这些回复的议员集合$B<em>{qrm}$，b从$lastVote(b,v)$集合里面取出符合定理3的法案d，就向$B</em>{qrm}$发送$BeginBallot(b,d)$.
+符合$B_{3}$，就是从$LastVote(b,v)$中取出最接近b的法案。</p>
+
+<h4 id="第四步">第四步</h4>
+
+<p>议员q之前记录了$nextBal[q]$，如果等于b的话，就记录这个提案d，并设置$prevVote[q]=d$，向p发送$Voted(b,q)$。如果q之前回复过其他议员的提案，可能导致$b \neq nextBal[q]$，那么就直接拒接这个提案了。</p>
+
+<h4 id="第五步">第五步</h4>
+
+<p>议员p收到了议员q返回的$voted(b,q)$，如果$B<em>{qrm} \subseteq B</em>{vot}$，就证明全票通过，记录下提案并向$B_{qrm}$发送$Success(d)$信息。如果没有全部收到的话，就继续发送或者等待。</p>
+
+<h4 id="第六步">第六步</h4>
+
+<p>议员q收到了$Success(d)$的话，也记录下这个通过的法案。</p>
+
+<h3 id="结论">结论</h3>
+
+<p>从这六步可以看出来，这个是对初始协议的限定版，所以原协议能通过的一致性，本基本协议更一定能通过。</p>
+
+<h2 id="完整协议">完整协议</h2>
+
+<p>由于基本协议已经定义了主干内容，这一部分lamport大神并没再对步骤做进一步阐释，而是介绍了各种恶劣情况，论证了协议的各部分欠缺以及解决办法。
+首先是投票的情况，如果没有人生成投票或者一直生成新的投票，会导致无法稳定，一直在等待，因此有了几种解决办法。</p>
+
+<h3 id="ballot创建">ballot创建</h3>
+
+<ol>
+<li>选举leader生成</li>
+
+<li><p>新提案生成取决于超时或者有人提出了更高的投票选项。</p>
+
+<h3 id="leader的选举">leader的选举</h3>
+
+<p>选举leader主要目标是为了初始化ballot和创建ballot。
+选举的条件是T分钟之内集合没有任何变化的话，议员推选自己为主席，然后向其他人广播，按照字母表进行排序，选择最后一个作为主席。</p>
+
+<h3 id="结论-1">结论</h3>
+
+<p>相较于基本协议，增加了一些新的内容，比如及时相应步骤(2)-(6)，以及推选主席的方式和创建ballot的时间。</p></li>
+</ol>
+
+<p>神权消失了，牧师不再存在，议员诞生了。
+我们下面就要开始接触多法案同时进行multi-paxos了。</p>
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">Hundred</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2018-01-17 08:47
+        
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">许可协议</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/paxos/">paxos</a>
+          <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/">分布式</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/%E5%AE%88%E6%B3%95%E5%85%AC%E6%B0%91%E8%A7%82%E5%90%8E%E6%84%9F/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">《守法公民》观后感</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E4%BA%AB%E5%85%83%E6%A8%A1%E5%BC%8F/">
+            <span class="next-text nav-default">java设计模式之享元模式</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+  
+  
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="#" class="iconfont icon-cnblogs" title="cnblogs"></a>
+      <a href="mailto:sdwangzhuo@gmail.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/hundredwz" class="iconfont icon-github" title="github"></a>
+      <a href="#" class="iconfont icon-juejin" title="juejin"></a>
+      <a href="#" class="iconfont icon-v2ex" title="v2ex"></a>
+      <a href="https://weibo.com/hundredwz" class="iconfont icon-weibo" title="weibo"></a>
+  <a href="https://hundredwz.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2013 - 
+    2020
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Hundred</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.min.js" integrity="sha256-jwCP0NAdCBloaIWTWHmW4i3snUNMHUNO+jr9rYd2iOI=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.locales.min.js" integrity="sha256-ZwofwC1Lf/faQCzN7nZtfijVV6hSwxjQMwXL4gn9qU8=" crossorigin="anonymous"></script>
+  <script><!-- NOTE: timeago.js uses the language code format like "zh_CN" (underscore and case sensitive) -->
+    var languageCode = "zh-CN".replace(/-/g, '_').replace(/_(.*)/, function ($0, $1) {return $0.replace($1, $1.toUpperCase());});
+    timeago().render(document.querySelectorAll('.timeago'), languageCode);
+    timeago.cancel();  
+  </script>
+<script type="text/javascript" src="/dist/even.26188efa.min.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+      showProcessingMessages: false,
+      messageStyle: 'none'
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"  integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-138883536-1', 'auto');
+	ga('set', 'anonymizeIp', true);
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+
+
+
+
+</body>
+</html>

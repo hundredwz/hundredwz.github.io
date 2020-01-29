@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>esp8266试玩 - A Lazy Coder</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="Hundred" /><meta name="description" content="前一阵买了一个esp8266，使用了一段时间之后感觉物有所值，很是值得拿来学习使用，记录下使用的过程，以及期间遇到的一些错误，希望对于大家有帮助。
+" /><meta name="keywords" content="Blockchain, Golang, Fabric, Ethereum, Code" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.56.1 with even 4.0.0" />
+
+
+<link rel="canonical" href="https://hundredwz.github.io/post/esp8266%E8%AF%95%E7%8E%A9/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<link href="/dist/even.c2a46f00.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+<link rel="stylesheet" href="/css/reset-even.css">
+
+
+<meta property="og:title" content="esp8266试玩" />
+<meta property="og:description" content="前一阵买了一个esp8266，使用了一段时间之后感觉物有所值，很是值得拿来学习使用，记录下使用的过程，以及期间遇到的一些错误，希望对于大家有帮助。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://hundredwz.github.io/post/esp8266%E8%AF%95%E7%8E%A9/" />
+<meta property="article:published_time" content="2016-05-09T05:18:00+00:00" />
+<meta property="article:modified_time" content="2016-05-09T05:18:00+00:00" />
+<meta itemprop="name" content="esp8266试玩">
+<meta itemprop="description" content="前一阵买了一个esp8266，使用了一段时间之后感觉物有所值，很是值得拿来学习使用，记录下使用的过程，以及期间遇到的一些错误，希望对于大家有帮助。">
+
+
+<meta itemprop="datePublished" content="2016-05-09T05:18:00&#43;00:00" />
+<meta itemprop="dateModified" content="2016-05-09T05:18:00&#43;00:00" />
+<meta itemprop="wordCount" content="2146">
+
+
+
+<meta itemprop="keywords" content="c,esp8266," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="esp8266试玩"/>
+<meta name="twitter:description" content="前一阵买了一个esp8266，使用了一段时间之后感觉物有所值，很是值得拿来学习使用，记录下使用的过程，以及期间遇到的一些错误，希望对于大家有帮助。"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">A Lazy Coder</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">首页</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">归档</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">分类</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/friends/">
+        <li class="mobile-menu-item">Friends</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">A Lazy Coder</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">首页</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">归档</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">分类</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/friends/">Friends</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">esp8266试玩</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2016-05-09 05:18 </span>
+        <div class="post-category">
+            <a href="/categories/program/"> program </a>
+            </div>
+          <span class="more-meta"> 约 2146 字 </span>
+          <span class="more-meta"> 预计阅读 5 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    
+  </div>
+</div>
+  <div class="post-outdated">
+    <div class="warn">
+      <p>【注意】最后更新于 <span class="timeago" datetime="2016-05-09T05:18:00" title="May 9, 2016">May 9, 2016</span>，文中内容可能已过时，请谨慎使用。</p>
+    </div>
+  </div>
+    <div class="post-content">
+      <p>前一阵买了一个esp8266，使用了一段时间之后感觉物有所值，很是值得拿来学习使用，记录下使用的过程，以及期间遇到的一些错误，希望对于大家有帮助。</p>
+
+<p>首先上图，就是这么个东西
+<img src="https://raw.githubusercontent.com/hundredwz/Images/blog/esp8266.jpg" alt="esp8266" />
+确实比较小，跟大拇指大小差不多，做一些嵌入式的小设计不占空间又很好用。esp8266有几个管脚，vcc3.3v供电，gnd接地，rxd、txd接串口（注意反接），，ch_pd接高电平，rst以及gpio那几个管脚无需接电路。这是一个直观的连接方式。
+<img src="https://raw.githubusercontent.com/hundredwz/Images/blog/guanjiao.jpg" alt="guanjiao" />
+#<em>一.容易出的错</em>
+esp8266的指令网上很多，也都解释的很详细，就是有时候有些过程介绍的不太细致，或者说有点模糊，让人容易出错，在此记录下来。
+1.管脚的连接方式，由于usb-ttl进行串口通信时电压不是太理想，在进行调试的时候最好使用外接电源，即使用外接3.3进行供电。这就容易导致一个问题，只把usb-ttl的rxd和txd接到wifi模块上，电源和地都没有接。但是进行串口调试的时候必须要共地，不然数据肯定会传输错误。只需要把usb-ttl的gnd接到外接电源的地就好了。并且比较旧的模块波特率是9600bps，而不是115200bps，如果选用过高的波特率，会出现错误。
+2.改变模块工作状态一定要重启。很多时候设置为ap模式或者station模式忘了重启，结果模式没有生效，后面的一系列操作都进行不了。
+3.进行tcp等通信一定要在同一个子网下面。学过计算机网的一看就知道了，如果不在同一个子网下面，并且server所在主机没有外网地址，肯定会连接出错。住需要用路由器或者电脑开个热点进行处理就好了。
+#<em>二.常用的指令介绍</em>
+esp8266主要用的指令就是AT+&#42;&#42;&#42;,指令名称也都比较容易记忆，即使记不住官网上也有说明文档，一查便知。
+1.正常启动的时候esp8266串口会返回乱码+ready。如果没有ready的话就查一下电路连接波特率等是不是正确吧。
+2.<code>AT</code>，这个就是单纯测试链接的通常与否的，不会对esp8266做任何更改。如果联通正常，会返回“OK”。
+3.<code>AT+RST</code>,重启模块，有时候设置了一些模式等需要输入重启来使设置生效。
+4.<code>AT+CWMODE=2</code>，这个是设置工作模式，1是station模式，即只能连接别人的wifi。2是ap模式，创建热点，别人连上esp8266.3是station+ap模式，在创建热点的同时连接别人的wifi。
+5.<code>AT+CIPMUX=1</code>,这个是设置多链接模式，是esp8266与其他设备建立多个tcp（udp）连接，不过设置了这个就无法开启透传模式。
+6.<code>AT+CIPSERVER=1,8080</code>,开启服务器，服务器端口是8080，这样其他设备就可以将其作为tcp或者udp服务器，进行连接以及数据的处理。
+7.<code>AT+CWSAP=\'TXINR.TOP\',\'12345678\',1,3</code>,这个看着参数多点，实际也很简单，第一个是热点的名称，第二个是密码，第三个是信道号，第四个是加密方式（3对应的是wpa2），具体加密方式可以看官方文档。
+8.<code>AT+CIPSEND=0,4</code>,这个是向tcp的客户端发送数据（实际服务器也是一样的）。0代表设备号，4代表发送的内容大小，这个地方设置4个字节。
+9.<code>AT+CIFSR</code>，这个是显示esp8266的ip地址，建立连接的时候必须要有ip地址啊！
+还有一些常用的命令，不过我们项目没有使用到或者使用不是很多，就不再赘述了。
+#<em>三.实战测试</em>
+1.esp8266接上usb串口线，连接电脑，注意共地。电脑打开串口调试助手，会收到乱码+ready。</p>
+
+<pre><code>b试篅k...
+[Vendor:www.ai-thinker.com Version:0.9.2.4]
+ready
+</code></pre>
+
+<p>有这个提示就证明开启成功了。
+2.串口输入<code>AT+CWMODE=2</code>，注意<font color=\'red\'>勾选发送新行</font>。如果模式本来就是ap模式，会提示<code>no change</code>，否则会提示重启以便生效。如果提示<code>no change</code>直接跳到第5步就好了。也可以一步一步进行下去。
+3.串口输入<code>AT+CWSAP=\'ESP8266\',\'12345678\',1,3</code>,创建热点成功。
+4.串口输入<code>AT+RST</code>重启，回复信息跟第一步一样。
+5.串口输入<code>AT+CIPMUX=1</code>，开启多链接模式。如果正确了返回一个<code>OK</code>,继续下一步就好了。
+6.串口输入<code>AT+CIPSERVER=1,8800</code>，开启服务器，端口为8800，如果正确了仍然返回一个<code>OK</code>
+7.电脑调试的话连上esp8266的无线网，本测试是&quot;ESP8266&quot;,打开tcp调试助手，ip地址为&quot;192.168.4.1&quot;，貌似esp8266的ip地址都是这个。连接测试就好了。
+<img src="https://raw.githubusercontent.com/hundredwz/Images/blog/esp8266_wifi.png" alt="esp8266_wifi" />
+8.多说一句，由于开启了服务器模式，所以无法关闭透传模式。非透传模式会在接收到的消息前面加上前缀&quot;+IPD:1,4:CONTENT&quot;,其中1是指设备号，4值接收数据的大小。
+懒得拆分图片了，全部截下来看下吧。
+<img src="https://raw.githubusercontent.com/hundredwz/Images/blog/PIC1.png" alt="set1" />
+<img src="https://raw.githubusercontent.com/hundredwz/Images/blog/PIC2.png" alt="set2" />
+<img src="https://raw.githubusercontent.com/hundredwz/Images/blog/TCPASSIST.png" alt="tcp" />
+实际上本次仅仅测试了非常简单的一些功能，用它来实现更大的更强的功能也是可以的，比如连上外网的服务器获取天气，使用单片机进行数据解析，然后控制一些东西，都不是很难实现。期待大家的努力。
+在官网上也有挺多人做了很高级的程序，大家可以去看看。没了防止打广告的嫌疑，就不直接说了。实际上上面也已经有地址了。</p>
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">Hundred</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2016-05-09 05:18
+        
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">许可协议</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/c/">c</a>
+          <a href="/tags/esp8266/">esp8266</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/tos-patch/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">tos patch</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/python%E8%AE%A1%E7%AE%97%E5%8F%89%E4%B9%98/">
+            <span class="next-text nav-default">python计算叉乘</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+  
+  
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="#" class="iconfont icon-cnblogs" title="cnblogs"></a>
+      <a href="mailto:sdwangzhuo@gmail.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/hundredwz" class="iconfont icon-github" title="github"></a>
+      <a href="#" class="iconfont icon-juejin" title="juejin"></a>
+      <a href="#" class="iconfont icon-v2ex" title="v2ex"></a>
+      <a href="https://weibo.com/hundredwz" class="iconfont icon-weibo" title="weibo"></a>
+  <a href="https://hundredwz.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2013 - 
+    2020
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Hundred</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.min.js" integrity="sha256-jwCP0NAdCBloaIWTWHmW4i3snUNMHUNO+jr9rYd2iOI=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.locales.min.js" integrity="sha256-ZwofwC1Lf/faQCzN7nZtfijVV6hSwxjQMwXL4gn9qU8=" crossorigin="anonymous"></script>
+  <script><!-- NOTE: timeago.js uses the language code format like "zh_CN" (underscore and case sensitive) -->
+    var languageCode = "zh-CN".replace(/-/g, '_').replace(/_(.*)/, function ($0, $1) {return $0.replace($1, $1.toUpperCase());});
+    timeago().render(document.querySelectorAll('.timeago'), languageCode);
+    timeago.cancel();  
+  </script>
+<script type="text/javascript" src="/dist/even.26188efa.min.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+      showProcessingMessages: false,
+      messageStyle: 'none'
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"  integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-138883536-1', 'auto');
+	ga('set', 'anonymizeIp', true);
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>fabric源码阅读3：PutState&amp;amp;GetState理解 - A Lazy Coder</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="Hundred" /><meta name="description" content="最近还在继续看Fabric源码，发现自己还是差的太多了。估计可能是看的方式不太对。不过也慢慢的有了一点收获吧。
+" /><meta name="keywords" content="Blockchain, Golang, Fabric, Ethereum, Code" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.56.1 with even 4.0.0" />
+
+
+<link rel="canonical" href="https://hundredwz.github.io/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB3PutStateampGetState%E7%90%86%E8%A7%A3/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<link href="/dist/even.c2a46f00.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+<link rel="stylesheet" href="/css/reset-even.css">
+
+
+<meta property="og:title" content="fabric源码阅读3：PutState&amp;amp;GetState理解" />
+<meta property="og:description" content="最近还在继续看Fabric源码，发现自己还是差的太多了。估计可能是看的方式不太对。不过也慢慢的有了一点收获吧。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://hundredwz.github.io/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB3PutStateampGetState%E7%90%86%E8%A7%A3/" />
+<meta property="article:published_time" content="2017-11-09T06:19:00+00:00" />
+<meta property="article:modified_time" content="2017-11-09T06:19:00+00:00" />
+<meta itemprop="name" content="fabric源码阅读3：PutState&amp;amp;GetState理解">
+<meta itemprop="description" content="最近还在继续看Fabric源码，发现自己还是差的太多了。估计可能是看的方式不太对。不过也慢慢的有了一点收获吧。">
+
+
+<meta itemprop="datePublished" content="2017-11-09T06:19:00&#43;00:00" />
+<meta itemprop="dateModified" content="2017-11-09T06:19:00&#43;00:00" />
+<meta itemprop="wordCount" content="1559">
+
+
+
+<meta itemprop="keywords" content="fabric,go," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="fabric源码阅读3：PutState&amp;amp;GetState理解"/>
+<meta name="twitter:description" content="最近还在继续看Fabric源码，发现自己还是差的太多了。估计可能是看的方式不太对。不过也慢慢的有了一点收获吧。"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">A Lazy Coder</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">首页</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">归档</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">分类</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/friends/">
+        <li class="mobile-menu-item">Friends</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">A Lazy Coder</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">首页</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">归档</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">分类</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/friends/">Friends</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">fabric源码阅读3：PutState&amp;amp;GetState理解</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2017-11-09 06:19 </span>
+        <div class="post-category">
+            <a href="/categories/program/"> program </a>
+            </div>
+          <span class="more-meta"> 约 1559 字 </span>
+          <span class="more-meta"> 预计阅读 4 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    
+  </div>
+</div>
+  <div class="post-outdated">
+    <div class="warn">
+      <p>【注意】最后更新于 <span class="timeago" datetime="2017-11-09T06:19:00" title="November 9, 2017">November 9, 2017</span>，文中内容可能已过时，请谨慎使用。</p>
+    </div>
+  </div>
+    <div class="post-content">
+      <p>最近还在继续看Fabric源码，发现自己还是差的太多了。估计可能是看的方式不太对。不过也慢慢的有了一点收获吧。</p>
+
+<p>这次带来的分享是PutState以及GetState。实际上这两个函数区别不大，就是几个关键字不同。
+首先，我们知道，PutState是可以在chaincode里面书写，是属于<code>ChaincodeStub</code>的一个方法。
+代码很简单，主要就是这几句：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">stub</span> <span class="o">*</span><span class="nx">ChaincodeStub</span><span class="p">)</span> <span class="nf">PutState</span><span class="p">(</span><span class="nx">key</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">value</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+	<span class="k">if</span> <span class="nx">key</span> <span class="o">==</span> <span class="s">&#34;&#34;</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;key must not be an empty string&#34;</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="nx">stub</span><span class="p">.</span><span class="nx">handler</span><span class="p">.</span><span class="nf">handlePutState</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">stub</span><span class="p">.</span><span class="nx">TxID</span><span class="p">)</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>没有什么问题，可以看到是调用的handler的<code>handlePutState</code>方法，继续看下去。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// handlePutState communicates with the validator to put state information into the ledger.
+</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">handler</span> <span class="o">*</span><span class="nx">Handler</span><span class="p">)</span> <span class="nf">handlePutState</span><span class="p">(</span><span class="nx">key</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">value</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">,</span> <span class="nx">txid</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+	<span class="c1">// Check if this is a transaction
+</span><span class="c1"></span>	<span class="nx">chaincodeLogger</span><span class="p">.</span><span class="nf">Debugf</span><span class="p">(</span><span class="s">&#34;[%s]Inside putstate&#34;</span><span class="p">,</span> <span class="nf">shorttxid</span><span class="p">(</span><span class="nx">txid</span><span class="p">))</span>
+
+	<span class="c1">//we constructed a valid object. No need to check for error
+</span><span class="c1"></span>	<span class="nx">payloadBytes</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">proto</span><span class="p">.</span><span class="nf">Marshal</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">pb</span><span class="p">.</span><span class="nx">PutStateInfo</span><span class="p">{</span><span class="nx">Key</span><span class="p">:</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">Value</span><span class="p">:</span> <span class="nx">value</span><span class="p">})</span>
+
+	<span class="c1">// Create the channel on which to communicate the response from validating peer
+</span><span class="c1"></span>	<span class="kd">var</span> <span class="nx">respChan</span> <span class="kd">chan</span> <span class="nx">pb</span><span class="p">.</span><span class="nx">ChaincodeMessage</span>
+	<span class="kd">var</span> <span class="nx">err</span> <span class="kt">error</span>
+	<span class="k">if</span> <span class="nx">respChan</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">handler</span><span class="p">.</span><span class="nf">createChannel</span><span class="p">(</span><span class="nx">txid</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">err</span>
+	<span class="p">}</span>
+
+	<span class="k">defer</span> <span class="nx">handler</span><span class="p">.</span><span class="nf">deleteChannel</span><span class="p">(</span><span class="nx">txid</span><span class="p">)</span>
+
+	<span class="c1">// Send PUT_STATE message to validator chaincode support
+</span><span class="c1"></span>	<span class="nx">msg</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">pb</span><span class="p">.</span><span class="nx">ChaincodeMessage</span><span class="p">{</span><span class="nx">Type</span><span class="p">:</span> <span class="nx">pb</span><span class="p">.</span><span class="nx">ChaincodeMessage_PUT_STATE</span><span class="p">,</span> <span class="nx">Payload</span><span class="p">:</span> <span class="nx">payloadBytes</span><span class="p">,</span> <span class="nx">Txid</span><span class="p">:</span> <span class="nx">txid</span><span class="p">}</span>
+	<span class="nx">chaincodeLogger</span><span class="p">.</span><span class="nf">Debugf</span><span class="p">(</span><span class="s">&#34;[%s]Sending %s&#34;</span><span class="p">,</span> <span class="nf">shorttxid</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">Txid</span><span class="p">),</span> <span class="nx">pb</span><span class="p">.</span><span class="nx">ChaincodeMessage_PUT_STATE</span><span class="p">)</span>
+
+	<span class="kd">var</span> <span class="nx">responseMsg</span> <span class="nx">pb</span><span class="p">.</span><span class="nx">ChaincodeMessage</span>
+
+	<span class="k">if</span> <span class="nx">responseMsg</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">handler</span><span class="p">.</span><span class="nf">sendReceive</span><span class="p">(</span><span class="nx">msg</span><span class="p">,</span> <span class="nx">respChan</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">errors</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">&#34;[%s]error sending PUT_STATE %s&#34;</span><span class="p">,</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">Txid</span><span class="p">,</span> <span class="nx">err</span><span class="p">))</span>
+	<span class="p">}</span>
+
+	<span class="k">if</span> <span class="nx">responseMsg</span><span class="p">.</span><span class="nx">Type</span><span class="p">.</span><span class="nf">String</span><span class="p">()</span> <span class="o">==</span> <span class="nx">pb</span><span class="p">.</span><span class="nx">ChaincodeMessage_RESPONSE</span><span class="p">.</span><span class="nf">String</span><span class="p">()</span> <span class="p">{</span>
+		<span class="c1">// Success response
+</span><span class="c1"></span>		<span class="nx">chaincodeLogger</span><span class="p">.</span><span class="nf">Debugf</span><span class="p">(</span><span class="s">&#34;[%s]Received %s. Successfully updated state&#34;</span><span class="p">,</span> <span class="nf">shorttxid</span><span class="p">(</span><span class="nx">responseMsg</span><span class="p">.</span><span class="nx">Txid</span><span class="p">),</span> <span class="nx">pb</span><span class="p">.</span><span class="nx">ChaincodeMessage_RESPONSE</span><span class="p">)</span>
+		<span class="k">return</span> <span class="kc">nil</span>
+	<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>内容有点长，我还没有截完，核心的函数就是三个，<code>createChannel</code>,<code>deleteChannel</code>以及<code>sendReceive</code>。要理解这三个函数需要看下handler的结构。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Handler</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">sync</span><span class="p">.</span><span class="nx">RWMutex</span>
+	<span class="c1">//shim to peer grpc serializer. User only in serialSend
+</span><span class="c1"></span>	<span class="nx">serialLock</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">Mutex</span>
+	<span class="nx">To</span>         <span class="kt">string</span>
+	<span class="nx">ChatStream</span> <span class="nx">PeerChaincodeStream</span>
+	<span class="nx">FSM</span>        <span class="o">*</span><span class="nx">fsm</span><span class="p">.</span><span class="nx">FSM</span>
+	<span class="nx">cc</span>         <span class="nx">Chaincode</span>
+	<span class="nx">responseChannel</span> <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kd">chan</span> <span class="nx">pb</span><span class="p">.</span><span class="nx">ChaincodeMessage</span>
+	<span class="nx">nextState</span>       <span class="kd">chan</span> <span class="o">*</span><span class="nx">nextStateInfo</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>我们在这先关注responseChnnel，是一个mao类型，<code>txid-&gt;chan</code>，是一个对应关系。
+<code>createChannel</code>以及<code>deleteChannel</code>都是针对这个map进行处理的，就不在详细查看了。
+好了，我们继续看<code>sendReceive</code>函数。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">handler</span> <span class="o">*</span><span class="nx">Handler</span><span class="p">)</span> <span class="nf">sendReceive</span><span class="p">(</span><span class="nx">msg</span> <span class="o">*</span><span class="nx">pb</span><span class="p">.</span><span class="nx">ChaincodeMessage</span><span class="p">,</span> <span class="nx">c</span> <span class="kd">chan</span> <span class="nx">pb</span><span class="p">.</span><span class="nx">ChaincodeMessage</span><span class="p">)</span> <span class="p">(</span><span class="nx">pb</span><span class="p">.</span><span class="nx">ChaincodeMessage</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+	<span class="nx">errc</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">error</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+	<span class="nx">handler</span><span class="p">.</span><span class="nf">serialSendAsync</span><span class="p">(</span><span class="nx">msg</span><span class="p">,</span> <span class="nx">errc</span><span class="p">)</span>
+
+	<span class="c1">//the serialsend above will send an err or nil
+</span><span class="c1"></span>	<span class="c1">//the select filters that first error(or nil)
+</span><span class="c1"></span>	<span class="c1">//and continues to wait for the response
+</span><span class="c1"></span>	<span class="c1">//it is possible that the response triggers first
+</span><span class="c1"></span>	<span class="c1">//in which case the errc obviously worked and is
+</span><span class="c1"></span>	<span class="c1">//ignored
+</span><span class="c1"></span>	<span class="k">for</span> <span class="p">{</span>
+		<span class="k">select</span> <span class="p">{</span>
+		<span class="k">case</span> <span class="nx">err</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="nx">errc</span><span class="p">:</span>
+			<span class="k">if</span> <span class="nx">err</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+				<span class="k">continue</span>
+			<span class="p">}</span>
+			<span class="c1">//would have been logged, return false
+</span><span class="c1"></span>			<span class="k">return</span> <span class="nx">pb</span><span class="p">.</span><span class="nx">ChaincodeMessage</span><span class="p">{},</span> <span class="nx">err</span>
+		<span class="k">case</span> <span class="nx">outmsg</span><span class="p">,</span> <span class="nx">val</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="nx">c</span><span class="p">:</span>
+			<span class="k">if</span> <span class="p">!</span><span class="nx">val</span> <span class="p">{</span>
+				<span class="k">return</span> <span class="nx">pb</span><span class="p">.</span><span class="nx">ChaincodeMessage</span><span class="p">{},</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;unexpected failure on receive&#34;</span><span class="p">)</span>
+			<span class="p">}</span>
+			<span class="k">return</span> <span class="nx">outmsg</span><span class="p">,</span> <span class="kc">nil</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>好的，可以看到了传递了两个参数，一个是<code>msg</code>，一个是<code>respChan</code>，注意，这个地方有重点了。
+可以看到代码里面调用了<code>serialSendAsync</code>函数，传递了一个新的<code>chan</code>以及<code>msg</code>，但是并没有传递<code>respChan</code>.然后下面等待接收消息。一个是errc的，一个是respChan的。根据我们的应用，正确的消息应该是执行的</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="k">case</span> <span class="nx">outmsg</span><span class="p">,</span> <span class="nx">val</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="nx">c</span><span class="p">:</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>这一句。这儿就很奇怪了，没有传递是怎么接受的数据呢?其次，chan不是应该只返回一个值吗？为什么是两个值？
+我们先留待疑问，继续往下看<code>serialSendAsync</code>函数。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">handler</span> <span class="o">*</span><span class="nx">Handler</span><span class="p">)</span> <span class="nf">serialSendAsync</span><span class="p">(</span><span class="nx">msg</span> <span class="o">*</span><span class="nx">pb</span><span class="p">.</span><span class="nx">ChaincodeMessage</span><span class="p">,</span> <span class="nx">errc</span> <span class="kd">chan</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+	<span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+		<span class="nx">err</span> <span class="o">:=</span> <span class="nx">handler</span><span class="p">.</span><span class="nf">serialSend</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span>
+		<span class="k">if</span> <span class="nx">errc</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="nx">errc</span> <span class="o">&lt;-</span> <span class="nx">err</span>
+		<span class="p">}</span>
+	<span class="p">}()</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>开启了一个协程，实现异步接受消息，对应了函数名。估计<code>serialSend</code>没有什么复杂的了。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">handler</span> <span class="o">*</span><span class="nx">Handler</span><span class="p">)</span> <span class="nf">serialSend</span><span class="p">(</span><span class="nx">msg</span> <span class="o">*</span><span class="nx">pb</span><span class="p">.</span><span class="nx">ChaincodeMessage</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+	<span class="nx">handler</span><span class="p">.</span><span class="nx">serialLock</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
+	<span class="k">defer</span> <span class="nx">handler</span><span class="p">.</span><span class="nx">serialLock</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+
+	<span class="nx">err</span> <span class="o">:=</span> <span class="nx">handler</span><span class="p">.</span><span class="nx">ChatStream</span><span class="p">.</span><span class="nf">Send</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span>
+
+	<span class="k">return</span> <span class="nx">err</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>果然，调用了ChatStream的Send方法。
+到这，我的源码就进入瓶颈了。
+由于我们的所有的东西都是运行在docker中的，所以进行沟通的时候会有rpc等等一系列过程，而我刚开始看，所以嘛。。。
+接下来就是我的一些猜想了。
+我们接着上面的疑问，我们都知道，<code>msg</code>中是有txid的，而txid是对应的是<code>respChan</code>.除此之外，我们还看到有这个函数。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">handler</span> <span class="o">*</span><span class="nx">Handler</span><span class="p">)</span> <span class="nf">sendChannel</span><span class="p">(</span><span class="nx">msg</span> <span class="o">*</span><span class="nx">pb</span><span class="p">.</span><span class="nx">ChaincodeMessage</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+	<span class="nx">handler</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
+	<span class="k">defer</span> <span class="nx">handler</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+	<span class="k">if</span> <span class="nx">handler</span><span class="p">.</span><span class="nx">responseChannel</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;[%s]Cannot send message response channel&#34;</span><span class="p">,</span> <span class="nf">shorttxid</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">Txid</span><span class="p">))</span>
+	<span class="p">}</span>
+	<span class="k">if</span> <span class="nx">handler</span><span class="p">.</span><span class="nx">responseChannel</span><span class="p">[</span><span class="nx">msg</span><span class="p">.</span><span class="nx">Txid</span><span class="p">]</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;[%s]sendChannel does not exist&#34;</span><span class="p">,</span> <span class="nf">shorttxid</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">Txid</span><span class="p">))</span>
+	<span class="p">}</span>
+
+	<span class="nx">chaincodeLogger</span><span class="p">.</span><span class="nf">Debugf</span><span class="p">(</span><span class="s">&#34;[%s]before send&#34;</span><span class="p">,</span> <span class="nf">shorttxid</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">Txid</span><span class="p">))</span>
+	<span class="nx">handler</span><span class="p">.</span><span class="nx">responseChannel</span><span class="p">[</span><span class="nx">msg</span><span class="p">.</span><span class="nx">Txid</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="o">*</span><span class="nx">msg</span>
+	<span class="nx">chaincodeLogger</span><span class="p">.</span><span class="nf">Debugf</span><span class="p">(</span><span class="s">&#34;[%s]after send&#34;</span><span class="p">,</span> <span class="nf">shorttxid</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">Txid</span><span class="p">))</span>
+
+	<span class="k">return</span> <span class="kc">nil</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>在这个地方将消息传递给了<code>respChan</code>，进行后续的沟通。
+可以看到还有其他的函数，诸如<code>afterResponse</code>，<code>afterError</code>调用了这个函数。
+我们可以猜测，在docker中存在着类似一个守护进程,会执行这些过程，处理数据，写入到通道中。（主要是目前文档太大了，太难找了，还没看完.
+恩，就这样吧。</p>
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">Hundred</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2017-11-09 06:19
+        
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">许可协议</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/fabric/">fabric</a>
+          <a href="/tags/go/">go</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB4fabric%E5%90%AF%E5%8A%A8I/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">fabric源码阅读4：fabric启动I</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/proto%E6%96%87%E4%BB%B6%E5%AD%A6%E4%B9%A0/">
+            <span class="next-text nav-default">proto文件学习</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+  
+  
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="#" class="iconfont icon-cnblogs" title="cnblogs"></a>
+      <a href="mailto:sdwangzhuo@gmail.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/hundredwz" class="iconfont icon-github" title="github"></a>
+      <a href="#" class="iconfont icon-juejin" title="juejin"></a>
+      <a href="#" class="iconfont icon-v2ex" title="v2ex"></a>
+      <a href="https://weibo.com/hundredwz" class="iconfont icon-weibo" title="weibo"></a>
+  <a href="https://hundredwz.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2013 - 
+    2020
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Hundred</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.min.js" integrity="sha256-jwCP0NAdCBloaIWTWHmW4i3snUNMHUNO+jr9rYd2iOI=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.locales.min.js" integrity="sha256-ZwofwC1Lf/faQCzN7nZtfijVV6hSwxjQMwXL4gn9qU8=" crossorigin="anonymous"></script>
+  <script><!-- NOTE: timeago.js uses the language code format like "zh_CN" (underscore and case sensitive) -->
+    var languageCode = "zh-CN".replace(/-/g, '_').replace(/_(.*)/, function ($0, $1) {return $0.replace($1, $1.toUpperCase());});
+    timeago().render(document.querySelectorAll('.timeago'), languageCode);
+    timeago.cancel();  
+  </script>
+<script type="text/javascript" src="/dist/even.26188efa.min.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+      showProcessingMessages: false,
+      messageStyle: 'none'
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"  integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-138883536-1', 'auto');
+	ga('set', 'anonymizeIp', true);
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+
+
+
+
+</body>
+</html>

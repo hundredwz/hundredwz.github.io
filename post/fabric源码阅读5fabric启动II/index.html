@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>fabric源码阅读5:fabric启动II - A Lazy Coder</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="Hundred" /><meta name="description" content="在上一篇文章fabric源码阅读4：fabric启动I我们从操作者的角度分析了fabric的启动过程，这篇文章我们就尽量从开发者的角度来看fabric是怎么启动的。
+" /><meta name="keywords" content="Blockchain, Golang, Fabric, Ethereum, Code" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.56.1 with even 4.0.0" />
+
+
+<link rel="canonical" href="https://hundredwz.github.io/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB5fabric%E5%90%AF%E5%8A%A8II/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<link href="/dist/even.c2a46f00.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+<link rel="stylesheet" href="/css/reset-even.css">
+
+
+<meta property="og:title" content="fabric源码阅读5:fabric启动II" />
+<meta property="og:description" content="在上一篇文章fabric源码阅读4：fabric启动I我们从操作者的角度分析了fabric的启动过程，这篇文章我们就尽量从开发者的角度来看fabric是怎么启动的。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://hundredwz.github.io/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB5fabric%E5%90%AF%E5%8A%A8II/" />
+<meta property="article:published_time" content="2017-11-17T09:08:00+00:00" />
+<meta property="article:modified_time" content="2017-11-17T09:08:00+00:00" />
+<meta itemprop="name" content="fabric源码阅读5:fabric启动II">
+<meta itemprop="description" content="在上一篇文章fabric源码阅读4：fabric启动I我们从操作者的角度分析了fabric的启动过程，这篇文章我们就尽量从开发者的角度来看fabric是怎么启动的。">
+
+
+<meta itemprop="datePublished" content="2017-11-17T09:08:00&#43;00:00" />
+<meta itemprop="dateModified" content="2017-11-17T09:08:00&#43;00:00" />
+<meta itemprop="wordCount" content="1477">
+
+
+
+<meta itemprop="keywords" content="fabric,go," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="fabric源码阅读5:fabric启动II"/>
+<meta name="twitter:description" content="在上一篇文章fabric源码阅读4：fabric启动I我们从操作者的角度分析了fabric的启动过程，这篇文章我们就尽量从开发者的角度来看fabric是怎么启动的。"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">A Lazy Coder</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">首页</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">归档</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">分类</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/friends/">
+        <li class="mobile-menu-item">Friends</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">A Lazy Coder</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">首页</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">归档</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">分类</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/friends/">Friends</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">fabric源码阅读5:fabric启动II</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2017-11-17 09:08 </span>
+        <div class="post-category">
+            <a href="/categories/program/"> program </a>
+            </div>
+          <span class="more-meta"> 约 1477 字 </span>
+          <span class="more-meta"> 预计阅读 3 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#查找peer文件">查找peer文件</a></li>
+<li><a href="#阅读文件">阅读文件</a></li>
+<li><a href="#总结">总结</a></li>
+</ul></li>
+</ul>
+</nav>
+  </div>
+</div>
+  <div class="post-outdated">
+    <div class="warn">
+      <p>【注意】最后更新于 <span class="timeago" datetime="2017-11-17T09:08:00" title="November 17, 2017">November 17, 2017</span>，文中内容可能已过时，请谨慎使用。</p>
+    </div>
+  </div>
+    <div class="post-content">
+      <p>在上一篇文章<a href="http://txiner.top/program/29.html">fabric源码阅读4：fabric启动I</a>我们从操作者的角度分析了fabric的启动过程，这篇文章我们就尽量从开发者的角度来看fabric是怎么启动的。</p>
+
+<h2 id="查找peer文件">查找peer文件</h2>
+
+<p>我们已经知道，启动有两条指令<code>orderer</code>和<code>peer node start</code>，为了方便分析，先看peer的启动。
+毫无疑问，<code>peer</code>一定是go编译出来的，问题是我咋知道哪个文件编译出来的啊！</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span><span class="lnt">2
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">读Makefile是不可能的，这辈子都不可能读Makefile的，用grep又不会，就是直接瞎找才能找到这样子，瞎找就像回家的感觉一样。
+                                                                --窃 格瓦拉</pre></td></tr></table>
+</div>
+</div>
+<p>不瞎开玩笑了，读Makefle文件确实是比较好的一个分析方法，但是相对来说确实比较复杂，而且源文件四百多行，真的挺累。使用查找命令，找对应的main函数是一个比较巧妙地办法</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">grep -r <span class="s2">&#34;func main&#34;</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>但是输出的结果太多了，有好多是测试文档的，再去找我也嫌麻烦。那就只好猜了。
+看到，整个目录结果中有个peer文件夹，点开一看就有个main.go文件！就是这么巧！
+* 实际上是人家开发者做的很规范啦</p>
+
+<h2 id="阅读文件">阅读文件</h2>
+
+<p>点进来瞅一瞅！
+好吧，第一个<code>viper</code>就不认识。。。。。
+<code>viper</code>是一个给go用的处理配置文件的工具，支持很多种格式。
+首先是对于整个环境变量进行配置。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">viper</span><span class="p">.</span><span class="nf">SetEnvPrefix</span><span class="p">(</span><span class="nx">cmdRoot</span><span class="p">)</span>
+	<span class="nx">viper</span><span class="p">.</span><span class="nf">AutomaticEnv</span><span class="p">()</span>
+	<span class="nx">replacer</span> <span class="o">:=</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">NewReplacer</span><span class="p">(</span><span class="s">&#34;.&#34;</span><span class="p">,</span> <span class="s">&#34;_&#34;</span><span class="p">)</span>
+	<span class="nx">viper</span><span class="p">.</span><span class="nf">SetEnvKeyReplacer</span><span class="p">(</span><span class="nx">replacer</span><span class="p">)</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>给以后对环境变量的读取设置<code>core</code>的前缀，然后把环境变量的内容读入进来，然后实现<code>.</code>和<code>_</code>的转换。
+然后又看不懂了<code>cobra.Command</code>。。。。。
+<code>cobra</code>能创建cli（command line interface）,这么说来跟go自带的flag包挺像的，不过肯定是有自己的一套处理机制。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">var</span> <span class="nx">mainCmd</span> <span class="p">=</span> <span class="o">&amp;</span><span class="nx">cobra</span><span class="p">.</span><span class="nx">Command</span><span class="p">{</span>
+	<span class="nx">Use</span><span class="p">:</span> <span class="s">&#34;peer&#34;</span><span class="p">,</span>
+	<span class="nx">PersistentPreRunE</span><span class="p">:</span> <span class="kd">func</span><span class="p">(</span><span class="nx">cmd</span> <span class="o">*</span><span class="nx">cobra</span><span class="p">.</span><span class="nx">Command</span><span class="p">,</span> <span class="nx">args</span> <span class="p">[]</span><span class="kt">string</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+		<span class="c1">// check for CORE_LOGGING_LEVEL environment variable, which should override
+</span><span class="c1"></span>		<span class="c1">// all other log settings
+</span><span class="c1"></span>		<span class="nx">loggingSpec</span> <span class="o">:=</span> <span class="nx">viper</span><span class="p">.</span><span class="nf">GetString</span><span class="p">(</span><span class="s">&#34;logging_level&#34;</span><span class="p">)</span>
+
+		<span class="k">if</span> <span class="nx">loggingSpec</span> <span class="o">==</span> <span class="s">&#34;&#34;</span> <span class="p">{</span>
+			<span class="c1">// if CORE_LOGGING_LEVEL not set, use the value for &#39;peer&#39; from core.yaml
+</span><span class="c1"></span>			<span class="nx">loggingSpec</span> <span class="p">=</span> <span class="nx">viper</span><span class="p">.</span><span class="nf">GetString</span><span class="p">(</span><span class="s">&#34;logging.peer&#34;</span><span class="p">)</span>
+		<span class="p">}</span>
+		<span class="nx">flogging</span><span class="p">.</span><span class="nf">InitFromSpec</span><span class="p">(</span><span class="nx">loggingSpec</span><span class="p">)</span>
+
+		<span class="k">return</span> <span class="kc">nil</span>
+	<span class="p">},</span>
+	<span class="nx">Run</span><span class="p">:</span> <span class="kd">func</span><span class="p">(</span><span class="nx">cmd</span> <span class="o">*</span><span class="nx">cobra</span><span class="p">.</span><span class="nx">Command</span><span class="p">,</span> <span class="nx">args</span> <span class="p">[]</span><span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">if</span> <span class="nx">versionFlag</span> <span class="p">{</span>
+			<span class="nx">fmt</span><span class="p">.</span><span class="nf">Print</span><span class="p">(</span><span class="nx">version</span><span class="p">.</span><span class="nf">GetInfo</span><span class="p">())</span>
+		<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+			<span class="nx">cmd</span><span class="p">.</span><span class="nf">HelpFunc</span><span class="p">()(</span><span class="nx">cmd</span><span class="p">,</span> <span class="nx">args</span><span class="p">)</span>
+		<span class="p">}</span>
+	<span class="p">},</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>第一个<code>Use</code>指明了就是使用<code>peer</code>进行命令行操作。
+下面的<code>PersistentPreRunE</code>是对程序运行错误进行处理的，可以不用关注。
+然后<code>Run</code>是运行这个指令时候的处理，这个地方就是显示版本或者显示帮助信息。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">mainFlags</span> <span class="o">:=</span> <span class="nx">mainCmd</span><span class="p">.</span><span class="nf">PersistentFlags</span><span class="p">()</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>是把<code>peer</code>当成全局的指令，传入的参数都是公用的。然后针对<code>mainFlags</code>设定了一些自己的参数，包括版本日志等内容。
+接下来是初始化配置</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">err</span> <span class="o">:=</span> <span class="nx">common</span><span class="p">.</span><span class="nf">InitConfig</span><span class="p">(</span><span class="nx">cmdRoot</span><span class="p">)</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>这个函数具体是什么功能呢？就是使用viper读取配置文件。如果配置过<code>FABRIC_CFG_PATH</code>就是用配置的路径，如果没有就使用这几个路径
+* /etc/hyperledger/fabric
+* $GOPATH/src/github.com/hyperledger/fabric/sampleconfig
+* 当前运行的路径</p>
+
+<p>然后读取这些配置信息。
+不错，我们确实在go下面看到了sampleconfig文件夹。具体的内容就不分析了，反正是运行所必须的一些配置。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go">	<span class="nx">mainCmd</span><span class="p">.</span><span class="nf">AddCommand</span><span class="p">(</span><span class="nx">version</span><span class="p">.</span><span class="nf">Cmd</span><span class="p">())</span>
+	<span class="nx">mainCmd</span><span class="p">.</span><span class="nf">AddCommand</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nf">Cmd</span><span class="p">())</span>
+	<span class="nx">mainCmd</span><span class="p">.</span><span class="nf">AddCommand</span><span class="p">(</span><span class="nx">chaincode</span><span class="p">.</span><span class="nf">Cmd</span><span class="p">(</span><span class="kc">nil</span><span class="p">))</span>
+	<span class="nx">mainCmd</span><span class="p">.</span><span class="nf">AddCommand</span><span class="p">(</span><span class="nx">clilogging</span><span class="p">.</span><span class="nf">Cmd</span><span class="p">(</span><span class="kc">nil</span><span class="p">))</span>
+	<span class="nx">mainCmd</span><span class="p">.</span><span class="nf">AddCommand</span><span class="p">(</span><span class="nx">channel</span><span class="p">.</span><span class="nf">Cmd</span><span class="p">(</span><span class="kc">nil</span><span class="p">))</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>为执行添加对应的操作。比如我们一直念念不忘的<code>peer node start</code>。
+跟本程序在同一层的有好多文件夹，包括chaincode，channel，node等，就是对应的这几个命令。
+接下来是对MSP的一些配置</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">var</span> <span class="nx">mspMgrConfigDir</span> <span class="p">=</span> <span class="nx">config</span><span class="p">.</span><span class="nf">GetPath</span><span class="p">(</span><span class="s">&#34;peer.mspConfigPath&#34;</span><span class="p">)</span>
+	<span class="kd">var</span> <span class="nx">mspID</span> <span class="p">=</span> <span class="nx">viper</span><span class="p">.</span><span class="nf">GetString</span><span class="p">(</span><span class="s">&#34;peer.localMspId&#34;</span><span class="p">)</span>
+	<span class="nx">err</span> <span class="p">=</span> <span class="nx">common</span><span class="p">.</span><span class="nf">InitCrypto</span><span class="p">(</span><span class="nx">mspMgrConfigDir</span><span class="p">,</span> <span class="nx">mspID</span><span class="p">)</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>这一块我目前也比较乱，整体上就是进行了一些初始化配置。
+最后是这么一句</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go">	<span class="k">if</span> <span class="nx">mainCmd</span><span class="p">.</span><span class="nf">Execute</span><span class="p">()</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">os</span><span class="p">.</span><span class="nf">Exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+	<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>就是把这些都启动起来了，等待命令行的操作。如果出错了，就退出。
+这样的话整体就执行了。</p>
+
+<h2 id="总结">总结</h2>
+
+<p>目前。对于peer的启动就看完了，但是里面“注册”的子命令（像node start）这种的，还没有来得及看，继续看，继续写。
+peer的启动过程是这样
+1. 生成viper以及rootCmd
+2. 读取对应的配置文件，把配置的信息加载到viper里面
+3. 把cmd指令注册到mainCmd上，方便处理命令行
+4. 执行execute操作，解析命令行的内容，执行对应的操作。</p>
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">Hundred</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2017-11-17 09:08
+        
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">许可协议</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/fabric/">fabric</a>
+          <a href="/tags/go/">go</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB6fabric%E6%95%B0%E6%8D%AE%E5%BA%93I/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">fabric源码阅读6：fabric数据库I</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB4fabric%E5%90%AF%E5%8A%A8I/">
+            <span class="next-text nav-default">fabric源码阅读4：fabric启动I</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+  
+  
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="#" class="iconfont icon-cnblogs" title="cnblogs"></a>
+      <a href="mailto:sdwangzhuo@gmail.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/hundredwz" class="iconfont icon-github" title="github"></a>
+      <a href="#" class="iconfont icon-juejin" title="juejin"></a>
+      <a href="#" class="iconfont icon-v2ex" title="v2ex"></a>
+      <a href="https://weibo.com/hundredwz" class="iconfont icon-weibo" title="weibo"></a>
+  <a href="https://hundredwz.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2013 - 
+    2020
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Hundred</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.min.js" integrity="sha256-jwCP0NAdCBloaIWTWHmW4i3snUNMHUNO+jr9rYd2iOI=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.locales.min.js" integrity="sha256-ZwofwC1Lf/faQCzN7nZtfijVV6hSwxjQMwXL4gn9qU8=" crossorigin="anonymous"></script>
+  <script><!-- NOTE: timeago.js uses the language code format like "zh_CN" (underscore and case sensitive) -->
+    var languageCode = "zh-CN".replace(/-/g, '_').replace(/_(.*)/, function ($0, $1) {return $0.replace($1, $1.toUpperCase());});
+    timeago().render(document.querySelectorAll('.timeago'), languageCode);
+    timeago.cancel();  
+  </script>
+<script type="text/javascript" src="/dist/even.26188efa.min.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+      showProcessingMessages: false,
+      messageStyle: 'none'
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"  integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-138883536-1', 'auto');
+	ga('set', 'anonymizeIp', true);
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+
+
+
+
+</body>
+</html>

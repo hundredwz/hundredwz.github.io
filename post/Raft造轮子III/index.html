@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Raft造轮子III - A Lazy Coder</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="Hundred" /><meta name="description" content="我们之前定义了raft通信的基本数据格式以及rpc模式也生成了数据内容，这篇文章就要开始具体的操作了。
+" /><meta name="keywords" content="Blockchain, Golang, Fabric, Ethereum, Code" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.56.1 with even 4.0.0" />
+
+
+<link rel="canonical" href="https://hundredwz.github.io/post/Raft%E9%80%A0%E8%BD%AE%E5%AD%90III/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<link href="/dist/even.c2a46f00.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+<link rel="stylesheet" href="/css/reset-even.css">
+
+
+<meta property="og:title" content="Raft造轮子III" />
+<meta property="og:description" content="我们之前定义了raft通信的基本数据格式以及rpc模式也生成了数据内容，这篇文章就要开始具体的操作了。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://hundredwz.github.io/post/Raft%E9%80%A0%E8%BD%AE%E5%AD%90III/" />
+<meta property="article:published_time" content="2018-04-13T08:50:00+00:00" />
+<meta property="article:modified_time" content="2018-04-13T08:50:00+00:00" />
+<meta itemprop="name" content="Raft造轮子III">
+<meta itemprop="description" content="我们之前定义了raft通信的基本数据格式以及rpc模式也生成了数据内容，这篇文章就要开始具体的操作了。">
+
+
+<meta itemprop="datePublished" content="2018-04-13T08:50:00&#43;00:00" />
+<meta itemprop="dateModified" content="2018-04-13T08:50:00&#43;00:00" />
+<meta itemprop="wordCount" content="1005">
+
+
+
+<meta itemprop="keywords" content="go,raft,接口," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Raft造轮子III"/>
+<meta name="twitter:description" content="我们之前定义了raft通信的基本数据格式以及rpc模式也生成了数据内容，这篇文章就要开始具体的操作了。"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">A Lazy Coder</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">首页</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">归档</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">分类</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/friends/">
+        <li class="mobile-menu-item">Friends</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">A Lazy Coder</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">首页</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">归档</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">分类</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/friends/">Friends</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">Raft造轮子III</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2018-04-13 08:50 </span>
+        <div class="post-category">
+            <a href="/categories/program/"> program </a>
+            </div>
+          <span class="more-meta"> 约 1005 字 </span>
+          <span class="more-meta"> 预计阅读 3 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#前言">前言</a></li>
+<li><a href="#日志操作">日志操作</a></li>
+<li><a href="#peer内容">peer内容</a></li>
+<li><a href="#通信">通信</a></li>
+<li><a href="#状态机">状态机</a></li>
+<li><a href="#结束">结束</a></li>
+</ul></li>
+</ul>
+</nav>
+  </div>
+</div>
+  <div class="post-outdated">
+    <div class="hint">
+      <p>【注意】最后更新于 <span class="timeago" datetime="2018-04-13T08:50:00" title="April 13, 2018">April 13, 2018</span>，文中内容可能已过时，请谨慎使用。</p>
+    </div>
+  </div>
+    <div class="post-content">
+      <p>我们之前定义了raft通信的基本数据格式以及rpc模式也生成了数据内容，这篇文章就要开始具体的操作了。</p>
+
+<h2 id="前言">前言</h2>
+
+<p>由于本部分涉及到很多的判断过程，我们想要一蹴而就是不可能的，所以我们应该借鉴面向接口的思想，先定义好接口，外部操作直接调用，具体的操作我们以后再进行判断。</p>
+
+<h2 id="日志操作">日志操作</h2>
+
+<p>在raft中在，最重要的判断就是日志的操作了吧，无论是增加日志，还是判断日志内容，抑或取出一个日志，我们都是对日志的操作，所以我们为了方便，先定义一个队日志的基本操作。
+我们先自己考虑下有什么对日志的操作，目前至少这几个是要有的
+1. 日志内容对比:我们知道有prevLogTerm这些内容需要校验，这个是必须的
+2. 日志内容添加：Leader发来新的日志，Follower需要添加进来
+3. 取出日志最新任期，最新序号，以及已经执行的最新序号</p>
+
+<p>大体就是以下几个内容</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Logger</span> <span class="kd">interface</span> <span class="p">{</span>
+	<span class="nf">Check</span><span class="p">(</span><span class="nx">prevLogIndex</span> <span class="kt">int64</span><span class="p">,</span> <span class="nx">prevLogTerm</span> <span class="kt">int64</span><span class="p">,</span> <span class="nx">index</span> <span class="kt">int64</span><span class="p">,</span> <span class="nx">term</span> <span class="kt">int64</span><span class="p">)</span> <span class="kt">error</span>
+	<span class="nf">Append</span><span class="p">(</span><span class="nx">e</span> <span class="o">*</span><span class="nx">Entry</span><span class="p">)</span> <span class="kt">error</span>
+	<span class="nf">FresherThan</span><span class="p">(</span><span class="nx">index</span> <span class="kt">int64</span><span class="p">,</span> <span class="nx">term</span> <span class="kt">int64</span><span class="p">)</span> <span class="kt">bool</span>
+	<span class="nf">Get</span><span class="p">(</span><span class="nx">index</span> <span class="kt">int64</span><span class="p">)</span> <span class="o">*</span><span class="nx">Entry</span>
+	<span class="nf">GetEntryForRequest</span><span class="p">(</span><span class="nx">index</span> <span class="kt">int64</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="nx">Entry</span><span class="p">,</span> <span class="kt">int64</span><span class="p">,</span> <span class="kt">int64</span><span class="p">)</span>
+	<span class="nf">Index</span><span class="p">()</span> <span class="kt">int64</span>
+	<span class="nf">LastIndex</span><span class="p">()</span> <span class="kt">int64</span>
+	<span class="nf">Term</span><span class="p">()</span> <span class="kt">int64</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>其中entry就是日志的内容了，我们可以想下entry至少有以下结构</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Entry</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">CmdID</span> <span class="kt">int64</span>
+	<span class="nx">Index</span> <span class="kt">int64</span>
+	<span class="nx">Term</span>  <span class="kt">int64</span>
+	<span class="nx">Data</span>  <span class="p">[]</span><span class="kt">byte</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>好，关于日志的定义我们暂时先定义到这。</p>
+
+<h2 id="peer内容">peer内容</h2>
+
+<p>我们从论文中可以看到，leader是需要维护一个数据结构的，这个数组里面有nextIndex和matchIndex，用来给不同的follower发送日志内容，因此我们定义这么一个结构</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Peer</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">ID</span>         <span class="kt">string</span>
+	<span class="nx">NextIndex</span>  <span class="kt">int64</span>
+	<span class="nx">MatchIndex</span> <span class="kt">int64</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<h2 id="通信">通信</h2>
+
+<p>我们应该还记得，上一篇文章我们定义了通信的基本要求，在这个地方我们需要二次封装下
+首先是client端，我们知道，client端是可以生成client之后，直接调用函数进行操作的，但是client的生成需要地址，参数等，所以我们定义一个接口</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">GRPCClient</span> <span class="kd">interface</span> <span class="p">{</span>
+	<span class="nf">RequestVote</span><span class="p">(</span><span class="nx">address</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">request</span> <span class="o">*</span><span class="nx">pb</span><span class="p">.</span><span class="nx">VoteRequest</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="nx">pb</span><span class="p">.</span><span class="nx">VoteRespond</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+	<span class="nf">AppendEntries</span><span class="p">(</span><span class="nx">address</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">request</span> <span class="o">*</span><span class="nx">pb</span><span class="p">.</span><span class="nx">EntryRequest</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="nx">pb</span><span class="p">.</span><span class="nx">EntryResponse</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>这个就是我们client需要实现的内容了
+server的话，不仅需要实现proto定义的service，还有定义这么几个接口，包括启动服务，停止服务，处理网络参数等</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">GRPCServer</span> <span class="kd">interface</span> <span class="p">{</span>
+	<span class="nf">Address</span><span class="p">()</span> <span class="kt">string</span>
+	<span class="nf">Start</span><span class="p">(</span><span class="nx">n</span> <span class="o">*</span><span class="nx">Node</span><span class="p">)</span> <span class="kt">error</span>
+	<span class="nf">Stop</span><span class="p">()</span>
+	<span class="nf">Server</span><span class="p">()</span> <span class="o">*</span><span class="nx">grpc</span><span class="p">.</span><span class="nx">Server</span>
+	<span class="nf">Listener</span><span class="p">()</span> <span class="nx">net</span><span class="p">.</span><span class="nx">Listener</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<h2 id="状态机">状态机</h2>
+
+<p>我们还差最后一个部分，就是把日志内容执行的部分，我们收到了leader的指令，肯定是要存储的，就是有了一个接口</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Applyer</span> <span class="kd">interface</span> <span class="p">{</span>
+	<span class="nf">Apply</span><span class="p">(</span><span class="nx">cmd</span> <span class="o">*</span><span class="nx">CommandRequest</span><span class="p">)</span> <span class="kt">error</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>这个CommandRequest是什么呢？就是具体的指令，有什么内容我们可以先不考虑，定义成一个空的结构体</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">CommandRequest</span> <span class="kd">struct</span> <span class="p">{</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<h2 id="结束">结束</h2>
+
+<p>我们目前定义了后续开发所需要的各种接口，工具与原料都准备好了，就准备开始造起来吧！</p>
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">Hundred</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2018-04-13 08:50
+        
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">许可协议</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/go/">go</a>
+          <a href="/tags/raft/">raft</a>
+          <a href="/tags/%E6%8E%A5%E5%8F%A3/">接口</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/Raft%E9%80%A0%E8%BD%AE%E5%AD%90IV/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">Raft造轮子IV</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/Raft%E9%80%A0%E8%BD%AE%E5%AD%90II/">
+            <span class="next-text nav-default">Raft造轮子II</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+  
+  
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="#" class="iconfont icon-cnblogs" title="cnblogs"></a>
+      <a href="mailto:sdwangzhuo@gmail.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/hundredwz" class="iconfont icon-github" title="github"></a>
+      <a href="#" class="iconfont icon-juejin" title="juejin"></a>
+      <a href="#" class="iconfont icon-v2ex" title="v2ex"></a>
+      <a href="https://weibo.com/hundredwz" class="iconfont icon-weibo" title="weibo"></a>
+  <a href="https://hundredwz.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2013 - 
+    2020
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Hundred</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.min.js" integrity="sha256-jwCP0NAdCBloaIWTWHmW4i3snUNMHUNO+jr9rYd2iOI=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.locales.min.js" integrity="sha256-ZwofwC1Lf/faQCzN7nZtfijVV6hSwxjQMwXL4gn9qU8=" crossorigin="anonymous"></script>
+  <script><!-- NOTE: timeago.js uses the language code format like "zh_CN" (underscore and case sensitive) -->
+    var languageCode = "zh-CN".replace(/-/g, '_').replace(/_(.*)/, function ($0, $1) {return $0.replace($1, $1.toUpperCase());});
+    timeago().render(document.querySelectorAll('.timeago'), languageCode);
+    timeago.cancel();  
+  </script>
+<script type="text/javascript" src="/dist/even.26188efa.min.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+      showProcessingMessages: false,
+      messageStyle: 'none'
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"  integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-138883536-1', 'auto');
+	ga('set', 'anonymizeIp', true);
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+
+
+
+
+</body>
+</html>

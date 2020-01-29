@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>fabric源码阅读2：chaincode函数理解II - A Lazy Coder</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="Hundred" /><meta name="description" content="上一篇讲了在chaincode端函数GetFuncAndParameters()的使用，但是在客户端这块使用还是有一点问题，就在此进一步解释下.
+" /><meta name="keywords" content="Blockchain, Golang, Fabric, Ethereum, Code" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.56.1 with even 4.0.0" />
+
+
+<link rel="canonical" href="https://hundredwz.github.io/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB2chaincode%E5%87%BD%E6%95%B0%E7%90%86%E8%A7%A3II/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<link href="/dist/even.c2a46f00.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+<link rel="stylesheet" href="/css/reset-even.css">
+
+
+<meta property="og:title" content="fabric源码阅读2：chaincode函数理解II" />
+<meta property="og:description" content="上一篇讲了在chaincode端函数GetFuncAndParameters()的使用，但是在客户端这块使用还是有一点问题，就在此进一步解释下." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://hundredwz.github.io/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB2chaincode%E5%87%BD%E6%95%B0%E7%90%86%E8%A7%A3II/" />
+<meta property="article:published_time" content="2017-10-19T07:14:00+00:00" />
+<meta property="article:modified_time" content="2017-10-19T07:14:00+00:00" />
+<meta itemprop="name" content="fabric源码阅读2：chaincode函数理解II">
+<meta itemprop="description" content="上一篇讲了在chaincode端函数GetFuncAndParameters()的使用，但是在客户端这块使用还是有一点问题，就在此进一步解释下.">
+
+
+<meta itemprop="datePublished" content="2017-10-19T07:14:00&#43;00:00" />
+<meta itemprop="dateModified" content="2017-10-19T07:14:00&#43;00:00" />
+<meta itemprop="wordCount" content="1238">
+
+
+
+<meta itemprop="keywords" content="java,区块链,fabric," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="fabric源码阅读2：chaincode函数理解II"/>
+<meta name="twitter:description" content="上一篇讲了在chaincode端函数GetFuncAndParameters()的使用，但是在客户端这块使用还是有一点问题，就在此进一步解释下."/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">A Lazy Coder</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">首页</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">归档</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">分类</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/friends/">
+        <li class="mobile-menu-item">Friends</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">A Lazy Coder</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">首页</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">归档</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">分类</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/friends/">Friends</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">fabric源码阅读2：chaincode函数理解II</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2017-10-19 07:14 </span>
+        <div class="post-category">
+            <a href="/categories/program/"> program </a>
+            </div>
+          <span class="more-meta"> 约 1238 字 </span>
+          <span class="more-meta"> 预计阅读 3 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    
+  </div>
+</div>
+  <div class="post-outdated">
+    <div class="warn">
+      <p>【注意】最后更新于 <span class="timeago" datetime="2017-10-19T07:14:00" title="October 19, 2017">October 19, 2017</span>，文中内容可能已过时，请谨慎使用。</p>
+    </div>
+  </div>
+    <div class="post-content">
+      <p>上一篇讲了在chaincode端函数GetFuncAndParameters()的使用，但是在客户端这块使用还是有一点问题，就在此进一步解释下.</p>
+
+<p>首先我们看下<code>ChaincodeStub</code>怎么写的</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">ChaincodeStub</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">TxID</span>           <span class="kt">string</span>
+	<span class="nx">chaincodeEvent</span> <span class="o">*</span><span class="nx">pb</span><span class="p">.</span><span class="nx">ChaincodeEvent</span>
+	<span class="nx">args</span>           <span class="p">[][]</span><span class="kt">byte</span>
+	<span class="nx">handler</span>        <span class="o">*</span><span class="nx">Handler</span>
+	<span class="nx">signedProposal</span> <span class="o">*</span><span class="nx">pb</span><span class="p">.</span><span class="nx">SignedProposal</span>
+	<span class="nx">proposal</span>       <span class="o">*</span><span class="nx">pb</span><span class="p">.</span><span class="nx">Proposal</span>
+
+	<span class="c1">// Additional fields extracted from the signedProposal
+</span><span class="c1"></span>	<span class="nx">creator</span>   <span class="p">[]</span><span class="kt">byte</span>
+	<span class="nx">transient</span> <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">][]</span><span class="kt">byte</span>
+	<span class="nx">binding</span>   <span class="p">[]</span><span class="kt">byte</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>可以很清楚的看到，这里面并没有Function参数，是全部都从args里面提取出来的，那么在java端这个<code>setFcn()</code>以及<code>setArgs()</code>是怎么回事呢？
+正常情况下，java端操作时的函数如下</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="n">TransactionProposalRequest</span> <span class="nf">tpr</span> <span class="o">=</span> <span class="n">client</span><span class="p">.</span><span class="na">newTransactionProposalRequest</span><span class="p">();</span>
+<span class="n">tpr</span><span class="p">.</span><span class="na">setChaincodeID</span><span class="p">(</span><span class="n">chaincodeID</span><span class="p">);</span>
+<span class="n">tpr</span><span class="p">.</span><span class="na">setFcn</span><span class="p">(</span><span class="n">fcn</span><span class="p">);</span>
+<span class="n">tpr</span><span class="p">.</span><span class="na">setArgs</span><span class="p">(</span><span class="n">args</span><span class="p">);</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>这里面是有函数以及参数的，那么进入到chaincode里面就没有了，是怎么变化的呢？
+可以看到，发送<code>transactionProposalRequest</code>是使用的这个方式</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="n">Collection</span><span class="o">&lt;</span><span class="n">ProposalResponse</span><span class="o">&gt;</span> <span class="nf">transactionPropResp</span> <span class="o">=</span> <span class="n">channel</span><span class="p">.</span><span class="na">sendTransactionProposal</span><span class="p">(</span><span class="n">tpr</span><span class="p">,</span> <span class="n">channel</span><span class="p">.</span><span class="na">getPeers</span><span class="p">());</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>那么就进入这个函数体看一看吧。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="nf">Collection</span><span class="o">&lt;</span><span class="n">ProposalResponse</span><span class="o">&gt;</span> <span class="nf">sendTransactionProposal</span><span class="p">(</span><span class="n">TransactionProposalRequest</span> <span class="nf">transactionProposalRequest</span><span class="p">,</span> <span class="n">Collection</span><span class="o">&lt;</span><span class="n">Peer</span><span class="o">&gt;</span> <span class="nf">peers</span><span class="p">)</span> <span class="kd">throws</span> <span class="nf">ProposalException</span><span class="p">,</span> <span class="n">InvalidArgumentException</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="na">sendProposal</span><span class="p">(</span><span class="n">transactionProposalRequest</span><span class="p">,</span> <span class="n">peers</span><span class="p">);</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>调用的内部方法，传递的<code>request</code>，继续看这个<code>sengProposal</code>函数。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java">    <span class="kd">private</span> <span class="nf">Collection</span><span class="o">&lt;</span><span class="n">ProposalResponse</span><span class="o">&gt;</span> <span class="nf">sendProposal</span><span class="p">(</span><span class="n">TransactionRequest</span> <span class="nf">proposalRequest</span><span class="p">,</span> <span class="n">Collection</span><span class="o">&lt;</span><span class="n">Peer</span><span class="o">&gt;</span> <span class="nf">peers</span><span class="p">)</span> <span class="kd">throws</span> <span class="nf">InvalidArgumentException</span><span class="p">,</span> <span class="n">ProposalException</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="na">checkChannelState</span><span class="p">();</span>
+        <span class="k">this</span><span class="p">.</span><span class="na">checkPeers</span><span class="p">(</span><span class="n">peers</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="kc">null</span> <span class="o">==</span> <span class="n">proposalRequest</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="n">InvalidArgumentException</span><span class="p">(</span><span class="s">&#34;sendProposal queryProposalRequest is null&#34;</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="n">proposalRequest</span><span class="p">.</span><span class="na">setSubmitted</span><span class="p">();</span>
+
+            <span class="k">try</span> <span class="p">{</span>
+                <span class="n">TransactionContext</span> <span class="nf">transactionContext</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="na">getTransactionContext</span><span class="p">(</span><span class="n">proposalRequest</span><span class="p">.</span><span class="na">getUserContext</span><span class="p">());</span>
+                <span class="n">transactionContext</span><span class="p">.</span><span class="na">verify</span><span class="p">(</span><span class="n">proposalRequest</span><span class="p">.</span><span class="na">doVerify</span><span class="p">());</span>
+                <span class="n">transactionContext</span><span class="p">.</span><span class="na">setProposalWaitTime</span><span class="p">(</span><span class="n">proposalRequest</span><span class="p">.</span><span class="na">getProposalWaitTime</span><span class="p">());</span>
+                <span class="n">ProposalBuilder</span> <span class="nf">proposalBuilder</span> <span class="o">=</span> <span class="n">ProposalBuilder</span><span class="p">.</span><span class="na">newBuilder</span><span class="p">();</span>
+                <span class="n">proposalBuilder</span><span class="p">.</span><span class="na">context</span><span class="p">(</span><span class="n">transactionContext</span><span class="p">);</span>
+                <span class="n">proposalBuilder</span><span class="p">.</span><span class="na">request</span><span class="p">(</span><span class="n">proposalRequest</span><span class="p">);</span>
+                <span class="n">SignedProposal</span> <span class="nf">invokeProposal</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="na">getSignedProposal</span><span class="p">(</span><span class="n">transactionContext</span><span class="p">,</span> <span class="n">proposalBuilder</span><span class="p">.</span><span class="na">build</span><span class="p">());</span>
+                <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="na">sendProposalToPeers</span><span class="p">(</span><span class="n">peers</span><span class="p">,</span> <span class="n">invokeProposal</span><span class="p">,</span> <span class="n">transactionContext</span><span class="p">);</span>
+            <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="n">ProposalException</span> <span class="nf">var6</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">throw</span> <span class="n">var6</span><span class="p">;</span>
+            <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="n">Exception</span> <span class="nf">var7</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">ProposalException</span> <span class="nf">exp</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ProposalException</span><span class="p">(</span><span class="n">var7</span><span class="p">);</span>
+                <span class="n">logger</span><span class="p">.</span><span class="na">error</span><span class="p">(</span><span class="n">exp</span><span class="p">.</span><span class="na">getMessage</span><span class="p">(),</span> <span class="n">exp</span><span class="p">);</span>
+                <span class="k">throw</span> <span class="n">exp</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>在这里我们可以看到两个有用的地方，一个是</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="n">proposalBuilder</span><span class="p">.</span><span class="na">request</span><span class="p">(</span><span class="n">proposalRequest</span><span class="p">);</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>还有一个是</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="n">SignedProposal</span> <span class="nf">invokeProposal</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="na">getSignedProposal</span><span class="p">(</span><span class="n">transactionContext</span><span class="p">,</span> <span class="n">proposalBuilder</span><span class="p">.</span><span class="na">build</span><span class="p">());</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>第一个是给<code>builder</code>设置<code>request</code>,第二个是执行<code>builder.build()</code>操作。看下第一个有没有对<code>fcn</code>以及<code>args</code>进行操作的内容。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java">    <span class="kd">public</span> <span class="nf">ProposalBuilder</span> <span class="n">request</span><span class="p">(</span><span class="n">TransactionRequest</span> <span class="nf">request</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="na">request</span> <span class="o">=</span> <span class="n">request</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="na">chaincodeID</span><span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="na">getChaincodeID</span><span class="p">().</span><span class="na">getFabricChaincodeID</span><span class="p">());</span>
+        <span class="k">this</span><span class="p">.</span><span class="na">ccType</span><span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="na">getChaincodeLanguage</span><span class="p">()</span> <span class="o">==</span> <span class="n">org</span><span class="p">.</span><span class="na">hyperledger</span><span class="p">.</span><span class="na">fabric</span><span class="p">.</span><span class="na">sdk</span><span class="p">.</span><span class="na">TransactionRequest</span><span class="p">.</span><span class="na">Type</span><span class="p">.</span><span class="na">JAVA</span> <span class="o">?</span> <span class="n">Type</span><span class="p">.</span><span class="na">JAVA</span> <span class="o">:</span> <span class="n">Type</span><span class="p">.</span><span class="na">GOLANG</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="na">transientMap</span> <span class="o">=</span> <span class="n">request</span><span class="p">.</span><span class="na">getTransientMap</span><span class="p">();</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+    <span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>可以看到，并没有。那么看<code>build</code>函数吧</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="nf">Proposal</span> <span class="n">build</span><span class="p">()</span> <span class="kd">throws</span> <span class="nf">ProposalException</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="na">request</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="na">request</span><span class="p">.</span><span class="na">noChannelID</span><span class="p">())</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="na">channelID</span> <span class="o">=</span> <span class="s">&#34;&#34;</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="na">createFabricProposal</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="na">channelID</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="na">chaincodeID</span><span class="p">);</span>
+    <span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>有一句话是<code>createFabricProposal</code>函数，看看是怎么写的</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">private</span> <span class="nf">Proposal</span> <span class="n">createFabricProposal</span><span class="p">(</span><span class="n">String</span> <span class="nf">channelID</span><span class="p">,</span> <span class="n">ChaincodeID</span> <span class="nf">chaincodeID</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="kc">null</span> <span class="o">==</span> <span class="k">this</span><span class="p">.</span><span class="na">transientMap</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="na">transientMap</span> <span class="o">=</span> <span class="n">Collections</span><span class="p">.</span><span class="na">emptyMap</span><span class="p">();</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">IS_DEBUG_LEVEL</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">Iterator</span> <span class="nf">var3</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="na">transientMap</span><span class="p">.</span><span class="na">entrySet</span><span class="p">().</span><span class="na">iterator</span><span class="p">();</span>
+
+            <span class="k">while</span><span class="p">(</span><span class="n">var3</span><span class="p">.</span><span class="na">hasNext</span><span class="p">())</span> <span class="p">{</span>
+                <span class="n">Entry</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span> <span class="kt">byte</span><span class="p">[]</span><span class="o">&gt;</span> <span class="nf">tme</span> <span class="o">=</span> <span class="p">(</span><span class="n">Entry</span><span class="p">)</span><span class="n">var3</span><span class="p">.</span><span class="na">next</span><span class="p">();</span>
+                <span class="n">logger</span><span class="p">.</span><span class="na">debug</span><span class="p">(</span><span class="n">String</span><span class="p">.</span><span class="na">format</span><span class="p">(</span><span class="s">&#34;transientMap(&#39;%s&#39;, &#39;%s&#39;))&#34;</span><span class="p">,</span> <span class="n">Utils</span><span class="p">.</span><span class="na">logString</span><span class="p">((</span><span class="n">String</span><span class="p">)</span><span class="n">tme</span><span class="p">.</span><span class="na">getKey</span><span class="p">()),</span> <span class="n">Utils</span><span class="p">.</span><span class="na">logString</span><span class="p">(</span><span class="k">new</span> <span class="n">String</span><span class="p">((</span><span class="kt">byte</span><span class="p">[])</span><span class="n">tme</span><span class="p">.</span><span class="na">getValue</span><span class="p">(),</span> <span class="n">StandardCharsets</span><span class="p">.</span><span class="na">UTF_8</span><span class="p">))));</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="n">ChaincodeHeaderExtension</span> <span class="nf">chaincodeHeaderExtension</span> <span class="o">=</span> <span class="n">ChaincodeHeaderExtension</span><span class="p">.</span><span class="na">newBuilder</span><span class="p">().</span><span class="na">setChaincodeId</span><span class="p">(</span><span class="n">chaincodeID</span><span class="p">).</span><span class="na">build</span><span class="p">();</span>
+        <span class="n">ChannelHeader</span> <span class="nf">chainHeader</span> <span class="o">=</span> <span class="n">ProtoUtils</span><span class="p">.</span><span class="na">createChannelHeader</span><span class="p">(</span><span class="n">HeaderType</span><span class="p">.</span><span class="na">ENDORSER_TRANSACTION</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="na">context</span><span class="p">.</span><span class="na">getTxID</span><span class="p">(),</span> <span class="n">channelID</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="na">context</span><span class="p">.</span><span class="na">getEpoch</span><span class="p">(),</span> <span class="k">this</span><span class="p">.</span><span class="na">context</span><span class="p">.</span><span class="na">getFabricTimestamp</span><span class="p">(),</span> <span class="n">chaincodeHeaderExtension</span><span class="p">);</span>
+        <span class="n">ChaincodeInvocationSpec</span> <span class="nf">chaincodeInvocationSpec</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="na">createChaincodeInvocationSpec</span><span class="p">(</span><span class="n">chaincodeID</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="na">ccType</span><span class="p">);</span>
+        <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span> <span class="n">ByteString</span><span class="o">&gt;</span> <span class="nf">bsm</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="na">transientMap</span><span class="p">.</span><span class="na">size</span><span class="p">());</span>
+        <span class="n">Iterator</span> <span class="nf">var7</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="na">transientMap</span><span class="p">.</span><span class="na">entrySet</span><span class="p">().</span><span class="na">iterator</span><span class="p">();</span>
+
+        <span class="k">while</span><span class="p">(</span><span class="n">var7</span><span class="p">.</span><span class="na">hasNext</span><span class="p">())</span> <span class="p">{</span>
+            <span class="n">Entry</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span> <span class="kt">byte</span><span class="p">[]</span><span class="o">&gt;</span> <span class="nf">tme</span> <span class="o">=</span> <span class="p">(</span><span class="n">Entry</span><span class="p">)</span><span class="n">var7</span><span class="p">.</span><span class="na">next</span><span class="p">();</span>
+            <span class="n">bsm</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="n">tme</span><span class="p">.</span><span class="na">getKey</span><span class="p">(),</span> <span class="n">ByteString</span><span class="p">.</span><span class="na">copyFrom</span><span class="p">((</span><span class="kt">byte</span><span class="p">[])</span><span class="n">tme</span><span class="p">.</span><span class="na">getValue</span><span class="p">()));</span>
+        <span class="p">}</span>
+
+        <span class="n">ChaincodeProposalPayload</span> <span class="nf">payload</span> <span class="o">=</span> <span class="n">ChaincodeProposalPayload</span><span class="p">.</span><span class="na">newBuilder</span><span class="p">().</span><span class="na">setInput</span><span class="p">(</span><span class="n">chaincodeInvocationSpec</span><span class="p">.</span><span class="na">toByteString</span><span class="p">()).</span><span class="na">putAllTransientMap</span><span class="p">(</span><span class="n">bsm</span><span class="p">).</span><span class="na">build</span><span class="p">();</span>
+        <span class="n">Header</span> <span class="nf">header</span> <span class="o">=</span> <span class="n">Header</span><span class="p">.</span><span class="na">newBuilder</span><span class="p">().</span><span class="na">setSignatureHeader</span><span class="p">(</span><span class="n">ProtoUtils</span><span class="p">.</span><span class="na">getSignatureHeaderAsByteString</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="na">context</span><span class="p">)).</span><span class="na">setChannelHeader</span><span class="p">(</span><span class="n">chainHeader</span><span class="p">.</span><span class="na">toByteString</span><span class="p">()).</span><span class="na">build</span><span class="p">();</span>
+        <span class="k">return</span> <span class="n">Proposal</span><span class="p">.</span><span class="na">newBuilder</span><span class="p">().</span><span class="na">setHeader</span><span class="p">(</span><span class="n">header</span><span class="p">.</span><span class="na">toByteString</span><span class="p">()).</span><span class="na">setPayload</span><span class="p">(</span><span class="n">payload</span><span class="p">.</span><span class="na">toByteString</span><span class="p">()).</span><span class="na">build</span><span class="p">();</span>
+    <span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>貌似没有说？不不不，让我们看下<code>chaincodeInvocationSpec</code>这个变量是怎么生成的。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">private</span> <span class="nf">ChaincodeInvocationSpec</span> <span class="n">createChaincodeInvocationSpec</span><span class="p">(</span><span class="n">ChaincodeID</span> <span class="nf">chaincodeID</span><span class="p">,</span> <span class="n">Type</span> <span class="nf">langType</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">List</span><span class="o">&lt;</span><span class="n">ByteString</span><span class="o">&gt;</span> <span class="nf">allArgs</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="p">();</span>
+        <span class="n">Iterator</span> <span class="nf">var13</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="na">argList</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="na">argList</span><span class="p">.</span><span class="na">size</span><span class="p">()</span> <span class="o">&gt;</span> <span class="n">0</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">allArgs</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="na">argList</span><span class="p">;</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="na">request</span> <span class="o">!=</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
+            <span class="p">((</span><span class="n">List</span><span class="p">)</span><span class="n">allArgs</span><span class="p">).</span><span class="na">add</span><span class="p">(</span><span class="n">ByteString</span><span class="p">.</span><span class="na">copyFrom</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="na">request</span><span class="p">.</span><span class="na">getFcn</span><span class="p">(),</span> <span class="n">StandardCharsets</span><span class="p">.</span><span class="na">UTF_8</span><span class="p">));</span>
+            <span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="nf">args</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="na">request</span><span class="p">.</span><span class="na">getArgs</span><span class="p">();</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">args</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="n">args</span><span class="p">.</span><span class="na">size</span><span class="p">()</span> <span class="o">&gt;</span> <span class="n">0</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">Iterator</span> <span class="nf">var5</span> <span class="o">=</span> <span class="n">args</span><span class="p">.</span><span class="na">iterator</span><span class="p">();</span>
+
+                <span class="k">while</span><span class="p">(</span><span class="n">var5</span><span class="p">.</span><span class="na">hasNext</span><span class="p">())</span> <span class="p">{</span>
+                    <span class="n">String</span> <span class="nf">arg</span> <span class="o">=</span> <span class="p">(</span><span class="n">String</span><span class="p">)</span><span class="n">var5</span><span class="p">.</span><span class="na">next</span><span class="p">();</span>
+                    <span class="p">((</span><span class="n">List</span><span class="p">)</span><span class="n">allArgs</span><span class="p">).</span><span class="na">add</span><span class="p">(</span><span class="n">ByteString</span><span class="p">.</span><span class="na">copyFrom</span><span class="p">(</span><span class="n">arg</span><span class="p">.</span><span class="na">getBytes</span><span class="p">(</span><span class="n">StandardCharsets</span><span class="p">.</span><span class="na">UTF_8</span><span class="p">)));</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+
+            <span class="n">List</span><span class="o">&lt;</span><span class="kt">byte</span><span class="p">[]</span><span class="o">&gt;</span> <span class="nf">argBytes</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="na">request</span><span class="p">.</span><span class="na">getArgBytes</span><span class="p">();</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">argBytes</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="n">argBytes</span><span class="p">.</span><span class="na">size</span><span class="p">()</span> <span class="o">&gt;</span> <span class="n">0</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">var13</span> <span class="o">=</span> <span class="n">argBytes</span><span class="p">.</span><span class="na">iterator</span><span class="p">();</span>
+
+                <span class="k">while</span><span class="p">(</span><span class="n">var13</span><span class="p">.</span><span class="na">hasNext</span><span class="p">())</span> <span class="p">{</span>
+                    <span class="kt">byte</span><span class="p">[]</span> <span class="nf">arg</span> <span class="o">=</span> <span class="p">(</span><span class="kt">byte</span><span class="p">[])</span><span class="n">var13</span><span class="p">.</span><span class="na">next</span><span class="p">();</span>
+                    <span class="p">((</span><span class="n">List</span><span class="p">)</span><span class="n">allArgs</span><span class="p">).</span><span class="na">add</span><span class="p">(</span><span class="n">ByteString</span><span class="p">.</span><span class="na">copyFrom</span><span class="p">(</span><span class="n">arg</span><span class="p">));</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">IS_DEBUG_LEVEL</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">StringBuilder</span> <span class="nf">logout</span> <span class="o">=</span> <span class="k">new</span> <span class="n">StringBuilder</span><span class="p">(</span><span class="n">1000</span><span class="p">);</span>
+            <span class="n">logout</span><span class="p">.</span><span class="na">append</span><span class="p">(</span><span class="n">String</span><span class="p">.</span><span class="na">format</span><span class="p">(</span><span class="s">&#34;ChaincodeInvocationSpec type: %s, chaincode name: %s, chaincode path: %s, chaincode version: %s&#34;</span><span class="p">,</span> <span class="n">langType</span><span class="p">.</span><span class="na">name</span><span class="p">(),</span> <span class="n">chaincodeID</span><span class="p">.</span><span class="na">getName</span><span class="p">(),</span> <span class="n">chaincodeID</span><span class="p">.</span><span class="na">getPath</span><span class="p">(),</span> <span class="n">chaincodeID</span><span class="p">.</span><span class="na">getVersion</span><span class="p">()));</span>
+            <span class="n">String</span> <span class="nf">sep</span> <span class="o">=</span> <span class="s">&#34;&#34;</span><span class="p">;</span>
+            <span class="n">logout</span><span class="p">.</span><span class="na">append</span><span class="p">(</span><span class="s">&#34; args(&#34;</span><span class="p">);</span>
+
+            <span class="k">for</span><span class="p">(</span><span class="n">var13</span> <span class="o">=</span> <span class="p">((</span><span class="n">List</span><span class="p">)</span><span class="n">allArgs</span><span class="p">).</span><span class="na">iterator</span><span class="p">();</span> <span class="n">var13</span><span class="p">.</span><span class="na">hasNext</span><span class="p">();</span> <span class="n">sep</span> <span class="o">=</span> <span class="s">&#34;, &#34;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">ByteString</span> <span class="nf">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">ByteString</span><span class="p">)</span><span class="n">var13</span><span class="p">.</span><span class="na">next</span><span class="p">();</span>
+                <span class="n">logout</span><span class="p">.</span><span class="na">append</span><span class="p">(</span><span class="n">sep</span><span class="p">).</span><span class="na">append</span><span class="p">(</span><span class="s">&#34;\&#34;&#34;</span><span class="p">).</span><span class="na">append</span><span class="p">(</span><span class="n">Utils</span><span class="p">.</span><span class="na">logString</span><span class="p">(</span><span class="k">new</span> <span class="n">String</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="na">toByteArray</span><span class="p">(),</span> <span class="n">StandardCharsets</span><span class="p">.</span><span class="na">UTF_8</span><span class="p">))).</span><span class="na">append</span><span class="p">(</span><span class="s">&#34;\&#34;&#34;</span><span class="p">);</span>
+            <span class="p">}</span>
+
+            <span class="n">logout</span><span class="p">.</span><span class="na">append</span><span class="p">(</span><span class="s">&#34;)&#34;</span><span class="p">);</span>
+            <span class="n">logger</span><span class="p">.</span><span class="na">debug</span><span class="p">(</span><span class="n">logout</span><span class="p">.</span><span class="na">toString</span><span class="p">());</span>
+        <span class="p">}</span>
+
+        <span class="n">ChaincodeInput</span> <span class="nf">chaincodeInput</span> <span class="o">=</span> <span class="n">ChaincodeInput</span><span class="p">.</span><span class="na">newBuilder</span><span class="p">().</span><span class="na">addAllArgs</span><span class="p">((</span><span class="n">Iterable</span><span class="p">)</span><span class="n">allArgs</span><span class="p">).</span><span class="na">build</span><span class="p">();</span>
+        <span class="n">ChaincodeSpec</span> <span class="nf">chaincodeSpec</span> <span class="o">=</span> <span class="n">ChaincodeSpec</span><span class="p">.</span><span class="na">newBuilder</span><span class="p">().</span><span class="na">setType</span><span class="p">(</span><span class="n">langType</span><span class="p">).</span><span class="na">setChaincodeId</span><span class="p">(</span><span class="n">chaincodeID</span><span class="p">).</span><span class="na">setInput</span><span class="p">(</span><span class="n">chaincodeInput</span><span class="p">).</span><span class="na">build</span><span class="p">();</span>
+        <span class="k">return</span> <span class="n">ChaincodeInvocationSpec</span><span class="p">.</span><span class="na">newBuilder</span><span class="p">().</span><span class="na">setChaincodeSpec</span><span class="p">(</span><span class="n">chaincodeSpec</span><span class="p">).</span><span class="na">build</span><span class="p">();</span>
+    <span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>有没有看到这两句？</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="p">((</span><span class="n">List</span><span class="p">)</span><span class="n">allArgs</span><span class="p">).</span><span class="na">add</span><span class="p">(</span><span class="n">ByteString</span><span class="p">.</span><span class="na">copyFrom</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="na">request</span><span class="p">.</span><span class="na">getFcn</span><span class="p">(),</span> <span class="n">StandardCharsets</span><span class="p">.</span><span class="na">UTF_8</span><span class="p">));</span>
+            <span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="nf">args</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="na">request</span><span class="p">.</span><span class="na">getArgs</span><span class="p">();</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">args</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="n">args</span><span class="p">.</span><span class="na">size</span><span class="p">()</span> <span class="o">&gt;</span> <span class="n">0</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">Iterator</span> <span class="nf">var5</span> <span class="o">=</span> <span class="n">args</span><span class="p">.</span><span class="na">iterator</span><span class="p">();</span>
+
+                <span class="k">while</span><span class="p">(</span><span class="n">var5</span><span class="p">.</span><span class="na">hasNext</span><span class="p">())</span> <span class="p">{</span>
+                    <span class="n">String</span> <span class="nf">arg</span> <span class="o">=</span> <span class="p">(</span><span class="n">String</span><span class="p">)</span><span class="n">var5</span><span class="p">.</span><span class="na">next</span><span class="p">();</span>
+                    <span class="p">((</span><span class="n">List</span><span class="p">)</span><span class="n">allArgs</span><span class="p">).</span><span class="na">add</span><span class="p">(</span><span class="n">ByteString</span><span class="p">.</span><span class="na">copyFrom</span><span class="p">(</span><span class="n">arg</span><span class="p">.</span><span class="na">getBytes</span><span class="p">(</span><span class="n">StandardCharsets</span><span class="p">.</span><span class="na">UTF_8</span><span class="p">)));</span>
+                <span class="p">}</span>
+            
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>看到了吧，这个地方把<code>fcn</code>和<code>args</code>合并到一起了，然后作为payload发送出去了。
+所以，假设我们需要调chaincode中的<code>addUser</code>方法，需要4个参数，就应该这么写。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="n">tpr</span><span class="p">.</span><span class="na">setFcn</span><span class="p">(</span><span class="s">&#34;addUser&#34;</span><span class="p">)</span>
+<span class="n">tpr</span><span class="p">.</span><span class="na">setArgs</span><span class="p">(</span><span class="k">new</span> <span class="n">String</span><span class="p">[]{</span><span class="s">&#34;a&#34;</span><span class="p">,</span><span class="s">&#34;b&#34;</span><span class="p">,</span><span class="s">&#34;c&#34;</span><span class="p">,</span><span class="s">&#34;d&#34;</span><span class="p">});</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>好了！客户端函数使用也完工！</p>
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">Hundred</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2017-10-19 07:14
+        
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">许可协议</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/java/">java</a>
+          <a href="/tags/%E5%8C%BA%E5%9D%97%E9%93%BE/">区块链</a>
+          <a href="/tags/fabric/">fabric</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/proto%E6%96%87%E4%BB%B6%E5%AD%A6%E4%B9%A0/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">proto文件学习</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB1chaincode%E5%87%BD%E6%95%B0%E7%90%86%E8%A7%A3I/">
+            <span class="next-text nav-default">fabric源码阅读1：chaincode函数理解I</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+  
+  
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="#" class="iconfont icon-cnblogs" title="cnblogs"></a>
+      <a href="mailto:sdwangzhuo@gmail.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/hundredwz" class="iconfont icon-github" title="github"></a>
+      <a href="#" class="iconfont icon-juejin" title="juejin"></a>
+      <a href="#" class="iconfont icon-v2ex" title="v2ex"></a>
+      <a href="https://weibo.com/hundredwz" class="iconfont icon-weibo" title="weibo"></a>
+  <a href="https://hundredwz.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2013 - 
+    2020
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Hundred</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.min.js" integrity="sha256-jwCP0NAdCBloaIWTWHmW4i3snUNMHUNO+jr9rYd2iOI=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.locales.min.js" integrity="sha256-ZwofwC1Lf/faQCzN7nZtfijVV6hSwxjQMwXL4gn9qU8=" crossorigin="anonymous"></script>
+  <script><!-- NOTE: timeago.js uses the language code format like "zh_CN" (underscore and case sensitive) -->
+    var languageCode = "zh-CN".replace(/-/g, '_').replace(/_(.*)/, function ($0, $1) {return $0.replace($1, $1.toUpperCase());});
+    timeago().render(document.querySelectorAll('.timeago'), languageCode);
+    timeago.cancel();  
+  </script>
+<script type="text/javascript" src="/dist/even.26188efa.min.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+      showProcessingMessages: false,
+      messageStyle: 'none'
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"  integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-138883536-1', 'auto');
+	ga('set', 'anonymizeIp', true);
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+
+
+
+
+</body>
+</html>

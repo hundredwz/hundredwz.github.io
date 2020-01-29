@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>fabric源码阅读4：fabric启动I - A Lazy Coder</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="Hundred" /><meta name="description" content="还记得我在上一篇PutState&amp;amp;GetState理解文章中留下了个疑问,猜测说fabric后台有个守护进程，对chan进行监听什么的。但是只是猜测不行啊，还得从实际来证明。
+" /><meta name="keywords" content="Blockchain, Golang, Fabric, Ethereum, Code" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.56.1 with even 4.0.0" />
+
+
+<link rel="canonical" href="https://hundredwz.github.io/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB4fabric%E5%90%AF%E5%8A%A8I/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<link href="/dist/even.c2a46f00.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+<link rel="stylesheet" href="/css/reset-even.css">
+
+
+<meta property="og:title" content="fabric源码阅读4：fabric启动I" />
+<meta property="og:description" content="还记得我在上一篇PutState&amp;GetState理解文章中留下了个疑问,猜测说fabric后台有个守护进程，对chan进行监听什么的。但是只是猜测不行啊，还得从实际来证明。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://hundredwz.github.io/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB4fabric%E5%90%AF%E5%8A%A8I/" />
+<meta property="article:published_time" content="2017-11-14T07:51:00+00:00" />
+<meta property="article:modified_time" content="2017-11-14T07:51:00+00:00" />
+<meta itemprop="name" content="fabric源码阅读4：fabric启动I">
+<meta itemprop="description" content="还记得我在上一篇PutState&amp;GetState理解文章中留下了个疑问,猜测说fabric后台有个守护进程，对chan进行监听什么的。但是只是猜测不行啊，还得从实际来证明。">
+
+
+<meta itemprop="datePublished" content="2017-11-14T07:51:00&#43;00:00" />
+<meta itemprop="dateModified" content="2017-11-14T07:51:00&#43;00:00" />
+<meta itemprop="wordCount" content="1658">
+
+
+
+<meta itemprop="keywords" content="docker,fabric,go," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="fabric源码阅读4：fabric启动I"/>
+<meta name="twitter:description" content="还记得我在上一篇PutState&amp;GetState理解文章中留下了个疑问,猜测说fabric后台有个守护进程，对chan进行监听什么的。但是只是猜测不行啊，还得从实际来证明。"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">A Lazy Coder</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">首页</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">归档</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">分类</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/friends/">
+        <li class="mobile-menu-item">Friends</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">A Lazy Coder</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">首页</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">归档</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">分类</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/friends/">Friends</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">fabric源码阅读4：fabric启动I</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2017-11-14 07:51 </span>
+        <div class="post-category">
+            <a href="/categories/program/"> program </a>
+            </div>
+          <span class="more-meta"> 约 1658 字 </span>
+          <span class="more-meta"> 预计阅读 4 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#network-setup-sh文件">network_setup.sh文件</a></li>
+<li><a href="#docker-compose-cli-yaml文件">docker-compose-cli.yaml文件</a></li>
+<li><a href="#docker-compose-base-yaml">docker-compose-base.yaml</a></li>
+<li><a href="#peer-base-yaml">peer-base.yaml</a></li>
+<li><a href="#总结">总结</a></li>
+</ul></li>
+</ul>
+</nav>
+  </div>
+</div>
+  <div class="post-outdated">
+    <div class="warn">
+      <p>【注意】最后更新于 <span class="timeago" datetime="2017-11-14T07:51:00" title="November 14, 2017">November 14, 2017</span>，文中内容可能已过时，请谨慎使用。</p>
+    </div>
+  </div>
+    <div class="post-content">
+      <p>还记得我在上一篇<a href="http://txiner.top/program/27.html">PutState&amp;GetState理解</a>文章中留下了个疑问,猜测说fabric后台有个守护进程，对<code>chan</code>进行监听什么的。但是只是猜测不行啊，还得从实际来证明。</p>
+
+<p>怎么看呢？首先我们去找几个文件来看。我们都知道，正常启动一个fabric网络的时候，是执行一个脚本文件，把各种配置文件够给挂载进去。。。为了方便，我们就找<code>./examples/e2e_cli</code>下面的文件吧。</p>
+
+<h2 id="network-setup-sh文件">network_setup.sh文件</h2>
+
+<p>首先，我们都知道，为了启动这个网络，我们通常都是执行</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">./network_setup.sh up</code></pre></td></tr></table>
+</div>
+</div>
+<p>来运行的，通过shell文件我们可以定位到启动主函数</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="k">function</span> networkUp <span class="o">()</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">[</span> -f <span class="s2">&#34;./crypto-config&#34;</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
+      <span class="nb">echo</span> <span class="s2">&#34;crypto-config directory already exists.&#34;</span>
+    <span class="k">else</span>
+      <span class="c1">#Generate all the artifacts that includes org certs, orderer genesis block,</span>
+      <span class="c1"># channel configuration transaction</span>
+      <span class="nb">source</span> generateArtifacts.sh <span class="nv">$CH_NAME</span>
+    <span class="k">fi</span>
+
+    <span class="k">if</span> <span class="o">[</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">IF_COUCHDB</span><span class="si">}</span><span class="s2">&#34;</span> <span class="o">==</span> <span class="s2">&#34;couchdb&#34;</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
+      <span class="nv">CHANNEL_NAME</span><span class="o">=</span><span class="nv">$CH_NAME</span> <span class="nv">TIMEOUT</span><span class="o">=</span><span class="nv">$CLI_TIMEOUT</span> docker-compose -f <span class="nv">$COMPOSE_FILE</span> -f <span class="nv">$COMPOSE_FILE_COUCH</span> up -d <span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
+    <span class="k">else</span>
+      <span class="nv">CHANNEL_NAME</span><span class="o">=</span><span class="nv">$CH_NAME</span> <span class="nv">TIMEOUT</span><span class="o">=</span><span class="nv">$CLI_TIMEOUT</span> docker-compose -f <span class="nv">$COMPOSE_FILE</span> up -d <span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
+    <span class="k">fi</span>
+    <span class="k">if</span> <span class="o">[</span> <span class="nv">$?</span> -ne <span class="m">0</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
+	<span class="nb">echo</span> <span class="s2">&#34;ERROR !!!! Unable to pull the images &#34;</span>
+	<span class="nb">exit</span> <span class="m">1</span>
+    <span class="k">fi</span>
+    docker logs -f cli
+<span class="o">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>首先是检查<code>crypto-config</code>文件夹是否存在，不存在则根据输入的channel名称生成对应的证书等文件。
+* 实际上，在运行之前最好删除下，要不然channel名称不匹配会出错的</p>
+
+<p>具体生成的过程我们稍后再看。
+fabric存储区块有两种存储格式，一种是levelDB，一种是couchDB，所以就是一个指定与否的关系。
+我们发现，启动服务是这一句话</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">docker-compose -f <span class="nv">$COMPOSE_FILE</span> up -d</code></pre></td></tr></table>
+</div>
+</div>
+<p>看来需要看下composefile--<code>compose-cli.yaml</code>文件了。</p>
+
+<h2 id="docker-compose-cli-yaml文件">docker-compose-cli.yaml文件</h2>
+
+<p>这个文件与启动脚本在同一个目录下，内容挺多的，我们分开来看。
+根据整体的文件结构，一共启动了<code>orderer</code>、<code>peer0.org1</code>、<code>peer1.org1</code>、<code>peer0.org2</code>、<code>peer1.org2</code>、<code>cli</code>这几个服务。
+除了<code>cli</code>之外，其他全部都是默认继承的base下面的配置文档。我们先看<code>cli</code>吧。
+<code>cli</code>中制定了<code>container_name</code>,所使用的镜像，一些系统环境变量，默认工作位置，启动时执行的指令，挂载的卷以及需要依赖的服务等等。
+环境这块没有太多奇怪的东西</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">environment<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>GOPATH=/opt/gopath<span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>CORE_VM_ENDPOINT=unix<span class="p">:</span>///host/var/run/docker.sock<span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>CORE_LOGGING_LEVEL=DEBUG<span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>CORE_PEER_ID=cli<span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>CORE_PEER_ADDRESS=peer0.org1.example.com<span class="p">:</span><span class="m">7051</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>CORE_PEER_LOCALMSPID=Org1MSP<span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>CORE_PEER_TLS_ENABLED=<span class="kc">true</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/server.crt<span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/server.key<span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt<span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp</code></pre></td></tr></table>
+</div>
+</div>
+<p>由于fabric是go开发的嘛，所以肯定得指定<code>GOPATH</code>啦，其他的是一些为了安全而使用的cert等等文件，知道存在就好了。
+* 这多说一句话，这些就是刚刚那个<code>generateArtifacts.sh</code>文件生成的。</p>
+
+<p>继续往下看执行的指令是</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">/bin/bash -c <span class="s1">&#39;./scripts/script.sh ${CHANNEL_NAME}; sleep $TIMEOUT&#39;</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>是在这个目录下执行一个<code>scripts.sh</code>文件。
+这个文件是通过<code>volumes</code>挂载进去的</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="w">        </span>-<span class="w"> </span>/var/run/<span class="p">:</span>/host/var/run/<span class="w">
+</span><span class="w">        </span>-<span class="w"> </span>../chaincode/go/<span class="p">:</span>/opt/gopath/src/github.com/hyperledger/fabric/examples/chaincode/go<span class="w">
+</span><span class="w">        </span>-<span class="w"> </span>./crypto-config<span class="p">:</span>/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/<span class="w">
+</span><span class="w">        </span>-<span class="w"> </span>./scripts<span class="p">:</span>/opt/gopath/src/github.com/hyperledger/fabric/peer/scripts/<span class="w">
+</span><span class="w">        </span>-<span class="w"> </span>./channel-artifacts<span class="p">:</span>/opt/gopath/src/github.com/hyperledger/fabric/peer/channel-artifacts</code></pre></td></tr></table>
+</div>
+</div>
+<p>可以看到就是在物理目录下的scripts文件夹。
+打开之后看了下，就是执行的一个正常的client的操作，安装，查询等等操作。就不再赘述了。</p>
+
+<h2 id="docker-compose-base-yaml">docker-compose-base.yaml</h2>
+
+<p>好了，总算看到这个了，又一个非常大的文件，不过我们刚刚看的那几个继承的在这都有了。我们主要看两个,一个<code>orderer</code>,一个<code>peer0.org1</code>，其他的都大同小异。
+首先是<code>orderer</code>.
+为了占空，显得文章多我就都粘贴上来。
+由于好多内容都一样，我们就关注几个核心的点。
+一个是<code>command</code>，含简单，只有一句话<code>orderer</code>，工作位置是<code>/opt/gopath/src/github.com/hyperledger/fabric</code>
+然后端口映射值外部7050，内部7050.
+然后来看<code>peer0.org1</code>.
+又来了一个继承的文件<code>peer-base.yaml</code>文件，这个地方主要做了端口映射，目录挂载等操作，没有太复杂的操作。</p>
+
+<h2 id="peer-base-yaml">peer-base.yaml</h2>
+
+<p>这个地方我们主要就是关注<code>command</code>是<code>peer node start</code>，工作位置是<code>/opt/gopath/src/github.com/hyperledger/fabric/peer</code>。</p>
+
+<h2 id="总结">总结</h2>
+
+<p>通过上面那么多乱七八糟的阅读，我们可以这样来说fabric的启动流程了。
+首先通过启动脚本配置一些用户的自定义参数，生成需要的秘钥啦证书等文件，然后找到对应的yaml文件，按照<code>orderer</code>、<code>peer</code>、<code>cli</code>的顺序启动起来，完成。
+通过这个我们就看到了fabric的启动<code>peer node start</code>以及<code>orderer</code>这两条指令，接下来就要看源码了。</p>
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">Hundred</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2017-11-14 07:51
+        
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">许可协议</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/docker/">docker</a>
+          <a href="/tags/fabric/">fabric</a>
+          <a href="/tags/go/">go</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB5fabric%E5%90%AF%E5%8A%A8II/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">fabric源码阅读5:fabric启动II</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB3PutStateampGetState%E7%90%86%E8%A7%A3/">
+            <span class="next-text nav-default">fabric源码阅读3：PutState&amp;amp;GetState理解</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+  
+  
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="#" class="iconfont icon-cnblogs" title="cnblogs"></a>
+      <a href="mailto:sdwangzhuo@gmail.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/hundredwz" class="iconfont icon-github" title="github"></a>
+      <a href="#" class="iconfont icon-juejin" title="juejin"></a>
+      <a href="#" class="iconfont icon-v2ex" title="v2ex"></a>
+      <a href="https://weibo.com/hundredwz" class="iconfont icon-weibo" title="weibo"></a>
+  <a href="https://hundredwz.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2013 - 
+    2020
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Hundred</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.min.js" integrity="sha256-jwCP0NAdCBloaIWTWHmW4i3snUNMHUNO+jr9rYd2iOI=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.locales.min.js" integrity="sha256-ZwofwC1Lf/faQCzN7nZtfijVV6hSwxjQMwXL4gn9qU8=" crossorigin="anonymous"></script>
+  <script><!-- NOTE: timeago.js uses the language code format like "zh_CN" (underscore and case sensitive) -->
+    var languageCode = "zh-CN".replace(/-/g, '_').replace(/_(.*)/, function ($0, $1) {return $0.replace($1, $1.toUpperCase());});
+    timeago().render(document.querySelectorAll('.timeago'), languageCode);
+    timeago.cancel();  
+  </script>
+<script type="text/javascript" src="/dist/even.26188efa.min.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+      showProcessingMessages: false,
+      messageStyle: 'none'
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"  integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-138883536-1', 'auto');
+	ga('set', 'anonymizeIp', true);
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+
+
+
+
+</body>
+</html>

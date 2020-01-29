@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>区块链 on A Lazy Coder</title>
+    <link>https://hundredwz.github.io/tags/%E5%8C%BA%E5%9D%97%E9%93%BE/</link>
+    <description>Recent content in 区块链 on A Lazy Coder</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Wed, 29 Jan 2020 03:05:57 +0000</lastBuildDate>
+    
+	<atom:link href="https://hundredwz.github.io/tags/%E5%8C%BA%E5%9D%97%E9%93%BE/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Tendermint I</title>
+      <link>https://hundredwz.github.io/post/Tendermint-I/</link>
+      <pubDate>Wed, 29 Jan 2020 03:05:57 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Tendermint-I/</guid>
+      <description>由于新型肺炎，不得不宅在家里面，闲着也是闲着，不如再认真地过一遍Tendermint源码吧。之前看的比较粗略，理解的也不够深。正好毕设使用了</description>
+    </item>
+    
+    <item>
+      <title>Tendermint阅读XI</title>
+      <link>https://hundredwz.github.io/post/Tendermint%E9%98%85%E8%AF%BBXI/</link>
+      <pubDate>Fri, 08 Mar 2019 08:25:56 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Tendermint%E9%98%85%E8%AF%BBXI/</guid>
+      <description>&lt;p&gt;我们现在来看一下Tendermint的工作流程，接上我们第一篇文章了。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Tendermint阅读X</title>
+      <link>https://hundredwz.github.io/post/Tendermint%E9%98%85%E8%AF%BBX/</link>
+      <pubDate>Fri, 08 Mar 2019 06:26:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Tendermint%E9%98%85%E8%AF%BBX/</guid>
+      <description>&lt;p&gt;我们要开始看最难的了，共识模块，这块事区块链的核心，也是流程多到让人痛苦，我们就尽力的看一看吧。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Tendermint阅读IX</title>
+      <link>https://hundredwz.github.io/post/Tendermint%E9%98%85%E8%AF%BBIX/</link>
+      <pubDate>Fri, 08 Mar 2019 03:11:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Tendermint%E9%98%85%E8%AF%BBIX/</guid>
+      <description>&lt;p&gt;我们现在要啃一个硬骨头了，共识模块。在开始之前，我们先看一下EvidencePool模块，一个合法证据池模块。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Tendermint阅读VIII</title>
+      <link>https://hundredwz.github.io/post/Tendermint%E9%98%85%E8%AF%BBVIII/</link>
+      <pubDate>Wed, 06 Mar 2019 02:32:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Tendermint%E9%98%85%E8%AF%BBVIII/</guid>
+      <description>&lt;p&gt;我们在上一篇文章中提到，block处理有处理state，以及相应的执行过程。我们这一节就来看一看。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Tendermint阅读VI</title>
+      <link>https://hundredwz.github.io/post/Tendermint%E9%98%85%E8%AF%BBVI/</link>
+      <pubDate>Sat, 02 Mar 2019 02:15:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Tendermint%E9%98%85%E8%AF%BBVI/</guid>
+      <description>&lt;p&gt;看了两个复杂的，我们来看一个简单的模块，crypto模块。这个模块封装了很多常用的加密所用的包。我们就大体介绍一下。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Tendermint阅读V</title>
+      <link>https://hundredwz.github.io/post/Tendermint%E9%98%85%E8%AF%BBV/</link>
+      <pubDate>Thu, 28 Feb 2019 01:50:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Tendermint%E9%98%85%E8%AF%BBV/</guid>
+      <description>&lt;p&gt;我们看完了peer，看点稍微简单点的mempool实现吧。
+这个和我们写的abci程序有直接的关联，因此，我们需要仔细阅读下。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Tendermint阅读IV</title>
+      <link>https://hundredwz.github.io/post/Tendermint%E9%98%85%E8%AF%BBIV/</link>
+      <pubDate>Tue, 26 Feb 2019 13:05:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Tendermint%E9%98%85%E8%AF%BBIV/</guid>
+      <description>&lt;p&gt;我们之前看了Tendermint如何和别人连接，如何接受别人的连接，可是，Tendermint得怎么找到别人啊！
+不能手动一个一个的输入连接地址啊！
+这个就是pexreactor的功能了！&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Tendermint源码学习III</title>
+      <link>https://hundredwz.github.io/post/Tendermint%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0III/</link>
+      <pubDate>Mon, 25 Feb 2019 12:34:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Tendermint%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0III/</guid>
+      <description>&lt;p&gt;我们之前看了peer的基本操作，现在看一下更上一层的工作内容。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Tendermint源码阅读II</title>
+      <link>https://hundredwz.github.io/post/Tendermint%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BBII/</link>
+      <pubDate>Fri, 22 Feb 2019 02:40:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Tendermint%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BBII/</guid>
+      <description>&lt;p&gt;在开始本节之前，我们得先说两个非常重要的接口，service和reactor。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Tendermint源码学习I</title>
+      <link>https://hundredwz.github.io/post/Tendermint%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0I/</link>
+      <pubDate>Wed, 20 Feb 2019 03:26:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Tendermint%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0I/</guid>
+      <description>&lt;p&gt;作为一个区块链研究生&amp;amp;码农，没有系统的阅读过一个区块链系统的源码，实在不好意思说出去。
+之前我阅读过几天的Fabric，结果发现读起来有点难以理解。于是放弃了好久。
+以前了解了Tendermint，发现是一个研究生的毕设，而且目前应用也挺广泛，就沉下心来阅读一下吧。
+当然啦，我自己直接阅读起来发现还是有一些问题，就看着github上以为大神的内容，阅读了一遍。
+github大佬的地址为&lt;a href=&#34;https://github.com/wupeaking/tendermint_code_analysis&#34; target=&#34;_blank&#34;&gt;通用区块链平台tendermint源码分析&lt;/a&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>掌握比特币IV:节点功能II</title>
+      <link>https://hundredwz.github.io/post/%E6%8E%8C%E6%8F%A1%E6%AF%94%E7%89%B9%E5%B8%81IV%E8%8A%82%E7%82%B9%E5%8A%9F%E8%83%BDII/</link>
+      <pubDate>Sun, 15 Jul 2018 09:41:09 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/%E6%8E%8C%E6%8F%A1%E6%AF%94%E7%89%B9%E5%B8%81IV%E8%8A%82%E7%82%B9%E5%8A%9F%E8%83%BDII/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://txiner.top/tool/91.html&#34;&gt;上一篇&lt;/a&gt;大体讲了比特币中节点主要全节点的功能，本文分析下轻节点等相关的功能。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>掌握比特币III:节点功能I</title>
+      <link>https://hundredwz.github.io/post/%E6%8E%8C%E6%8F%A1%E6%AF%94%E7%89%B9%E5%B8%81III%E8%8A%82%E7%82%B9%E5%8A%9F%E8%83%BDI/</link>
+      <pubDate>Fri, 13 Jul 2018 06:15:17 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/%E6%8E%8C%E6%8F%A1%E6%AF%94%E7%89%B9%E5%B8%81III%E8%8A%82%E7%82%B9%E5%8A%9F%E8%83%BDI/</guid>
+      <description>&lt;p&gt;比特币的节点分为好多种，但是功能都是钱包、矿工、完整区块链以及网络路由节点组成。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>掌握比特币II:支付方式</title>
+      <link>https://hundredwz.github.io/post/%E6%8E%8C%E6%8F%A1%E6%AF%94%E7%89%B9%E5%B8%81II%E6%94%AF%E4%BB%98%E6%96%B9%E5%BC%8F/</link>
+      <pubDate>Thu, 12 Jul 2018 03:11:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/%E6%8E%8C%E6%8F%A1%E6%AF%94%E7%89%B9%E5%B8%81II%E6%94%AF%E4%BB%98%E6%96%B9%E5%BC%8F/</guid>
+      <description>&lt;p&gt;今天了解了下比特币的支付方式，发现以前的了解太麻烦了，今天就多查了查资料弄明白点。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>掌握比特币I：钱包功能学习</title>
+      <link>https://hundredwz.github.io/post/%E6%8E%8C%E6%8F%A1%E6%AF%94%E7%89%B9%E5%B8%81I%E9%92%B1%E5%8C%85%E5%8A%9F%E8%83%BD%E5%AD%A6%E4%B9%A0/</link>
+      <pubDate>Tue, 10 Jul 2018 08:42:37 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/%E6%8E%8C%E6%8F%A1%E6%AF%94%E7%89%B9%E5%B8%81I%E9%92%B1%E5%8C%85%E5%8A%9F%E8%83%BD%E5%AD%A6%E4%B9%A0/</guid>
+      <description>&lt;p&gt;最近看了挺多区块链相关的论文，发现有挺多是解决比特币的一些问题的。仔细一看，发现这些问题我也能够想到，但是前提是对比特币的了解足够清楚。因此想着最近多看一看比特币的相关原理。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>比特币协议论文阅读</title>
+      <link>https://hundredwz.github.io/post/%E6%AF%94%E7%89%B9%E5%B8%81%E5%8D%8F%E8%AE%AE%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/</link>
+      <pubDate>Wed, 13 Jun 2018 06:16:28 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/%E6%AF%94%E7%89%B9%E5%B8%81%E5%8D%8F%E8%AE%AE%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/</guid>
+      <description>&lt;p&gt;前一阵出差了一趟，这几天把Garay的The Bitcoin Backbone Protocol:Analysis and Applications读完了，有了些新的收获。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Thunderella论文阅读</title>
+      <link>https://hundredwz.github.io/post/Thunderella%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/</link>
+      <pubDate>Wed, 30 May 2018 06:42:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Thunderella%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/</guid>
+      <description>&lt;p&gt;今日终于读完了Pass和Shi发表在欧密上的论文《Thunderella: Blockchains with Optimistic Instant Confirmation》，学习了很多，但依然迷惑很多。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Merkle树生成</title>
+      <link>https://hundredwz.github.io/post/Merkle%E6%A0%91%E7%94%9F%E6%88%90/</link>
+      <pubDate>Wed, 04 Apr 2018 08:27:40 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Merkle%E6%A0%91%E7%94%9F%E6%88%90/</guid>
+      <description>&lt;p&gt;今天在写程序的时候需要生成默克尔树进行校验，但是在网上一搜，全部都是讲的原理，没看到什么代码，很是奇怪，就自己动手写了一个。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>e2e_cli分析</title>
+      <link>https://hundredwz.github.io/post/e2e_cli%E5%88%86%E6%9E%90/</link>
+      <pubDate>Tue, 27 Mar 2018 08:52:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/e2e_cli%E5%88%86%E6%9E%90/</guid>
+      <description>&lt;p&gt;经过了将近$\frac{3}{4}$年的浑水摸鱼，我在fabric的道路上越走越偏，也该记录点东西误导下后续的人们了。本片文章分析下我们最常使用的e2e_cli吧。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>UTXO理解</title>
+      <link>https://hundredwz.github.io/post/UTXO%E7%90%86%E8%A7%A3/</link>
+      <pubDate>Fri, 09 Mar 2018 06:53:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/UTXO%E7%90%86%E8%A7%A3/</guid>
+      <description>&lt;p&gt;最近在看到区块链的底层内容，看到了UTXO，看的一头雾水，结合网上的帖子有了一些理解。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>区块链现象看法</title>
+      <link>https://hundredwz.github.io/post/%E5%8C%BA%E5%9D%97%E9%93%BE%E7%8E%B0%E8%B1%A1%E7%9C%8B%E6%B3%95/</link>
+      <pubDate>Tue, 23 Jan 2018 02:34:57 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/%E5%8C%BA%E5%9D%97%E9%93%BE%E7%8E%B0%E8%B1%A1%E7%9C%8B%E6%B3%95/</guid>
+      <description>&lt;p&gt;最近也不知道发生了什么，全民都在讨论区块链，比特币。似乎有一种区块链这个技术可以实现翻天覆地的变化。现在不往区块链上做点什么就是落伍了。
+作为一个刚入门没多久的小白，我有些不一样的看法。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>fabric源码阅读2：chaincode函数理解II</title>
+      <link>https://hundredwz.github.io/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB2chaincode%E5%87%BD%E6%95%B0%E7%90%86%E8%A7%A3II/</link>
+      <pubDate>Thu, 19 Oct 2017 07:14:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB2chaincode%E5%87%BD%E6%95%B0%E7%90%86%E8%A7%A3II/</guid>
+      <description>&lt;p&gt;上一篇讲了在chaincode端函数GetFuncAndParameters()的使用，但是在客户端这块使用还是有一点问题，就在此进一步解释下.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>fabric源码阅读1：chaincode函数理解I</title>
+      <link>https://hundredwz.github.io/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB1chaincode%E5%87%BD%E6%95%B0%E7%90%86%E8%A7%A3I/</link>
+      <pubDate>Mon, 16 Oct 2017 02:24:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB1chaincode%E5%87%BD%E6%95%B0%E7%90%86%E8%A7%A3I/</guid>
+      <description>&lt;p&gt;最近在开发chaincode的时候遇到了一个问题,使用GetFunctionAndParameters这个函数会返回一个函数以及参数，但是运行总是出了点问题。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>fabric-sdk-java初探</title>
+      <link>https://hundredwz.github.io/post/fabric-sdk-java%E5%88%9D%E6%8E%A2/</link>
+      <pubDate>Tue, 10 Oct 2017 11:43:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/fabric-sdk-java%E5%88%9D%E6%8E%A2/</guid>
+      <description>&lt;p&gt;最近在学习fabric，中间遇到了好多坑。而由于fabric更新迭代版本比较快，网上的很多教程也都不安全适用了。我反正也在学习过程中，就尽力的把自己所学习到的东西都记录下来吧。希望能够帮助到需要的人。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>fabric安装使用</title>
+      <link>https://hundredwz.github.io/post/fabric%E5%AE%89%E8%A3%85%E4%BD%BF%E7%94%A8/</link>
+      <pubDate>Fri, 22 Sep 2017 13:36:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/fabric%E5%AE%89%E8%A3%85%E4%BD%BF%E7%94%A8/</guid>
+      <description>&lt;p&gt;最近在学习区块链，想着把自己所学到的东西都记录下来，希望能够写一系列文章吧。本篇文章是fabric的安装教程。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

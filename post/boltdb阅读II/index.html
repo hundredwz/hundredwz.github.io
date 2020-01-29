@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>boltdb阅读II - A Lazy Coder</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="Hundred" /><meta name="description" content="我们继续上篇的bolt源码阅读。
+" /><meta name="keywords" content="Blockchain, Golang, Fabric, Ethereum, Code" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.56.1 with even 4.0.0" />
+
+
+<link rel="canonical" href="https://hundredwz.github.io/post/boltdb%E9%98%85%E8%AF%BBII/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<link href="/dist/even.c2a46f00.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+<link rel="stylesheet" href="/css/reset-even.css">
+
+
+<meta property="og:title" content="boltdb阅读II" />
+<meta property="og:description" content="我们继续上篇的bolt源码阅读。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://hundredwz.github.io/post/boltdb%E9%98%85%E8%AF%BBII/" />
+<meta property="article:published_time" content="2018-11-02T07:48:00+00:00" />
+<meta property="article:modified_time" content="2018-11-02T07:48:00+00:00" />
+<meta itemprop="name" content="boltdb阅读II">
+<meta itemprop="description" content="我们继续上篇的bolt源码阅读。">
+
+
+<meta itemprop="datePublished" content="2018-11-02T07:48:00&#43;00:00" />
+<meta itemprop="dateModified" content="2018-11-02T07:48:00&#43;00:00" />
+<meta itemprop="wordCount" content="1780">
+
+
+
+<meta itemprop="keywords" content="golang,boltdb,源码," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="boltdb阅读II"/>
+<meta name="twitter:description" content="我们继续上篇的bolt源码阅读。"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">A Lazy Coder</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">首页</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">归档</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">分类</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/friends/">
+        <li class="mobile-menu-item">Friends</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">A Lazy Coder</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">首页</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">归档</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">分类</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/friends/">Friends</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">boltdb阅读II</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2018-11-02 07:48 </span>
+        <div class="post-category">
+            <a href="/categories/program/"> program </a>
+            </div>
+          <span class="more-meta"> 约 1780 字 </span>
+          <span class="more-meta"> 预计阅读 4 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#文件锁">文件锁</a></li>
+<li><a href="#文件判断">文件判断</a></li>
+<li><a href="#初始化">初始化</a></li>
+<li><a href="#page">page</a></li>
+<li><a href="#meta">meta</a></li>
+<li><a href="#配置">配置</a></li>
+<li><a href="#参考文献">参考文献</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+  </div>
+</div>
+  <div class="post-outdated">
+    <div class="hint">
+      <p>【注意】最后更新于 <span class="timeago" datetime="2018-11-02T07:48:00" title="November 2, 2018">November 2, 2018</span>，文中内容可能已过时，请谨慎使用。</p>
+    </div>
+  </div>
+    <div class="post-content">
+      <p>我们继续上篇的bolt源码阅读。</p>
+
+<h4 id="文件锁">文件锁</h4>
+
+<p>数据库由于有读写操作，所以会在一定情况下会有多个进程同时写一个文件的情况。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nf">flock</span><span class="p">(</span><span class="nx">db</span><span class="p">,</span> <span class="nx">mode</span><span class="p">,</span> <span class="p">!</span><span class="nx">db</span><span class="p">.</span><span class="nx">readOnly</span><span class="p">,</span> <span class="nx">options</span><span class="p">.</span><span class="nx">Timeout</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">_</span> <span class="p">=</span> <span class="nx">db</span><span class="p">.</span><span class="nb">close</span><span class="p">()</span>
+		<span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>bolt使用系统的文件锁来防止多个进程同时对一个文件操作。这样就进一步防止了用户创建了两个不同的实例对一个数据库操作导致的问题的发生。
+写入函数很简单，直接使用</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// Default values for test hooks
+</span><span class="c1"></span><span class="nx">db</span><span class="p">.</span><span class="nx">ops</span><span class="p">.</span><span class="nx">writeAt</span> <span class="p">=</span> <span class="nx">db</span><span class="p">.</span><span class="nx">file</span><span class="p">.</span><span class="nx">WriteAt</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>系统默认的写入方式写入文件。</p>
+
+<h4 id="文件判断">文件判断</h4>
+
+<p>通过使用了上述的<code>OpenFile</code>函数，系统中可能已经存在数据，也有可能没有存在，因此需要进行判断</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="k">if</span> <span class="nx">info</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">db</span><span class="p">.</span><span class="nx">file</span><span class="p">.</span><span class="nf">Stat</span><span class="p">();</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
+<span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="nx">info</span><span class="p">.</span><span class="nf">Size</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+	<span class="c1">// Initialize new files with meta pages.
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">db</span><span class="p">.</span><span class="nf">init</span><span class="p">();</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
+	<span class="p">}</span>
+<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+	<span class="c1">// Read the first meta page to determine the page size.
+</span><span class="c1"></span>	<span class="kd">var</span> <span class="nx">buf</span> <span class="p">[</span><span class="mh">0x1000</span><span class="p">]</span><span class="kt">byte</span>
+	<span class="k">if</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">db</span><span class="p">.</span><span class="nx">file</span><span class="p">.</span><span class="nf">ReadAt</span><span class="p">(</span><span class="nx">buf</span><span class="p">[:],</span> <span class="mi">0</span><span class="p">);</span> <span class="nx">err</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">m</span> <span class="o">:=</span> <span class="nx">db</span><span class="p">.</span><span class="nf">pageInBuffer</span><span class="p">(</span><span class="nx">buf</span><span class="p">[:],</span> <span class="mi">0</span><span class="p">).</span><span class="nf">meta</span><span class="p">()</span>
+		<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">m</span><span class="p">.</span><span class="nf">validate</span><span class="p">();</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="nx">db</span><span class="p">.</span><span class="nx">pageSize</span> <span class="p">=</span> <span class="nx">os</span><span class="p">.</span><span class="nf">Getpagesize</span><span class="p">()</span>
+		<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+			<span class="nx">db</span><span class="p">.</span><span class="nx">pageSize</span> <span class="p">=</span> <span class="nb">int</span><span class="p">(</span><span class="nx">m</span><span class="p">.</span><span class="nx">pageSize</span><span class="p">)</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>如果连文件信息都无法获取，则直接认定出错，无需进行后续的处理。如果文件大小为0，代表是一个新的文件，需要对数据库进行初始化。否则的话需要读取数据库文件。</p>
+
+<h4 id="初始化">初始化</h4>
+
+<p>为了方便从头理解，我们就从初始化一个数据库开始读起。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">db</span> <span class="o">*</span><span class="nx">DB</span><span class="p">)</span> <span class="nf">init</span><span class="p">()</span> <span class="kt">error</span> <span class="p">{</span>
+	<span class="c1">// Set the page size to the OS page size.
+</span><span class="c1"></span>	<span class="nx">db</span><span class="p">.</span><span class="nx">pageSize</span> <span class="p">=</span> <span class="nx">os</span><span class="p">.</span><span class="nf">Getpagesize</span><span class="p">()</span>
+
+	<span class="c1">// Create two meta pages on a buffer.
+</span><span class="c1"></span>	<span class="nx">buf</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">byte</span><span class="p">,</span> <span class="nx">db</span><span class="p">.</span><span class="nx">pageSize</span><span class="o">*</span><span class="mi">4</span><span class="p">)</span>
+	
+	<span class="o">...</span>
+	<span class="o">...</span>
+
+	<span class="k">return</span> <span class="kc">nil</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>初始化函数多个几个我们刚刚没有看到的内容，我们一步一步来分析。
+首先，bolt使用mmap进行内存与文件系统的映射转换，因此，在一个操作系统中，需要知道给定的分页大小。我们假设系统给定的分页大小是4096。
+首先创建了4*4096长度的字节数组。然后每次都往buf中写入数据，每次写入的都是4096(pageSize)大小。</p>
+
+<h4 id="page">page</h4>
+
+<p>在这个地方，出现了第一个我们需要认识的数据类型<code>page</code>。
+我们先在这停一下，来了解下<code>page</code>。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">const</span> <span class="nx">pageHeaderSize</span> <span class="p">=</span> <span class="nb">int</span><span class="p">(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Offsetof</span><span class="p">(((</span><span class="o">*</span><span class="nx">page</span><span class="p">)(</span><span class="kc">nil</span><span class="p">)).</span><span class="nx">ptr</span><span class="p">))</span>
+
+<span class="kd">const</span> <span class="nx">branchPageElementSize</span> <span class="p">=</span> <span class="nb">int</span><span class="p">(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Sizeof</span><span class="p">(</span><span class="nx">branchPageElement</span><span class="p">{}))</span>
+<span class="kd">const</span> <span class="nx">leafPageElementSize</span> <span class="p">=</span> <span class="nb">int</span><span class="p">(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Sizeof</span><span class="p">(</span><span class="nx">leafPageElement</span><span class="p">{}))</span>
+
+<span class="kd">const</span> <span class="p">(</span>
+	<span class="nx">branchPageFlag</span>   <span class="p">=</span> <span class="mh">0x01</span>
+	<span class="nx">leafPageFlag</span>     <span class="p">=</span> <span class="mh">0x02</span>
+	<span class="nx">metaPageFlag</span>     <span class="p">=</span> <span class="mh">0x04</span>
+	<span class="nx">freelistPageFlag</span> <span class="p">=</span> <span class="mh">0x10</span>
+<span class="p">)</span>
+
+<span class="kd">type</span> <span class="nx">pgid</span> <span class="kt">uint64</span>
+
+<span class="kd">type</span> <span class="nx">page</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">id</span>       <span class="nx">pgid</span>
+	<span class="nx">flags</span>    <span class="kt">uint16</span>
+	<span class="nx">count</span>    <span class="kt">uint16</span>
+	<span class="nx">overflow</span> <span class="kt">uint32</span>
+	<span class="nx">ptr</span>      <span class="kt">uintptr</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>这里面，<code>id</code>就是指每一个页面的Id
+<code>flags</code>是表示页面的数据类型，包含<code>branchPageFlag</code>、<code>leafPageFlag</code>等四种。
+其次是<code>count</code>，也就是页面内存储元素的个数，包括<code>branchPageElement</code>和<code>leafPageElement</code>。
+接下来的<code>overflow</code>字面意思是溢出，就是指页面是否有超出了pageSize的大小，需要进行连接。
+<code>ptr</code>是指的数据element开始的地址。
+我们画个示意图了解一下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">              +---------------+
+              |   Id          |
+              |               |
+              +---------------+
+              |    Flags      |
+              |               |
+              |               |
+              +---------------+
+              |     Count     |
+              |               |
+              +---------------+
+              |      overflow |
+              |               |
+ptr+--------&gt; +---------------+
+              |               |
+              |               |
+              |     Elements  |
+              |               |
+              |               |
+              |               |
+              |               |
+              |               |
+              |               |
+              |               |
+              +---------------+</pre></td></tr></table>
+</div>
+</div>
+<p>这就是一个页面的结构。
+为什么ptr不再内存中呢？</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">const</span> <span class="nx">pageHeaderSize</span> <span class="p">=</span> <span class="nb">int</span><span class="p">(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Offsetof</span><span class="p">(((</span><span class="o">*</span><span class="nx">page</span><span class="p">)(</span><span class="kc">nil</span><span class="p">)).</span><span class="nx">ptr</span><span class="p">))</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>可以看出，pageHeaderSize到ptr就结束了。所以ptr仅仅是一个分界线而已。</p>
+
+<h4 id="meta">meta</h4>
+
+<p>除此之外，源码中还有一个<code>meta</code>结构，我们一并分析下。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">meta</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">magic</span>    <span class="kt">uint32</span>
+	<span class="nx">version</span>  <span class="kt">uint32</span>
+	<span class="nx">pageSize</span> <span class="kt">uint32</span>
+	<span class="nx">flags</span>    <span class="kt">uint32</span>
+	<span class="nx">root</span>     <span class="nx">bucket</span>
+	<span class="nx">freelist</span> <span class="nx">pgid</span>
+	<span class="nx">pgid</span>     <span class="nx">pgid</span>
+	<span class="nx">txid</span>     <span class="nx">txid</span>
+	<span class="nx">checksum</span> <span class="kt">uint64</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>首先<code>magic</code>，就是一个表名是bolt的数字，没有太多的意义。
+<code>version</code>，版本号。
+<code>pageSize</code>在我们的<a href="#文件判断">文件判断</a>中有段代码是<code>db.pageSize = int(m.pageSize)</code>就是代表的页面大小。
+<code>flags</code>没有看到如何使用。
+<code>root</code>是数据库的一个根bucket
+<code>freelist</code>，就是指的空闲页面的标号
+<code>pgid</code>,记录的是数据库一共存了多少页
+<code>txid</code>，交易Id，表示数据库当前进行的版本。
+<code>checksum</code>，校验和，确保以后读取的信息没有错误。</p>
+
+<h4 id="配置">配置</h4>
+
+<p>现在我们继续回到<a href="#初始化">初始化</a>，可以看到，程序首先将前两个page设置为metaPage，其中meta的配置如下</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">m</span><span class="p">.</span><span class="nx">magic</span> <span class="p">=</span> <span class="nx">magic</span>
+<span class="nx">m</span><span class="p">.</span><span class="nx">version</span> <span class="p">=</span> <span class="nx">version</span>
+<span class="nx">m</span><span class="p">.</span><span class="nx">pageSize</span> <span class="p">=</span> <span class="nb">uint32</span><span class="p">(</span><span class="nx">db</span><span class="p">.</span><span class="nx">pageSize</span><span class="p">)</span>
+<span class="nx">m</span><span class="p">.</span><span class="nx">freelist</span> <span class="p">=</span> <span class="mi">2</span>
+<span class="nx">m</span><span class="p">.</span><span class="nx">root</span> <span class="p">=</span> <span class="nx">bucket</span><span class="p">{</span><span class="nx">root</span><span class="p">:</span> <span class="mi">3</span><span class="p">}</span>
+<span class="nx">m</span><span class="p">.</span><span class="nx">pgid</span> <span class="p">=</span> <span class="mi">4</span>
+<span class="nx">m</span><span class="p">.</span><span class="nx">txid</span> <span class="p">=</span> <span class="nf">txid</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>我们主要关注<code>freelist</code>和<code>pgid</code>。
+可以看到<code>freelist</code>设置为2，也就是我们接下来要设置的freelist页。
+<code>pgid</code>设置为4，因为我们再创建<code>buf</code>数组时制定的大小是4*pageSize,所以一共有四个page。
+接下来bolt配置page3(freelist页)和page4(leafPage页)</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// Write an empty freelist at page 3.
+</span><span class="c1"></span><span class="nx">p</span> <span class="o">:=</span> <span class="nx">db</span><span class="p">.</span><span class="nf">pageInBuffer</span><span class="p">(</span><span class="nx">buf</span><span class="p">[:],</span> <span class="nf">pgid</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+<span class="nx">p</span><span class="p">.</span><span class="nx">id</span> <span class="p">=</span> <span class="nf">pgid</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="nx">p</span><span class="p">.</span><span class="nx">flags</span> <span class="p">=</span> <span class="nx">freelistPageFlag</span>
+<span class="nx">p</span><span class="p">.</span><span class="nx">count</span> <span class="p">=</span> <span class="mi">0</span>
+
+<span class="c1">// Write an empty leaf page at page 4.
+</span><span class="c1"></span><span class="nx">p</span> <span class="p">=</span> <span class="nx">db</span><span class="p">.</span><span class="nf">pageInBuffer</span><span class="p">(</span><span class="nx">buf</span><span class="p">[:],</span> <span class="nf">pgid</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+<span class="nx">p</span><span class="p">.</span><span class="nx">id</span> <span class="p">=</span> <span class="nf">pgid</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="nx">p</span><span class="p">.</span><span class="nx">flags</span> <span class="p">=</span> <span class="nx">leafPageFlag</span>
+<span class="nx">p</span><span class="p">.</span><span class="nx">count</span> <span class="p">=</span> <span class="mi">0</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>没有什么难以理解的地方。
+然后系统将<code>buf</code>写入文件中。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="k">if</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">db</span><span class="p">.</span><span class="nx">ops</span><span class="p">.</span><span class="nf">writeAt</span><span class="p">(</span><span class="nx">buf</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="nx">err</span>
+<span class="p">}</span>
+<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nf">fdatasync</span><span class="p">(</span><span class="nx">db</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="nx">err</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>初始化结束。</p>
+
+<h4 id="参考文献">参考文献</h4>
+
+<p><a href="https://www.jianshu.com/p/b86a69892990">区块的持久化之BoltDB(一)</a></p>
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">Hundred</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2018-11-02 07:48
+        
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">许可协议</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/golang/">golang</a>
+          <a href="/tags/boltdb/">boltdb</a>
+          <a href="/tags/%E6%BA%90%E7%A0%81/">源码</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/boltdb%E9%98%85%E8%AF%BBIII/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">boltdb阅读III</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/boltdb%E9%98%85%E8%AF%BBI/">
+            <span class="next-text nav-default">boltdb阅读I</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+  
+  
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="#" class="iconfont icon-cnblogs" title="cnblogs"></a>
+      <a href="mailto:sdwangzhuo@gmail.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/hundredwz" class="iconfont icon-github" title="github"></a>
+      <a href="#" class="iconfont icon-juejin" title="juejin"></a>
+      <a href="#" class="iconfont icon-v2ex" title="v2ex"></a>
+      <a href="https://weibo.com/hundredwz" class="iconfont icon-weibo" title="weibo"></a>
+  <a href="https://hundredwz.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2013 - 
+    2020
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Hundred</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.min.js" integrity="sha256-jwCP0NAdCBloaIWTWHmW4i3snUNMHUNO+jr9rYd2iOI=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.locales.min.js" integrity="sha256-ZwofwC1Lf/faQCzN7nZtfijVV6hSwxjQMwXL4gn9qU8=" crossorigin="anonymous"></script>
+  <script><!-- NOTE: timeago.js uses the language code format like "zh_CN" (underscore and case sensitive) -->
+    var languageCode = "zh-CN".replace(/-/g, '_').replace(/_(.*)/, function ($0, $1) {return $0.replace($1, $1.toUpperCase());});
+    timeago().render(document.querySelectorAll('.timeago'), languageCode);
+    timeago.cancel();  
+  </script>
+<script type="text/javascript" src="/dist/even.26188efa.min.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+      showProcessingMessages: false,
+      messageStyle: 'none'
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"  integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-138883536-1', 'auto');
+	ga('set', 'anonymizeIp', true);
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+
+
+
+
+</body>
+</html>

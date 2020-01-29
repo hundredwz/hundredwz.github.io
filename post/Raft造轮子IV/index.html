@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Raft造轮子IV - A Lazy Coder</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="Hundred" /><meta name="description" content="经过上一篇文章关于一些基础“接口”的定义，我们本篇开始操作核心，节点。
+" /><meta name="keywords" content="Blockchain, Golang, Fabric, Ethereum, Code" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.56.1 with even 4.0.0" />
+
+
+<link rel="canonical" href="https://hundredwz.github.io/post/Raft%E9%80%A0%E8%BD%AE%E5%AD%90IV/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<link href="/dist/even.c2a46f00.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+<link rel="stylesheet" href="/css/reset-even.css">
+
+
+<meta property="og:title" content="Raft造轮子IV" />
+<meta property="og:description" content="经过上一篇文章关于一些基础“接口”的定义，我们本篇开始操作核心，节点。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://hundredwz.github.io/post/Raft%E9%80%A0%E8%BD%AE%E5%AD%90IV/" />
+<meta property="article:published_time" content="2018-04-17T06:15:00+00:00" />
+<meta property="article:modified_time" content="2018-04-17T06:15:00+00:00" />
+<meta itemprop="name" content="Raft造轮子IV">
+<meta itemprop="description" content="经过上一篇文章关于一些基础“接口”的定义，我们本篇开始操作核心，节点。">
+
+
+<meta itemprop="datePublished" content="2018-04-17T06:15:00&#43;00:00" />
+<meta itemprop="dateModified" content="2018-04-17T06:15:00&#43;00:00" />
+<meta itemprop="wordCount" content="2205">
+
+
+
+<meta itemprop="keywords" content="算法,go,分布式,raft," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Raft造轮子IV"/>
+<meta name="twitter:description" content="经过上一篇文章关于一些基础“接口”的定义，我们本篇开始操作核心，节点。"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">A Lazy Coder</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">首页</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">归档</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">分类</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/friends/">
+        <li class="mobile-menu-item">Friends</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">A Lazy Coder</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">首页</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">归档</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">分类</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/friends/">Friends</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">Raft造轮子IV</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2018-04-17 06:15 </span>
+        <div class="post-category">
+            <a href="/categories/program/"> program </a>
+            </div>
+          <span class="more-meta"> 约 2205 字 </span>
+          <span class="more-meta"> 预计阅读 5 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#顶层功能">顶层功能</a></li>
+<li><a href="#底层功能">底层功能</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+  </div>
+</div>
+  <div class="post-outdated">
+    <div class="hint">
+      <p>【注意】最后更新于 <span class="timeago" datetime="2018-04-17T06:15:00" title="April 17, 2018">April 17, 2018</span>，文中内容可能已过时，请谨慎使用。</p>
+    </div>
+  </div>
+    <div class="post-content">
+      <p>经过上一篇文章关于一些基础“接口”的定义，我们本篇开始操作核心，节点。</p>
+
+<p>一个节点，有三个状态，Follower,Candidate和Leader。他们肯定具有一些共性，比如他们都具有自己的ID，自己的交互通信工具，执行状态机，超时时间，任期，投票人等。
+这些信息我们肯定是无法以下就能够确定全的，我们不妨先知道有这些属性，用到了就做详细解释，没有用到就先忽略。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Node</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">sync</span><span class="p">.</span><span class="nx">RWMutex</span>
+
+	<span class="nx">ID</span>              <span class="kt">string</span>
+	<span class="nx">Server</span>          <span class="nx">GRPCServer</span>
+	<span class="nx">Client</span>          <span class="nx">GRPCClient</span>
+	<span class="nx">Status</span>          <span class="kt">int</span>
+	<span class="nx">Log</span>             <span class="nx">Logger</span>
+	<span class="nx">StateMachine</span>    <span class="nx">Applyer</span>
+	<span class="nx">ElectionTimeout</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Duration</span>
+	<span class="nx">Uncommitted</span>     <span class="kd">map</span><span class="p">[</span><span class="kt">int64</span><span class="p">]</span><span class="o">*</span><span class="nx">CommandRequest</span>
+
+	<span class="nx">Term</span>         <span class="kt">int64</span>
+	<span class="nx">ElectionTerm</span> <span class="kt">int64</span>
+	<span class="nx">VoteFor</span>      <span class="kt">string</span>
+	<span class="nx">Ballots</span>      <span class="kt">int</span>
+	<span class="nx">Cluster</span>      <span class="p">[]</span><span class="o">*</span><span class="nx">Peer</span>
+
+	<span class="nx">endElectionChan</span>      <span class="kd">chan</span> <span class="kt">int</span>
+	<span class="nx">finishedElectionChan</span> <span class="kd">chan</span> <span class="kt">int</span>
+
+	<span class="nx">VoteResponseChan</span>          <span class="kd">chan</span> <span class="nx">pb</span><span class="p">.</span><span class="nx">VoteRespond</span>
+	<span class="nx">RequestVoteChan</span>           <span class="kd">chan</span> <span class="nx">pb</span><span class="p">.</span><span class="nx">VoteRequest</span>
+	<span class="nx">RequestVoteResponseChan</span>   <span class="kd">chan</span> <span class="nx">pb</span><span class="p">.</span><span class="nx">VoteRespond</span>
+	<span class="nx">AppendEntriesChan</span>         <span class="kd">chan</span> <span class="nx">pb</span><span class="p">.</span><span class="nx">EntryRequest</span>
+	<span class="nx">AppendEntriesResponseChan</span> <span class="kd">chan</span> <span class="nx">pb</span><span class="p">.</span><span class="nx">EntryResponse</span>
+	<span class="nx">CommandChan</span>               <span class="kd">chan</span> <span class="nx">CommandRequest</span>
+	<span class="nx">ExitChan</span>                  <span class="kd">chan</span> <span class="kt">int</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>为了方便调用，我们可以创建一个new函数，直接把需要传递的参数传递进来，然后需要初始化的进行初始化即可。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">NewNode</span><span class="p">(</span><span class="nx">id</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">client</span> <span class="nx">GRPCClient</span><span class="p">,</span> <span class="nx">server</span> <span class="nx">GRPCServer</span><span class="p">,</span> <span class="nx">logger</span> <span class="nx">Logger</span><span class="p">,</span> <span class="nx">applyer</span> <span class="nx">Applyer</span><span class="p">)</span> <span class="o">*</span><span class="nx">Node</span> <span class="p">{</span>
+	<span class="nx">node</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">Node</span><span class="p">{</span>
+		<span class="nx">ID</span><span class="p">:</span>              <span class="nx">id</span><span class="p">,</span>
+		<span class="nx">Server</span><span class="p">:</span>          <span class="nx">server</span><span class="p">,</span>
+		<span class="nx">Client</span><span class="p">:</span>          <span class="nx">client</span><span class="p">,</span>
+		<span class="nx">Log</span><span class="p">:</span>             <span class="nx">logger</span><span class="p">,</span>
+		<span class="nx">Status</span><span class="p">:</span>          <span class="nx">FOLLOWER</span><span class="p">,</span>
+		<span class="nx">StateMachine</span><span class="p">:</span>    <span class="nx">applyer</span><span class="p">,</span>
+		<span class="nx">ElectionTimeout</span><span class="p">:</span> <span class="mi">500</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Millisecond</span><span class="p">,</span>
+		<span class="nx">Uncommitted</span><span class="p">:</span>     <span class="nb">make</span><span class="p">(</span><span class="kd">map</span><span class="p">[</span><span class="kt">int64</span><span class="p">]</span><span class="o">*</span><span class="nx">CommandRequest</span><span class="p">),</span>
+
+		<span class="nx">VoteResponseChan</span><span class="p">:</span>          <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="nx">pb</span><span class="p">.</span><span class="nx">VoteRespond</span><span class="p">),</span>
+		<span class="nx">RequestVoteChan</span><span class="p">:</span>           <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="nx">pb</span><span class="p">.</span><span class="nx">VoteRequest</span><span class="p">),</span>
+		<span class="nx">RequestVoteResponseChan</span><span class="p">:</span>   <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="nx">pb</span><span class="p">.</span><span class="nx">VoteRespond</span><span class="p">),</span>
+		<span class="nx">AppendEntriesChan</span><span class="p">:</span>         <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="nx">pb</span><span class="p">.</span><span class="nx">EntryRequest</span><span class="p">),</span>
+		<span class="nx">AppendEntriesResponseChan</span><span class="p">:</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="nx">pb</span><span class="p">.</span><span class="nx">EntryResponse</span><span class="p">),</span>
+		<span class="nx">CommandChan</span><span class="p">:</span>               <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="nx">CommandRequest</span><span class="p">),</span>
+		<span class="nx">ExitChan</span><span class="p">:</span>                  <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">int</span><span class="p">),</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="nx">node</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>我们的功能按置顶向下的方式来分类。这样容易理解，也容易完善流程。</p>
+
+<h4 id="顶层功能">顶层功能</h4>
+
+<ol>
+<li><p>启动功能</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">n</span> <span class="o">*</span><span class="nx">Node</span><span class="p">)</span> <span class="nf">Serve</span><span class="p">()</span> <span class="kt">error</span> <span class="p">{</span>
+	<span class="nx">err</span> <span class="o">:=</span> <span class="nx">n</span><span class="p">.</span><span class="nx">Server</span><span class="p">.</span><span class="nf">Start</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span>
+	<span class="nx">log</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;serve start &#34;</span><span class="p">)</span>
+	<span class="k">go</span> <span class="nx">n</span><span class="p">.</span><span class="nf">loop</span><span class="p">()</span>
+	<span class="k">return</span> <span class="nx">err</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ol>
+
+<p>我们需要第一步把GRPCServer启动起来，然后启动一个loop函数，这个loop函数是什么作用呢？
+这个node节点需要处理超时选举，处理请求信息，这个内容需要一个循环函数一致进行监听处理。
+2. 结束功能</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">n</span> <span class="o">*</span><span class="nx">Node</span><span class="p">)</span> <span class="nf">Stop</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">n</span><span class="p">.</span><span class="nx">Server</span><span class="p">.</span><span class="nf">Stop</span><span class="p">()</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>我们直接结束服务器即可。
+3. 添加服务器</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">n</span> <span class="o">*</span><span class="nx">Node</span><span class="p">)</span> <span class="nf">AddToCluster</span><span class="p">(</span><span class="nx">member</span> <span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
+	<span class="nx">p</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">Peer</span><span class="p">{</span>
+		<span class="nx">ID</span><span class="p">:</span> <span class="nx">member</span><span class="p">,</span>
+	<span class="p">}</span>
+	<span class="nx">n</span><span class="p">.</span><span class="nx">Cluster</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">n</span><span class="p">.</span><span class="nx">Cluster</span><span class="p">,</span> <span class="nx">p</span><span class="p">)</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>很明显，进来一个服务器，我们要添加到定义的Node里面的cluster变量里面。</p>
+
+<h4 id="底层功能">底层功能</h4>
+
+<p>底层提供的功能非常多，我们需要一点一点解释。
+为了方便理解，我们不妨按照启动流程进行解释。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-proto" data-lang="proto"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-proto" data-lang="proto">                                 <span class="err">分</span> <span class="err">离</span> <span class="err">或</span> <span class="err">超</span> <span class="err">时
+</span><span class="err"></span>                                   <span class="o">+-------+</span><span class="err">
+</span><span class="err"></span>                                   <span class="err">|</span>       <span class="err">|
+</span><span class="err"></span>                                   <span class="err">|</span>       <span class="err">|
+</span><span class="err"></span>                                   <span class="err">|</span>       <span class="err">|
+</span><span class="err"></span>                                   <span class="err">|</span>       <span class="err">|
+</span><span class="err"></span>                      <span class="err">超</span>  <span class="err">时</span>       <span class="err">|</span>       <span class="n">v</span>               <span class="err">成</span>  <span class="err">功
+</span><span class="err"></span><span class="n">Follower</span> <span class="o">+-------------------------</span><span class="p">&gt;</span><span class="n">Candidate</span><span class="o">+---------------------------</span><span class="p">&gt;</span><span class="n">Leader</span><span class="err">
+</span><span class="err"></span> <span class="err">^</span> <span class="err">^</span>                                    <span class="o">+</span>                                    <span class="o">+</span><span class="err">
+</span><span class="err"></span> <span class="err">|</span> <span class="err">|</span>                                    <span class="err">|</span>                                    <span class="err">|
+</span><span class="err"></span> <span class="err">|</span> <span class="err">|</span>                                    <span class="err">|</span>                                    <span class="err">|
+</span><span class="err"></span> <span class="err">|</span> <span class="err">|</span>                                    <span class="err">|</span>                                    <span class="err">|
+</span><span class="err"></span> <span class="err">|</span> <span class="err">|</span>                  <span class="err">失</span>  <span class="err">败</span>            <span class="err">|</span>                                    <span class="err">|
+</span><span class="err"></span> <span class="err">|</span> <span class="o">+------------------------------------+</span>          <span class="err">更</span> <span class="err">高</span> <span class="err">任</span> <span class="err">期</span>               <span class="err">|
+</span><span class="err"></span> <span class="err">|</span>                                                                           <span class="err">|
+</span><span class="err"></span> <span class="o">+---------------------------------------------------------------------------+</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>这里多说一句，这个工具是<a href="http://asciiflow.com/">asciiflow</a>很方便
+第一步就是选举超时，我们需要Follower将自己提升为Cnadidate
+在循环里面应该是这样</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">n</span> <span class="o">*</span><span class="nx">Node</span><span class="p">)</span> <span class="nf">loop</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">electionTimer</span> <span class="o">:=</span> <span class="nx">time</span><span class="p">.</span><span class="nf">NewTimer</span><span class="p">(</span><span class="nx">n</span><span class="p">.</span><span class="nf">randomElectionTimeout</span><span class="p">())</span>
+	<span class="k">for</span> <span class="p">{</span>
+		<span class="k">select</span> <span class="p">{</span>
+		<span class="k">case</span> <span class="o">&lt;-</span><span class="nx">electionTimer</span><span class="p">.</span><span class="nx">C</span><span class="p">:</span>
+			<span class="nx">n</span><span class="p">.</span><span class="nf">electionTimeout</span><span class="p">()</span>
+		<span class="k">case</span> <span class="o">&lt;-</span><span class="nx">n</span><span class="p">.</span><span class="nx">ExitChan</span><span class="p">:</span>
+			<span class="nx">n</span><span class="p">.</span><span class="nf">stepDown</span><span class="p">()</span>
+			<span class="k">goto</span> <span class="nx">exit</span>
+		<span class="p">}</span>
+		<span class="nx">randElectionTimeout</span> <span class="o">:=</span> <span class="nx">n</span><span class="p">.</span><span class="nf">randomElectionTimeout</span><span class="p">()</span>
+		<span class="k">if</span> <span class="p">!</span><span class="nx">electionTimer</span><span class="p">.</span><span class="nf">Reset</span><span class="p">(</span><span class="nx">randElectionTimeout</span><span class="p">)</span> <span class="p">{</span>
+			<span class="nx">electionTimer</span> <span class="p">=</span> <span class="nx">time</span><span class="p">.</span><span class="nf">NewTimer</span><span class="p">(</span><span class="nx">randElectionTimeout</span><span class="p">)</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+<span class="nx">exit</span><span class="p">:</span>
+	<span class="nx">log</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;[%s] exiting ioLoop()&#34;</span><span class="p">,</span> <span class="nx">n</span><span class="p">.</span><span class="nx">ID</span><span class="p">)</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>这个<code>n.randomElectionTimeout()</code>含义看单词意思就可以明白，就是生成随机的超时时间。在论文里面不同的节点具有不同的超时时间，这样才可以选举出leader。
+那么就定义下这个函数吧</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">n</span> <span class="o">*</span><span class="nx">Node</span><span class="p">)</span> <span class="nf">randomElectionTimeout</span><span class="p">()</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Duration</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="nx">n</span><span class="p">.</span><span class="nx">ElectionTimeout</span> <span class="o">+</span> <span class="nx">time</span><span class="p">.</span><span class="nf">Duration</span><span class="p">(</span><span class="nx">rand</span><span class="p">.</span><span class="nf">Int63n</span><span class="p">(</span><span class="nb">int64</span><span class="p">(</span><span class="nx">n</span><span class="p">.</span><span class="nx">ElectionTimeout</span><span class="p">)))</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>就是在基础超时时间的基础上添加一个随机数，生成不同的时间。
+那么<code>n.electionTimeout()</code>是怎么工作的呢？</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">n</span> <span class="o">*</span><span class="nx">Node</span><span class="p">)</span> <span class="nf">electionTimeout</span><span class="p">()</span> <span class="p">{</span>
+	<span class="k">if</span> <span class="nx">n</span><span class="p">.</span><span class="nx">Status</span> <span class="o">==</span> <span class="nx">LEADER</span> <span class="p">{</span>
+		<span class="k">return</span>
+	<span class="p">}</span>
+	<span class="nx">n</span><span class="p">.</span><span class="nx">Status</span> <span class="p">=</span> <span class="nx">CANDIDATE</span>
+	<span class="nx">n</span><span class="p">.</span><span class="nf">endElection</span><span class="p">()</span>
+	<span class="nx">n</span><span class="p">.</span><span class="nf">nextTerm</span><span class="p">()</span>
+	<span class="nx">n</span><span class="p">.</span><span class="nf">runForLeader</span><span class="p">()</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>毋庸置疑，如果节点已经是Leader了，就不需要再进行选举了。否则的话，把自己提升为Candidate，结束当前的选举，进入下一个任期，并且竞争Leader。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">n</span> <span class="o">*</span><span class="nx">Node</span><span class="p">)</span> <span class="nf">endElection</span><span class="p">()</span> <span class="p">{</span>
+	<span class="k">if</span> <span class="nx">n</span><span class="p">.</span><span class="nx">Status</span> <span class="o">!=</span> <span class="nx">CANDIDATE</span> <span class="o">||</span> <span class="nx">n</span><span class="p">.</span><span class="nx">endElectionChan</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">return</span>
+	<span class="p">}</span>
+	<span class="nb">close</span><span class="p">(</span><span class="nx">n</span><span class="p">.</span><span class="nx">endElectionChan</span><span class="p">)</span>
+	<span class="o">&lt;-</span><span class="nx">n</span><span class="p">.</span><span class="nx">finishedElectionChan</span>
+
+	<span class="nx">n</span><span class="p">.</span><span class="nx">endElectionChan</span> <span class="p">=</span> <span class="kc">nil</span>
+	<span class="nx">n</span><span class="p">.</span><span class="nx">finishedElectionChan</span> <span class="p">=</span> <span class="kc">nil</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>结束选举也不难理解，如果当前状态不是候选人，那就没必要进行了，否则关闭channel</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">n</span> <span class="o">*</span><span class="nx">Node</span><span class="p">)</span> <span class="nf">nextTerm</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">n</span><span class="p">.</span><span class="nx">Status</span> <span class="p">=</span> <span class="nx">FOLLOWER</span>
+	<span class="nx">n</span><span class="p">.</span><span class="nx">Term</span><span class="o">++</span>
+	<span class="nx">n</span><span class="p">.</span><span class="nx">Ballots</span> <span class="p">=</span> <span class="mi">0</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>为什么只会设置状态为Follower呢？因为，进入下一个任期的出发条件不一定是选举过程，也有可能是已经选举出来了。当然了，在此处我们要把自己的投票初始化为0.
+最后是要竞争选Leader了。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">n</span> <span class="o">*</span><span class="nx">Node</span><span class="p">)</span> <span class="nf">runForLeader</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">n</span><span class="p">.</span><span class="nx">Status</span> <span class="p">=</span> <span class="nx">CANDIDATE</span>
+	<span class="nx">n</span><span class="p">.</span><span class="nx">Ballots</span><span class="o">++</span>
+	<span class="nx">n</span><span class="p">.</span><span class="nx">ElectionTerm</span> <span class="p">=</span> <span class="nx">n</span><span class="p">.</span><span class="nx">Term</span>
+	<span class="nx">n</span><span class="p">.</span><span class="nx">endElectionChan</span> <span class="p">=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">int</span><span class="p">)</span>
+	<span class="nx">n</span><span class="p">.</span><span class="nx">finishedElectionChan</span> <span class="p">=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">int</span><span class="p">)</span>
+	<span class="nx">vr</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">pb</span><span class="p">.</span><span class="nx">VoteRequest</span><span class="p">{</span>
+		<span class="nx">Term</span><span class="p">:</span>         <span class="nx">n</span><span class="p">.</span><span class="nx">Term</span><span class="p">,</span>
+		<span class="nx">CandidateID</span><span class="p">:</span>  <span class="nx">n</span><span class="p">.</span><span class="nx">ID</span><span class="p">,</span>
+		<span class="nx">LastLogIndex</span><span class="p">:</span> <span class="nx">n</span><span class="p">.</span><span class="nx">Log</span><span class="p">.</span><span class="nf">Index</span><span class="p">(),</span>
+		<span class="nx">LastLogTerm</span><span class="p">:</span>  <span class="nx">n</span><span class="p">.</span><span class="nx">Log</span><span class="p">.</span><span class="nf">Term</span><span class="p">()}</span>
+	<span class="k">go</span> <span class="nx">n</span><span class="p">.</span><span class="nf">gatherVotes</span><span class="p">(</span><span class="nx">vr</span><span class="p">)</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>提升自己的状态，并且构造请求，发送给其他节点，收集投票结果。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">n</span> <span class="o">*</span><span class="nx">Node</span><span class="p">)</span> <span class="nf">gatherVotes</span><span class="p">(</span><span class="nx">request</span> <span class="o">*</span><span class="nx">pb</span><span class="p">.</span><span class="nx">VoteRequest</span><span class="p">)</span> <span class="p">{</span>
+	<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">peer</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">n</span><span class="p">.</span><span class="nx">Cluster</span> <span class="p">{</span>
+		<span class="k">go</span> <span class="kd">func</span><span class="p">(</span><span class="nx">p</span> <span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
+			<span class="nx">vresp</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">n</span><span class="p">.</span><span class="nx">Client</span><span class="p">.</span><span class="nf">RequestVote</span><span class="p">(</span><span class="nx">p</span><span class="p">,</span> <span class="nx">request</span><span class="p">)</span>
+			<span class="nx">log</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">vresp</span><span class="p">)</span>
+			<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+				<span class="nx">log</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;[%s] error in RequestVoteRPC() to %s - %s&#34;</span><span class="p">,</span> <span class="nx">n</span><span class="p">.</span><span class="nx">ID</span><span class="p">,</span> <span class="nx">p</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+				<span class="k">return</span>
+			<span class="p">}</span>
+			<span class="nx">n</span><span class="p">.</span><span class="nx">VoteResponseChan</span> <span class="o">&lt;-</span> <span class="o">*</span><span class="nx">vresp</span>
+		<span class="p">}(</span><span class="nx">peer</span><span class="p">.</span><span class="nx">ID</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="o">&lt;-</span><span class="nx">n</span><span class="p">.</span><span class="nx">endElectionChan</span>
+	<span class="nb">close</span><span class="p">(</span><span class="nx">n</span><span class="p">.</span><span class="nx">finishedElectionChan</span><span class="p">)</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>怎么发送的呢？就是按集群顺序全部发送，等到结果，把结果放到<code>n.VoteResponseChan</code>里面
+这里就体现出来<code>n.endElectionChan</code>的意义了。如果不使用的话，这个go的协程就停止了。
+然后，把收到的结果放到<code>n.VoteResponseChan</code>里面，我们进行投票处理就好了！
+在我们前面的循环里面要有个对<code>VoteResponseChan</code>的处理</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="k">case</span> <span class="nx">vresp</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="nx">n</span><span class="p">.</span><span class="nx">VoteResponseChan</span><span class="p">:</span>
+		<span class="nx">n</span><span class="p">.</span><span class="nf">doRespondVote</span><span class="p">(</span><span class="nx">vresp</span><span class="p">)</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>具体的处理流程应当如下</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">n</span> <span class="o">*</span><span class="nx">Node</span><span class="p">)</span> <span class="nf">doRespondVote</span><span class="p">(</span><span class="nx">vr</span> <span class="nx">pb</span><span class="p">.</span><span class="nx">VoteRespond</span><span class="p">)</span> <span class="p">{</span>
+	<span class="k">if</span> <span class="nx">n</span><span class="p">.</span><span class="nx">Status</span> <span class="o">!=</span> <span class="nx">CANDIDATE</span> <span class="p">{</span>
+		<span class="k">return</span>
+	<span class="p">}</span>
+	<span class="k">if</span> <span class="nx">vr</span><span class="p">.</span><span class="nx">Term</span> <span class="o">!=</span> <span class="nx">n</span><span class="p">.</span><span class="nx">ElectionTerm</span> <span class="p">{</span>
+		<span class="k">if</span> <span class="nx">vr</span><span class="p">.</span><span class="nx">Term</span> <span class="p">&gt;</span> <span class="nx">n</span><span class="p">.</span><span class="nx">ElectionTerm</span> <span class="p">{</span>
+			<span class="c1">// we discovered a higher term
+</span><span class="c1"></span>			<span class="nx">n</span><span class="p">.</span><span class="nf">endElection</span><span class="p">()</span>
+			<span class="nx">n</span><span class="p">.</span><span class="nf">setTerm</span><span class="p">(</span><span class="nx">vr</span><span class="p">.</span><span class="nx">Term</span><span class="p">)</span>
+		<span class="p">}</span>
+		<span class="k">return</span>
+	<span class="p">}</span>
+
+	<span class="k">if</span> <span class="nx">vr</span><span class="p">.</span><span class="nx">VoteGranted</span> <span class="p">{</span>
+		<span class="nx">n</span><span class="p">.</span><span class="nf">voteGranted</span><span class="p">()</span>
+	<span class="p">}</span>
+
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>如果当前的状态不是Candidate的话，肯定不需要处理的（实际上，不是发出去让别人投票请求，谁会主动给他发相应呢？）
+除此之外，如果回复的任期不一致，那一定不用进行选举了（有别人发了或者有人同意了其他人的Leader请求）然后，需要将任期更新到最新的。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">n</span> <span class="o">*</span><span class="nx">Node</span><span class="p">)</span> <span class="nf">setTerm</span><span class="p">(</span><span class="nx">term</span> <span class="kt">int64</span><span class="p">)</span> <span class="p">{</span>
+	<span class="c1">// check freshness
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">term</span> <span class="o">&lt;=</span> <span class="nx">n</span><span class="p">.</span><span class="nx">Term</span> <span class="p">{</span>
+		<span class="k">return</span>
+	<span class="p">}</span>
+
+	<span class="nx">n</span><span class="p">.</span><span class="nx">Term</span> <span class="p">=</span> <span class="nx">term</span>
+	<span class="nx">n</span><span class="p">.</span><span class="nx">Status</span> <span class="p">=</span> <span class="nx">FOLLOWER</span>
+	<span class="nx">n</span><span class="p">.</span><span class="nx">VoteFor</span> <span class="p">=</span> <span class="s">&#34;&#34;</span>
+	<span class="nx">n</span><span class="p">.</span><span class="nx">Ballots</span> <span class="p">=</span> <span class="mi">0</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>很容易理解，就是将任期更新，一切初始化。
+我们继续上面的投票内容。经过层层筛选，回复的消息是我同意你当选，也就是<code>vr.VoteGranted==True</code>的时候，我就认为有人投票同意了，开始进行处理。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">n</span> <span class="o">*</span><span class="nx">Node</span><span class="p">)</span> <span class="nf">voteGranted</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">n</span><span class="p">.</span><span class="nx">Ballots</span><span class="o">++</span>
+	<span class="nx">majority</span> <span class="o">:=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nx">n</span><span class="p">.</span><span class="nx">Cluster</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span>
+	<span class="k">if</span> <span class="nx">n</span><span class="p">.</span><span class="nx">Ballots</span> <span class="o">&gt;=</span> <span class="nx">majority</span> <span class="p">{</span>
+		<span class="nx">n</span><span class="p">.</span><span class="nf">endElection</span><span class="p">()</span>
+		<span class="nx">n</span><span class="p">.</span><span class="nf">promoteToLeader</span><span class="p">()</span>
+	<span class="p">}</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>只要票数大于大多数，就认为通过了，就把自己提权提到Leader就好了！</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">n</span> <span class="o">*</span><span class="nx">Node</span><span class="p">)</span> <span class="nf">promoteToLeader</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">n</span><span class="p">.</span><span class="nx">Status</span> <span class="p">=</span> <span class="nx">LEADER</span>
+	<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">peer</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">n</span><span class="p">.</span><span class="nx">Cluster</span> <span class="p">{</span>
+		<span class="nx">peer</span><span class="p">.</span><span class="nx">NextIndex</span> <span class="p">=</span> <span class="nx">n</span><span class="p">.</span><span class="nx">Log</span><span class="p">.</span><span class="nf">Index</span><span class="p">()</span>
+	<span class="p">}</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>我们关注的核心是目前将状态提升至Leader，并且维护peer的内容也要更新Index。
+可能会有人问，难道不需要广播吗？给所有的人说声，我当选了！
+这个就是在心跳包里面实现的了！
+我们下篇继续。</p>
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">Hundred</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2018-04-17 06:15
+        
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">许可协议</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/%E7%AE%97%E6%B3%95/">算法</a>
+          <a href="/tags/go/">go</a>
+          <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/">分布式</a>
+          <a href="/tags/raft/">raft</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/Raft%E9%80%A0%E8%BD%AE%E5%AD%90V/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">Raft造轮子V</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/Raft%E9%80%A0%E8%BD%AE%E5%AD%90III/">
+            <span class="next-text nav-default">Raft造轮子III</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+  
+  
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="#" class="iconfont icon-cnblogs" title="cnblogs"></a>
+      <a href="mailto:sdwangzhuo@gmail.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/hundredwz" class="iconfont icon-github" title="github"></a>
+      <a href="#" class="iconfont icon-juejin" title="juejin"></a>
+      <a href="#" class="iconfont icon-v2ex" title="v2ex"></a>
+      <a href="https://weibo.com/hundredwz" class="iconfont icon-weibo" title="weibo"></a>
+  <a href="https://hundredwz.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2013 - 
+    2020
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Hundred</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.min.js" integrity="sha256-jwCP0NAdCBloaIWTWHmW4i3snUNMHUNO+jr9rYd2iOI=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.locales.min.js" integrity="sha256-ZwofwC1Lf/faQCzN7nZtfijVV6hSwxjQMwXL4gn9qU8=" crossorigin="anonymous"></script>
+  <script><!-- NOTE: timeago.js uses the language code format like "zh_CN" (underscore and case sensitive) -->
+    var languageCode = "zh-CN".replace(/-/g, '_').replace(/_(.*)/, function ($0, $1) {return $0.replace($1, $1.toUpperCase());});
+    timeago().render(document.querySelectorAll('.timeago'), languageCode);
+    timeago.cancel();  
+  </script>
+<script type="text/javascript" src="/dist/even.26188efa.min.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+      showProcessingMessages: false,
+      messageStyle: 'none'
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"  integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-138883536-1', 'auto');
+	ga('set', 'anonymizeIp', true);
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>二叉树 on A Lazy Coder</title>
+    <link>https://hundredwz.github.io/tags/%E4%BA%8C%E5%8F%89%E6%A0%91/</link>
+    <description>Recent content in 二叉树 on A Lazy Coder</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Wed, 04 Apr 2018 08:27:40 +0000</lastBuildDate>
+    
+	<atom:link href="https://hundredwz.github.io/tags/%E4%BA%8C%E5%8F%89%E6%A0%91/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Merkle树生成</title>
+      <link>https://hundredwz.github.io/post/Merkle%E6%A0%91%E7%94%9F%E6%88%90/</link>
+      <pubDate>Wed, 04 Apr 2018 08:27:40 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Merkle%E6%A0%91%E7%94%9F%E6%88%90/</guid>
+      <description>&lt;p&gt;今天在写程序的时候需要生成默克尔树进行校验，但是在网上一搜，全部都是讲的原理，没看到什么代码，很是奇怪，就自己动手写了一个。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

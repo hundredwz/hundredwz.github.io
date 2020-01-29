@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>fabric源码阅读7：fabric的启动III - A Lazy Coder</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="Hundred" /><meta name="description" content="前面讨论了peer的启动，但都没有讨论完peer node start的全过程。本文继续跟着讨论。
+" /><meta name="keywords" content="Blockchain, Golang, Fabric, Ethereum, Code" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.56.1 with even 4.0.0" />
+
+
+<link rel="canonical" href="https://hundredwz.github.io/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB7fabric%E7%9A%84%E5%90%AF%E5%8A%A8III/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<link href="/dist/even.c2a46f00.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+<link rel="stylesheet" href="/css/reset-even.css">
+
+
+<meta property="og:title" content="fabric源码阅读7：fabric的启动III" />
+<meta property="og:description" content="前面讨论了peer的启动，但都没有讨论完peer node start的全过程。本文继续跟着讨论。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://hundredwz.github.io/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB7fabric%E7%9A%84%E5%90%AF%E5%8A%A8III/" />
+<meta property="article:published_time" content="2017-11-21T09:03:00+00:00" />
+<meta property="article:modified_time" content="2017-11-21T09:03:00+00:00" />
+<meta itemprop="name" content="fabric源码阅读7：fabric的启动III">
+<meta itemprop="description" content="前面讨论了peer的启动，但都没有讨论完peer node start的全过程。本文继续跟着讨论。">
+
+
+<meta itemprop="datePublished" content="2017-11-21T09:03:00&#43;00:00" />
+<meta itemprop="dateModified" content="2017-11-21T09:03:00&#43;00:00" />
+<meta itemprop="wordCount" content="1195">
+
+
+
+<meta itemprop="keywords" content="fabric,go," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="fabric源码阅读7：fabric的启动III"/>
+<meta name="twitter:description" content="前面讨论了peer的启动，但都没有讨论完peer node start的全过程。本文继续跟着讨论。"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">A Lazy Coder</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">首页</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">归档</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">分类</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/friends/">
+        <li class="mobile-menu-item">Friends</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">A Lazy Coder</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">首页</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">归档</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">分类</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/friends/">Friends</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">fabric源码阅读7：fabric的启动III</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2017-11-21 09:03 </span>
+        <div class="post-category">
+            <a href="/categories/program/"> program </a>
+            </div>
+          <span class="more-meta"> 约 1195 字 </span>
+          <span class="more-meta"> 预计阅读 3 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#devmode">devmode</a></li>
+<li><a href="#缓存配置">缓存配置</a></li>
+<li><a href="#ip端口等设置">ip端口等设置</a></li>
+<li><a href="#安全配置">安全配置</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+  </div>
+</div>
+  <div class="post-outdated">
+    <div class="warn">
+      <p>【注意】最后更新于 <span class="timeago" datetime="2017-11-21T09:03:00" title="November 21, 2017">November 21, 2017</span>，文中内容可能已过时，请谨慎使用。</p>
+    </div>
+  </div>
+    <div class="post-content">
+      <p>前面讨论了peer的启动，但都没有讨论完<code>peer node start</code>的全过程。本文继续跟着讨论。</p>
+
+<p>我们在<a href="http://txiner.top/program/32.html">上文</a>分析了serve的第一行代码，现在接着往下看。</p>
+
+<h3 id="devmode">devmode</h3>
+
+<p>刚开始显示了如果是开发模式的话，就设置相关的内容
+没有啥内容，就不做详细分析了。</p>
+
+<h3 id="缓存配置">缓存配置</h3>
+
+<p>fabric为了使处理速度更快，就对一些常用的内容做了缓存，就是调用这个函数进行处理</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go">	<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">peer</span><span class="p">.</span><span class="nf">CacheConfiguration</span><span class="p">();</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">err</span>
+	<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>具体的是得看函数内容的定义。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">CacheConfiguration</span><span class="p">()</span> <span class="p">(</span><span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+	<span class="nx">getLocalAddress</span> <span class="o">:=</span> <span class="kd">func</span><span class="p">()</span> <span class="p">(</span><span class="nx">peerAddress</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">if</span> <span class="nx">viper</span><span class="p">.</span><span class="nf">GetBool</span><span class="p">(</span><span class="s">&#34;peer.addressAutoDetect&#34;</span><span class="p">)</span> <span class="p">{</span>	
+			<span class="nx">_</span><span class="p">,</span> <span class="nx">port</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">net</span><span class="p">.</span><span class="nf">SplitHostPort</span><span class="p">(</span><span class="nx">viper</span><span class="p">.</span><span class="nf">GetString</span><span class="p">(</span><span class="s">&#34;peer.address&#34;</span><span class="p">))</span>
+			<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+				<span class="nx">err</span> <span class="p">=</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;Error auto detecting Peer&#39;s address: %s&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+				<span class="k">return</span> <span class="s">&#34;&#34;</span><span class="p">,</span> <span class="nx">err</span>
+			<span class="p">}</span>
+			<span class="nx">peerAddress</span> <span class="p">=</span> <span class="nx">net</span><span class="p">.</span><span class="nf">JoinHostPort</span><span class="p">(</span><span class="nf">GetLocalIP</span><span class="p">(),</span> <span class="nx">port</span><span class="p">)</span>
+			<span class="nx">peerLogger</span><span class="p">.</span><span class="nf">Infof</span><span class="p">(</span><span class="s">&#34;Auto detected peer address: %s&#34;</span><span class="p">,</span> <span class="nx">peerAddress</span><span class="p">)</span>
+		<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+			<span class="nx">peerAddress</span> <span class="p">=</span> <span class="nx">viper</span><span class="p">.</span><span class="nf">GetString</span><span class="p">(</span><span class="s">&#34;peer.address&#34;</span><span class="p">)</span>
+		<span class="p">}</span>
+		<span class="k">return</span>
+	<span class="p">}</span>
+
+	<span class="nx">getPeerEndpoint</span> <span class="o">:=</span> <span class="kd">func</span><span class="p">()</span> <span class="p">(</span><span class="o">*</span><span class="nx">pb</span><span class="p">.</span><span class="nx">PeerEndpoint</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+		<span class="kd">var</span> <span class="nx">peerAddress</span> <span class="kt">string</span>
+		<span class="nx">peerAddress</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nf">getLocalAddress</span><span class="p">()</span>
+		<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
+		<span class="p">}</span>
+		<span class="k">return</span> <span class="o">&amp;</span><span class="nx">pb</span><span class="p">.</span><span class="nx">PeerEndpoint</span><span class="p">{</span><span class="nx">Id</span><span class="p">:</span> <span class="o">&amp;</span><span class="nx">pb</span><span class="p">.</span><span class="nx">PeerID</span><span class="p">{</span><span class="nx">Name</span><span class="p">:</span> <span class="nx">viper</span><span class="p">.</span><span class="nf">GetString</span><span class="p">(</span><span class="s">&#34;peer.id&#34;</span><span class="p">)},</span> <span class="nx">Address</span><span class="p">:</span> <span class="nx">peerAddress</span><span class="p">},</span> <span class="kc">nil</span>
+	<span class="p">}</span>
+
+	<span class="nx">localAddress</span><span class="p">,</span> <span class="nx">localAddressError</span> <span class="p">=</span> <span class="nf">getLocalAddress</span><span class="p">()</span>
+	<span class="nx">peerEndpoint</span><span class="p">,</span> <span class="nx">_</span> <span class="p">=</span> <span class="nf">getPeerEndpoint</span><span class="p">()</span>
+
+	<span class="nx">configurationCached</span> <span class="p">=</span> <span class="kc">true</span>
+
+	<span class="k">if</span> <span class="nx">localAddressError</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">localAddressError</span>
+	<span class="p">}</span>
+	<span class="k">return</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>实际上并不是多复杂。
+显示定义了两个内部函数，需要的数据填充上去，就结束了。为什么要定义两个内部函数，注释说的原因是为了保持程序结构的abstract，好吧。
+这几个常用的内容被定义成了全局变量</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">var</span> <span class="nx">configurationCached</span> <span class="p">=</span> <span class="kc">false</span>
+<span class="kd">var</span> <span class="nx">localAddress</span> <span class="kt">string</span>
+<span class="kd">var</span> <span class="nx">localAddressError</span> <span class="kt">error</span>
+<span class="kd">var</span> <span class="nx">peerEndpoint</span> <span class="o">*</span><span class="nx">pb</span><span class="p">.</span><span class="nx">PeerEndpoint</span>
+<span class="kd">var</span> <span class="nx">peerEndpointError</span> <span class="kt">error</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>这几个就是我们会经常使用的变量了。第一个是用来判断是否已经数据处理过的。
+现在看一看获取本机地址的函数。这个段代码不复杂，首先从core.yaml文件读取是否自动检测本机地址。
+如果需要检测的话，就调用go内部的net接口转换出来。如果不需要检测的话就用配置文件中的默认地址。
+经查看，文件中设置的<code>addressAutoDetect</code>设置的是不自动检测，默认地址是<code>0.0.0.0:7051</code>.所以嘛，那么多自己判断的没什么意义。
+再来看下获取peer的端点的ip地址，就是调用我们刚刚定义的函数，生成proto所需要的类型。
+然后就是记录下已经修改过配置，返回内容，结束。</p>
+
+<h3 id="ip端口等设置">ip端口等设置</h3>
+
+<p>经过了刚刚的缓存，接下来就是读取相应的配置信息了。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">peerEndpoint</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">peer</span><span class="p">.</span><span class="nf">GetPeerEndpoint</span><span class="p">()</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">err</span> <span class="p">=</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;Failed to get Peer Endpoint: %s&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+		<span class="k">return</span> <span class="nx">err</span>
+	<span class="p">}</span>
+
+	<span class="nx">listenAddr</span> <span class="o">:=</span> <span class="nx">viper</span><span class="p">.</span><span class="nf">GetString</span><span class="p">(</span><span class="s">&#34;peer.listenAddress&#34;</span><span class="p">)</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>没有什么值得注意的，很简单，其中listenAddr就是<code>0.0.0.0:7051</code>,这个端口就是七佛那个服务监听的地址。</p>
+
+<h3 id="安全配置">安全配置</h3>
+
+<p>由于peer需要跟client和order进行通信，肯定需要确定需要不要tls，对应的证书等文件。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">secureConfig</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">peer</span><span class="p">.</span><span class="nf">GetSecureConfig</span><span class="p">()</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">logger</span><span class="p">.</span><span class="nf">Fatalf</span><span class="p">(</span><span class="s">&#34;Error loading secure config for peer (%s)&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="nx">peerServer</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">peer</span><span class="p">.</span><span class="nf">CreatePeerServer</span><span class="p">(</span><span class="nx">listenAddr</span><span class="p">,</span> <span class="nx">secureConfig</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">logger</span><span class="p">.</span><span class="nf">Fatalf</span><span class="p">(</span><span class="s">&#34;Failed to create peer server (%s)&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="k">if</span> <span class="nx">secureConfig</span><span class="p">.</span><span class="nx">UseTLS</span> <span class="p">{</span>
+		<span class="nx">logger</span><span class="p">.</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;Starting peer with TLS enabled&#34;</span><span class="p">)</span>
+		<span class="c1">// set up CA support
+</span><span class="c1"></span>		<span class="nx">caSupport</span> <span class="o">:=</span> <span class="nx">comm</span><span class="p">.</span><span class="nf">GetCASupport</span><span class="p">()</span>
+		<span class="nx">caSupport</span><span class="p">.</span><span class="nx">ServerRootCAs</span> <span class="p">=</span> <span class="nx">secureConfig</span><span class="p">.</span><span class="nx">ServerRootCAs</span>
+	<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>一堆log日志，没什么用。第一句</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="nf">GetSecureConfig</span><span class="p">()</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>是获取安全配置，如果启用tls通信，就加载对应的证书文件，然而fabric并没有启动。
+下面的<code>createPeerServer</code>是重点了，创建监听服务器。看下函数怎么写的</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">CreatePeerServer</span><span class="p">(</span><span class="nx">listenAddress</span> <span class="kt">string</span><span class="p">,</span>
+	<span class="nx">secureConfig</span> <span class="nx">comm</span><span class="p">.</span><span class="nx">SecureServerConfig</span><span class="p">)</span> <span class="p">(</span><span class="nx">comm</span><span class="p">.</span><span class="nx">GRPCServer</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+
+	<span class="kd">var</span> <span class="nx">err</span> <span class="kt">error</span>
+	<span class="nx">peerServer</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">comm</span><span class="p">.</span><span class="nf">NewGRPCServer</span><span class="p">(</span><span class="nx">listenAddress</span><span class="p">,</span> <span class="nx">secureConfig</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">peerLogger</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;Failed to create peer server (%s)&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+		<span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="nx">peerServer</span><span class="p">,</span> <span class="kc">nil</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>核心就一句：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">peerServer</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">comm</span><span class="p">.</span><span class="nf">NewGRPCServer</span><span class="p">(</span><span class="nx">listenAddress</span><span class="p">,</span> <span class="nx">secureConfig</span><span class="p">)</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>创建了grpc服务，调用开始进行函数处理。
+好吧，不会GRPC啊！
+下面的代码也开始跟rpc相关了！
+溜溜溜！看一看grpc再继续学！</p>
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">Hundred</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2017-11-21 09:03
+        
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">许可协议</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/fabric/">fabric</a>
+          <a href="/tags/go/">go</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/grpc%E5%AD%A6%E4%B9%A0/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">grpc学习</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB6fabric%E6%95%B0%E6%8D%AE%E5%BA%93I/">
+            <span class="next-text nav-default">fabric源码阅读6：fabric数据库I</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+  
+  
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="#" class="iconfont icon-cnblogs" title="cnblogs"></a>
+      <a href="mailto:sdwangzhuo@gmail.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/hundredwz" class="iconfont icon-github" title="github"></a>
+      <a href="#" class="iconfont icon-juejin" title="juejin"></a>
+      <a href="#" class="iconfont icon-v2ex" title="v2ex"></a>
+      <a href="https://weibo.com/hundredwz" class="iconfont icon-weibo" title="weibo"></a>
+  <a href="https://hundredwz.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2013 - 
+    2020
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Hundred</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.min.js" integrity="sha256-jwCP0NAdCBloaIWTWHmW4i3snUNMHUNO+jr9rYd2iOI=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.locales.min.js" integrity="sha256-ZwofwC1Lf/faQCzN7nZtfijVV6hSwxjQMwXL4gn9qU8=" crossorigin="anonymous"></script>
+  <script><!-- NOTE: timeago.js uses the language code format like "zh_CN" (underscore and case sensitive) -->
+    var languageCode = "zh-CN".replace(/-/g, '_').replace(/_(.*)/, function ($0, $1) {return $0.replace($1, $1.toUpperCase());});
+    timeago().render(document.querySelectorAll('.timeago'), languageCode);
+    timeago.cancel();  
+  </script>
+<script type="text/javascript" src="/dist/even.26188efa.min.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+      showProcessingMessages: false,
+      messageStyle: 'none'
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"  integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-138883536-1', 'auto');
+	ga('set', 'anonymizeIp', true);
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>github安装hexo - A Lazy Coder</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="Hundred" /><meta name="description" content="最近有同学要安装hexo，给他找了找教程，结果总是不对。我自己试了试，发现好多教程莫名其妙的一致，还都不大好理解，跟现在的3.0还都不一样了，就萌生了自己重新写教程的想法。
+" /><meta name="keywords" content="Blockchain, Golang, Fabric, Ethereum, Code" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.56.1 with even 4.0.0" />
+
+
+<link rel="canonical" href="https://hundredwz.github.io/post/github%E5%AE%89%E8%A3%85hexo/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<link href="/dist/even.c2a46f00.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+<link rel="stylesheet" href="/css/reset-even.css">
+
+
+<meta property="og:title" content="github安装hexo" />
+<meta property="og:description" content="最近有同学要安装hexo，给他找了找教程，结果总是不对。我自己试了试，发现好多教程莫名其妙的一致，还都不大好理解，跟现在的3.0还都不一样了，就萌生了自己重新写教程的想法。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://hundredwz.github.io/post/github%E5%AE%89%E8%A3%85hexo/" />
+<meta property="article:published_time" content="2017-03-10T07:51:00+00:00" />
+<meta property="article:modified_time" content="2017-03-10T07:51:00+00:00" />
+<meta itemprop="name" content="github安装hexo">
+<meta itemprop="description" content="最近有同学要安装hexo，给他找了找教程，结果总是不对。我自己试了试，发现好多教程莫名其妙的一致，还都不大好理解，跟现在的3.0还都不一样了，就萌生了自己重新写教程的想法。">
+
+
+<meta itemprop="datePublished" content="2017-03-10T07:51:00&#43;00:00" />
+<meta itemprop="dateModified" content="2017-03-10T07:51:00&#43;00:00" />
+<meta itemprop="wordCount" content="1907">
+
+
+
+<meta itemprop="keywords" content="github,hexo," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="github安装hexo"/>
+<meta name="twitter:description" content="最近有同学要安装hexo，给他找了找教程，结果总是不对。我自己试了试，发现好多教程莫名其妙的一致，还都不大好理解，跟现在的3.0还都不一样了，就萌生了自己重新写教程的想法。"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">A Lazy Coder</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">首页</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">归档</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">分类</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/friends/">
+        <li class="mobile-menu-item">Friends</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">A Lazy Coder</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">首页</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">归档</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">分类</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/friends/">Friends</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">github安装hexo</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2017-03-10 07:51 </span>
+        <div class="post-category">
+            <a href="/categories/tool/"> tool </a>
+            </div>
+          <span class="more-meta"> 约 1907 字 </span>
+          <span class="more-meta"> 预计阅读 4 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#github相关">github相关</a></li>
+<li><a href="#nodejs">nodejs</a></li>
+<li><a href="#hexo配置">hexo配置</a></li>
+<li><a href="#部署到服务器">部署到服务器</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+  </div>
+</div>
+  <div class="post-outdated">
+    <div class="warn">
+      <p>【注意】最后更新于 <span class="timeago" datetime="2017-03-10T07:51:00" title="March 10, 2017">March 10, 2017</span>，文中内容可能已过时，请谨慎使用。</p>
+    </div>
+  </div>
+    <div class="post-content">
+      <p>最近有同学要安装hexo，给他找了找教程，结果总是不对。我自己试了试，发现好多教程莫名其妙的一致，还都不大好理解，跟现在的3.0还都不一样了，就萌生了自己重新写教程的想法。</p>
+
+<p>hexo的安装教程实际上并不复杂。</p>
+
+<h3 id="github相关">github相关</h3>
+
+<p>注册github账户，注册地址<a href="https://github.com">github注册</a>,注册过程也比较简单，就不过多赘述。
+下载git的windows客户端，我下载的是位于github的地址，下载地址<a href=":https://desktop.github.com">git客户端</a>
+安装过程一路next就好，安装好后桌面会有git shell以及github这两个应用程序。
+用github这个登陆，这样使用gitshell的时候比较方便。
+打开github官网，创建一个新的仓库
+<img src="https://raw.githubusercontent.com/hundredwz/Images/blog/create_new_repo.jpg" alt="创建仓库" />
+输入仓库名，注意，必须是你的用户名.github.io，比如我的账户是hundred666,那么仓库的名称是hundred666.github.io,如图所示
+<img src="https://raw.githubusercontent.com/hundredwz/Images/blog/create_new_repo_name.jpg" alt="创建仓库示例" />
+出现这个提示
+<img src="https://raw.githubusercontent.com/hundredwz/Images/blog/create_repo_success.jpg" alt="创建仓库成功" />
+这个给的地址记一下，我的地址是<a href="http://github.com/hundred666/hundred666.github.io.git，接下来我们还要用。">http://github.com/hundred666/hundred666.github.io.git，接下来我们还要用。</a>
+接下来github端的设置就做好啦。我们开始做另外的本地相关的。</p>
+
+<h3 id="nodejs">nodejs</h3>
+
+<p>从官网下载nodejs<a href="https://nodejs.org/en/">nodejs</a>
+然后一路next就好。</p>
+
+<h3 id="hexo配置">hexo配置</h3>
+
+<p>这一步是最重要的，也是网上几乎教程都一致的，但是跟目前版本不太相符合的。
+假设我想把博客的文件放到F:\工作\website\blog目录里面，打开git shell，切换到这个目录下</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nb">cd</span> F:<span class="se">\工</span>作<span class="se">\w</span>ebsite<span class="se">\b</span>log</code></pre></td></tr></table>
+</div>
+</div>
+<p>然后输入</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">npm install hexo-cli -g</code></pre></td></tr></table>
+</div>
+</div>
+<p>将hexo的基础先安装上。
+安装好会出现类似这样的提示</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">$ npm install hexo-cli -g
+C:<span class="se">\U</span>sers<span class="se">\H</span>undred<span class="se">\A</span>ppData<span class="se">\R</span>oaming<span class="se">\n</span>pm<span class="se">\h</span>exo -&gt; C:<span class="se">\U</span>sers<span class="se">\H</span>undred<span class="se">\A</span>ppData<span class="se">\R</span>oaming<span class="se">\n</span>pm<span class="se">\n</span>ode_modules<span class="se">\h</span>exo-cli<span class="se">\b</span>in<span class="se">\h</span>exo
+C:<span class="se">\U</span>sers<span class="se">\H</span>undred<span class="se">\A</span>ppData<span class="se">\R</span>oaming<span class="se">\n</span>pm<span class="sb">`</span>-- hexo-cli@1.0.2
+
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@^1.0.0 <span class="o">(</span>node_modules<span class="se">\h</span>exo-cli<span class="se">\n</span>ode_modules<span class="se">\c</span>hokidar<span class="se">\n</span>ode_modules<span class="se">\f</span>sevents<span class="o">)</span>:
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform <span class="k">for</span> fsevents@1.1.1: wanted <span class="o">{</span><span class="s2">&#34;os&#34;</span>:<span class="s2">&#34;darwin&#34;</span>,<span class="s2">&#34;arch&#34;</span>:<span class="s2">&#34;any&#34;</span><span class="o">}</span> <span class="o">(</span>current: <span class="o">{</span><span class="s2">&#34;os&#34;</span>:<span class="s2">&#34;win32&#34;</span>,<span class="s2">&#34;arch&#34;</span>:<span class="s2">&#34;x64&#34;</span><span class="o">})</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>代表安装完成
+接下来初始化blog这个文件夹，命令行输入</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">hexo init</code></pre></td></tr></table>
+</div>
+</div>
+<p>接下来会下载一堆东西，出现的内容比较多</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">INFO  Cloning hexo-starter to F:<span class="se">\工</span>作<span class="se">\w</span>ebsite<span class="se">\b</span>log
+Cloning into <span class="s1">&#39;F:\工作\website\blog&#39;</span>...
+remote: Counting objects: <span class="m">53</span>, <span class="k">done</span>.
+remote: Total <span class="m">53</span> <span class="o">(</span>delta <span class="m">0</span><span class="o">)</span>, reused <span class="m">0</span> <span class="o">(</span>delta <span class="m">0</span><span class="o">)</span>, pack-reused <span class="m">53</span>
+Unpacking objects: <span class="m">100</span>% <span class="o">(</span><span class="m">53</span>/53<span class="o">)</span>, <span class="k">done</span>.
+Submodule <span class="s1">&#39;themes/landscape&#39;</span> <span class="o">(</span>https://github.com/hexojs/hexo-theme-landscape.git<span class="o">)</span> registered <span class="k">for</span> path <span class="s1">&#39;themes/landscape&#39;</span>
+Cloning into <span class="s1">&#39;F:/工作/website/blog/themes/landscape&#39;</span>...
+Submodule path <span class="s1">&#39;themes/landscape&#39;</span>: checked out <span class="s1">&#39;decdc2d9956776cbe95420ae94bac87e22468d38&#39;</span>
+
+...
+
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@^1.0.0 <span class="o">(</span>node_modules<span class="se">\c</span>hokidar<span class="se">\n</span>ode_modules<span class="se">\f</span>sevents<span class="o">)</span>:
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform <span class="k">for</span> fsevents@1.1.1: wanted <span class="o">{</span><span class="s2">&#34;os&#34;</span>:<span class="s2">&#34;darwin&#34;</span>,<span class="s2">&#34;arch&#34;</span>:<span class="s2">&#34;any&#34;</span><span class="o">}</span> <span class="o">(</span>current: <span class="o">{</span><span class="s2">&#34;os&#34;</span>:<span class="s2">&#34;win32&#34;</span>,<span class="s2">&#34;arch&#34;</span>:<span class="s2">&#34;x64&#34;</span><span class="o">})</span>
+INFO  Start blogging with Hexo!</code></pre></td></tr></table>
+</div>
+</div>
+<p>代表初始化完成了。
+然后执行</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">npm install</code></pre></td></tr></table>
+</div>
+</div>
+<p>提示的代码很简短，大体就像</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@^1.0.0 <span class="o">(</span>node_modules<span class="se">\c</span>hokidar<span class="se">\n</span>ode_modules<span class="se">\f</span>sevents<span class="o">)</span>:
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform <span class="k">for</span> fsevents@1.1.1: wanted <span class="o">{</span><span class="s2">&#34;os&#34;</span>:<span class="s2">&#34;darwin&#34;</span>,<span class="s2">&#34;arch&#34;</span>:<span class="s2">&#34;any&#34;</span><span class="o">}</span> <span class="o">(</span>current: <span class="o">{</span><span class="s2">&#34;os&#34;</span>:<span class="s2">&#34;win32&#34;</span>,<span class="s2">&#34;arch&#34;</span>:<span class="s2">&#34;x64&#34;</span><span class="o">})</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>好了，这下hexo安装好了，命令行输入</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">hexo server</code></pre></td></tr></table>
+</div>
+</div>
+<p>如果命令行提示</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">INFO  Start processing
+INFO  Hexo is running at http://localhost:4000/. Press Ctrl+C to stop.</code></pre></td></tr></table>
+</div>
+</div>
+<p>代表启动成功了，浏览器输入<code>localhost:4000</code>访问
+<img src="https://raw.githubusercontent.com/hundredwz/Images/blog/hexo_run.jpg" alt="hexo_run" />
+好了，本机成功了。
+运行是运行了，可是怎么添加自己的文章呢？
+只需命令行输入</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">hexo new <span class="o">(</span>文章的标题<span class="o">)</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>就好了，比如我想创建一篇名字叫做my first artile的文章，只需要输入</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">hexo new <span class="s2">&#34;my first artile&#34;</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>就可以啦
+命令行提示</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">INFO  Created: F:<span class="se">\工</span>作<span class="se">\w</span>ebsite<span class="se">\b</span>log<span class="se">\s</span>ource<span class="se">\_</span>posts<span class="se">\m</span>y-first-article.md</code></pre></td></tr></table>
+</div>
+</div>
+<p>打开这个目录，修改这个my-first-article.md .md文件。用sublime,editplus++之类的都可以修改。
+比如我随便这么写的</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-markdown" data-lang="markdown"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-markdown" data-lang="markdown">---
+title: my first article
+date: 2017-03-10 14:52:12
+tags: hello ,test
+---
+<span class="gh">#I am learning to build a website based on hexo!#
+</span><span class="gh"></span>*hope I can keep it!
+----
+Let&#39;s start!</code></pre></td></tr></table>
+</div>
+</div>
+<p>然后命令行打开输入</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">hexo generate</code></pre></td></tr></table>
+</div>
+</div>
+<p>出现类似的结果</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">INFO  Start processing
+INFO  Files loaded in <span class="m">264</span> ms
+INFO  Generated: index.html
+INFO  Generated: archives/index.html
+INFO  Generated: fancybox/blank.gif
+INFO  Generated: fancybox/jquery.fancybox.css
+INFO  Generated: fancybox/fancybox_loading@2x.gif
+INFO  Generated: fancybox/jquery.fancybox.pack.js
+INFO  Generated: fancybox/fancybox_overlay.png
+INFO  Generated: fancybox/fancybox_loading.gif
+INFO  Generated: fancybox/jquery.fancybox.js
+INFO  Generated: archives/2017/index.html
+INFO  Generated: fancybox/fancybox_sprite.png
+INFO  Generated: fancybox/fancybox_sprite@2x.png
+INFO  Generated: tags/hello-test/index.html
+INFO  Generated: archives/2017/03/index.html
+INFO  Generated: css/fonts/FontAwesome.otf
+INFO  Generated: js/script.js
+INFO  Generated: fancybox/helpers/jquery.fancybox-media.js
+INFO  Generated: fancybox/helpers/jquery.fancybox-buttons.css
+INFO  Generated: css/style.css
+INFO  Generated: css/fonts/fontawesome-webfont.eot
+INFO  Generated: fancybox/helpers/jquery.fancybox-thumbs.css
+INFO  Generated: css/fonts/fontawesome-webfont.woff
+INFO  Generated: fancybox/helpers/fancybox_buttons.png
+INFO  Generated: fancybox/helpers/jquery.fancybox-thumbs.js
+INFO  Generated: fancybox/helpers/jquery.fancybox-buttons.js
+INFO  Generated: css/fonts/fontawesome-webfont.svg
+INFO  Generated: css/fonts/fontawesome-webfont.ttf
+INFO  Generated: <span class="m">2017</span>/03/10/my-first-article/index.html
+INFO  Generated: <span class="m">2017</span>/03/10/hello-world/index.html
+INFO  Generated: css/images/banner.jpg
+INFO  <span class="m">30</span> files generated in <span class="m">888</span> ms</code></pre></td></tr></table>
+</div>
+</div>
+<p>然后再</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">hexo server</code></pre></td></tr></table>
+</div>
+</div>
+<p>浏览器打开，可以看到增加了一篇文章
+<img src="https://raw.githubusercontent.com/hundredwz/Images/blog/hexo_add_article.jpg" alt="hexo_add_article" /></p>
+
+<h3 id="部署到服务器">部署到服务器</h3>
+
+<p>主要是这块变化比较大</p>
+
+<p>1.网上好多说用ssh-keygen的，这个地方实际上可以不执行，因为咱们使用的git shell，已经拥有登入权限啦。</p>
+
+<p>打开blog目录下的_config.yml文件，找到最下面，有个deploy的改成类似这样的</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># Deployment</span>
+<span class="c1">## Docs: https://hexo.io/docs/deployment.html</span>
+deploy:
+  type: git
+  repository:  http://github.com/hundred666/hundred666.github.io.git
+  branch: master</code></pre></td></tr></table>
+</div>
+</div>
+<p>注意中间的空格，type就是git,repository地址就是刚开始让咱们记住的那个地址，注意不要用https，而是用http。
+这样就是修改好啦。再命令行输入</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">hexo deploy</code></pre></td></tr></table>
+</div>
+</div>
+<p>结果有可能会提示</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">ERROR Deployer not found: git</code></pre></td></tr></table>
+</div>
+</div>
+<p>只需要安装一个工具就好了，命令行输入</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">npm install hexo-deployer-git --save</code></pre></td></tr></table>
+</div>
+</div>
+<p>再执行deploy就好啦。
+出现类似的结果</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">INFO  Deploying: git
+INFO  Setting up Git deployment...
+Initialized empty Git repository in F:/工作/website/blog/.deploy_git/.git/
+<span class="o">[</span>master <span class="o">(</span>root-commit<span class="o">)</span> 5983a1b<span class="o">]</span> First commit
+
+...
+
+Branch master <span class="nb">set</span> up to track remote branch master from http://github.com/hundred666/hundred666.github.io.git.
+To http://github.com/hundred666/hundred666.github.io.git
+ * <span class="o">[</span>new branch<span class="o">]</span>      HEAD -&gt; master
+INFO  Deploy <span class="k">done</span>: git</code></pre></td></tr></table>
+</div>
+</div>
+<p>好了，打开浏览器输入<code>hundred666.github.io</code>访问就好啦
+<img src="https://raw.githubusercontent.com/hundredwz/Images/blog/hexo_install_finish.jpg" alt="hexo安装成功" /></p>
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">Hundred</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2017-03-10 07:51
+        
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">许可协议</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/github/">github</a>
+          <a href="/tags/hexo/">hexo</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/jdbc%E8%BF%9E%E6%8E%A5%E9%9D%9E%E6%9C%AC%E6%9C%BAmysql%E5%87%BA%E9%94%99/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">jdbc连接非本机mysql出错</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/nginx%E8%BD%AC%E5%8F%91%E7%94%A8%E6%88%B7%E8%AF%B7%E6%B1%82/">
+            <span class="next-text nav-default">nginx转发用户请求</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+  
+  
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="#" class="iconfont icon-cnblogs" title="cnblogs"></a>
+      <a href="mailto:sdwangzhuo@gmail.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/hundredwz" class="iconfont icon-github" title="github"></a>
+      <a href="#" class="iconfont icon-juejin" title="juejin"></a>
+      <a href="#" class="iconfont icon-v2ex" title="v2ex"></a>
+      <a href="https://weibo.com/hundredwz" class="iconfont icon-weibo" title="weibo"></a>
+  <a href="https://hundredwz.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2013 - 
+    2020
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Hundred</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.min.js" integrity="sha256-jwCP0NAdCBloaIWTWHmW4i3snUNMHUNO+jr9rYd2iOI=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.locales.min.js" integrity="sha256-ZwofwC1Lf/faQCzN7nZtfijVV6hSwxjQMwXL4gn9qU8=" crossorigin="anonymous"></script>
+  <script><!-- NOTE: timeago.js uses the language code format like "zh_CN" (underscore and case sensitive) -->
+    var languageCode = "zh-CN".replace(/-/g, '_').replace(/_(.*)/, function ($0, $1) {return $0.replace($1, $1.toUpperCase());});
+    timeago().render(document.querySelectorAll('.timeago'), languageCode);
+    timeago.cancel();  
+  </script>
+<script type="text/javascript" src="/dist/even.26188efa.min.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+      showProcessingMessages: false,
+      messageStyle: 'none'
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"  integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-138883536-1', 'auto');
+	ga('set', 'anonymizeIp', true);
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+
+
+
+
+</body>
+</html>

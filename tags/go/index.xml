@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>go on A Lazy Coder</title>
+    <link>https://hundredwz.github.io/tags/go/</link>
+    <description>Recent content in go on A Lazy Coder</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Tue, 17 Apr 2018 08:25:40 +0000</lastBuildDate>
+    
+	<atom:link href="https://hundredwz.github.io/tags/go/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Raft造轮子VI</title>
+      <link>https://hundredwz.github.io/post/Raft%E9%80%A0%E8%BD%AE%E5%AD%90VI/</link>
+      <pubDate>Tue, 17 Apr 2018 08:25:40 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Raft%E9%80%A0%E8%BD%AE%E5%AD%90VI/</guid>
+      <description>&lt;p&gt;我们上一篇说了领导的选举，本篇讨论日志和心跳包的处理。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Raft造轮子V</title>
+      <link>https://hundredwz.github.io/post/Raft%E9%80%A0%E8%BD%AE%E5%AD%90V/</link>
+      <pubDate>Tue, 17 Apr 2018 06:59:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Raft%E9%80%A0%E8%BD%AE%E5%AD%90V/</guid>
+      <description>&lt;p&gt;我们上一篇文章分析了一个节点作为主动发起方，向别的节点请求投票的信息，本篇就分析下接收方的工作流程。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Raft造轮子IV</title>
+      <link>https://hundredwz.github.io/post/Raft%E9%80%A0%E8%BD%AE%E5%AD%90IV/</link>
+      <pubDate>Tue, 17 Apr 2018 06:15:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Raft%E9%80%A0%E8%BD%AE%E5%AD%90IV/</guid>
+      <description>&lt;p&gt;经过上一篇文章关于一些基础“接口”的定义，我们本篇开始操作核心，节点。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Raft造轮子III</title>
+      <link>https://hundredwz.github.io/post/Raft%E9%80%A0%E8%BD%AE%E5%AD%90III/</link>
+      <pubDate>Fri, 13 Apr 2018 08:50:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Raft%E9%80%A0%E8%BD%AE%E5%AD%90III/</guid>
+      <description>&lt;p&gt;我们之前定义了raft通信的基本数据格式以及rpc模式也生成了数据内容，这篇文章就要开始具体的操作了。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Raft造轮子I</title>
+      <link>https://hundredwz.github.io/post/Raft%E9%80%A0%E8%BD%AE%E5%AD%90I/</link>
+      <pubDate>Fri, 13 Apr 2018 07:02:24 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Raft%E9%80%A0%E8%BD%AE%E5%AD%90I/</guid>
+      <description>&lt;p&gt;前一段时间在学习raft算法，看完后感觉相对paxos来说没有那么复杂,就萌生了要造个轮子的想法。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>go读取数据库反射变量</title>
+      <link>https://hundredwz.github.io/post/go%E8%AF%BB%E5%8F%96%E6%95%B0%E6%8D%AE%E5%BA%93%E5%8F%8D%E5%B0%84%E5%8F%98%E9%87%8F/</link>
+      <pubDate>Wed, 07 Mar 2018 01:38:55 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/go%E8%AF%BB%E5%8F%96%E6%95%B0%E6%8D%AE%E5%BA%93%E5%8F%8D%E5%B0%84%E5%8F%98%E9%87%8F/</guid>
+      <description>&lt;p&gt;最近写到一个程序，是关于go获取数据库的内容。按照以往用java的经验，我都是可以直接使用orm的，很方便快捷。go也有第三方的orm库，但是我嫌麻烦不想用。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>grpc学习</title>
+      <link>https://hundredwz.github.io/post/grpc%E5%AD%A6%E4%B9%A0/</link>
+      <pubDate>Wed, 22 Nov 2017 07:39:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/grpc%E5%AD%A6%E4%B9%A0/</guid>
+      <description>&lt;p&gt;在学习区块链的途中，看到了grpc。很久之前就听说过rpc，这次就仔细来一探究竟。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>fabric源码阅读7：fabric的启动III</title>
+      <link>https://hundredwz.github.io/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB7fabric%E7%9A%84%E5%90%AF%E5%8A%A8III/</link>
+      <pubDate>Tue, 21 Nov 2017 09:03:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB7fabric%E7%9A%84%E5%90%AF%E5%8A%A8III/</guid>
+      <description>&lt;p&gt;前面讨论了peer的启动，但都没有讨论完&lt;code&gt;peer node start&lt;/code&gt;的全过程。本文继续跟着讨论。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>fabric源码阅读6：fabric数据库I</title>
+      <link>https://hundredwz.github.io/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB6fabric%E6%95%B0%E6%8D%AE%E5%BA%93I/</link>
+      <pubDate>Tue, 21 Nov 2017 07:47:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB6fabric%E6%95%B0%E6%8D%AE%E5%BA%93I/</guid>
+      <description>&lt;p&gt;在上篇文章:&lt;a href=&#34;http://txiner.top/program/30.html&#34;&gt;fabric启动II&lt;/a&gt;中，我们大体上说到了peer的大体启动流程，但是并没有深入进去，现在我们追随&lt;code&gt;node start&lt;/code&gt;的脚步继续探索。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>fabric源码阅读5:fabric启动II</title>
+      <link>https://hundredwz.github.io/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB5fabric%E5%90%AF%E5%8A%A8II/</link>
+      <pubDate>Fri, 17 Nov 2017 09:08:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB5fabric%E5%90%AF%E5%8A%A8II/</guid>
+      <description>&lt;p&gt;在上一篇文章&lt;a href=&#34;http://txiner.top/program/29.html&#34;&gt;fabric源码阅读4：fabric启动I&lt;/a&gt;我们从操作者的角度分析了fabric的启动过程，这篇文章我们就尽量从开发者的角度来看fabric是怎么启动的。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>fabric源码阅读4：fabric启动I</title>
+      <link>https://hundredwz.github.io/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB4fabric%E5%90%AF%E5%8A%A8I/</link>
+      <pubDate>Tue, 14 Nov 2017 07:51:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB4fabric%E5%90%AF%E5%8A%A8I/</guid>
+      <description>&lt;p&gt;还记得我在上一篇&lt;a href=&#34;http://txiner.top/program/27.html&#34;&gt;PutState&amp;amp;GetState理解&lt;/a&gt;文章中留下了个疑问,猜测说fabric后台有个守护进程，对&lt;code&gt;chan&lt;/code&gt;进行监听什么的。但是只是猜测不行啊，还得从实际来证明。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>fabric源码阅读3：PutState&amp;amp;GetState理解</title>
+      <link>https://hundredwz.github.io/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB3PutStateampGetState%E7%90%86%E8%A7%A3/</link>
+      <pubDate>Thu, 09 Nov 2017 06:19:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB3PutStateampGetState%E7%90%86%E8%A7%A3/</guid>
+      <description>&lt;p&gt;最近还在继续看Fabric源码，发现自己还是差的太多了。估计可能是看的方式不太对。不过也慢慢的有了一点收获吧。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>proto文件学习</title>
+      <link>https://hundredwz.github.io/post/proto%E6%96%87%E4%BB%B6%E5%AD%A6%E4%B9%A0/</link>
+      <pubDate>Wed, 08 Nov 2017 07:00:40 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/proto%E6%96%87%E4%BB%B6%E5%AD%A6%E4%B9%A0/</guid>
+      <description>&lt;p&gt;最近在看fabric源码的时候看到了proto文件，以前没接触过，这次好好来看看.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>fabric源码阅读1：chaincode函数理解I</title>
+      <link>https://hundredwz.github.io/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB1chaincode%E5%87%BD%E6%95%B0%E7%90%86%E8%A7%A3I/</link>
+      <pubDate>Mon, 16 Oct 2017 02:24:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB1chaincode%E5%87%BD%E6%95%B0%E7%90%86%E8%A7%A3I/</guid>
+      <description>&lt;p&gt;最近在开发chaincode的时候遇到了一个问题,使用GetFunctionAndParameters这个函数会返回一个函数以及参数，但是运行总是出了点问题。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

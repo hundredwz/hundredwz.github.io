@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>slice on A Lazy Coder</title>
+    <link>https://hundredwz.github.io/tags/slice/</link>
+    <description>Recent content in slice on A Lazy Coder</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Mon, 19 Nov 2018 09:17:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://hundredwz.github.io/tags/slice/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>golang的slice处理</title>
+      <link>https://hundredwz.github.io/post/golang%E7%9A%84slice%E5%A4%84%E7%90%86/</link>
+      <pubDate>Mon, 19 Nov 2018 09:17:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/golang%E7%9A%84slice%E5%A4%84%E7%90%86/</guid>
+      <description>&lt;p&gt;今天在看《go in action》的时候，看到切片这一章对于切片分配有点不太理解，做了几个实验理解了，感觉很有意义，记录下来。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

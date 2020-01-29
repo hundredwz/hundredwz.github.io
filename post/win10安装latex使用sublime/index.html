@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>win10安装latex使用sublime - A Lazy Coder</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="Hundred" /><meta name="description" content="最近要写论文，推荐使用latex书写，由于比较习惯sublime，就安装了一遍。
+" /><meta name="keywords" content="Blockchain, Golang, Fabric, Ethereum, Code" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.56.1 with even 4.0.0" />
+
+
+<link rel="canonical" href="https://hundredwz.github.io/post/win10%E5%AE%89%E8%A3%85latex%E4%BD%BF%E7%94%A8sublime/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<link href="/dist/even.c2a46f00.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+<link rel="stylesheet" href="/css/reset-even.css">
+
+
+<meta property="og:title" content="win10安装latex使用sublime" />
+<meta property="og:description" content="最近要写论文，推荐使用latex书写，由于比较习惯sublime，就安装了一遍。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://hundredwz.github.io/post/win10%E5%AE%89%E8%A3%85latex%E4%BD%BF%E7%94%A8sublime/" />
+<meta property="article:published_time" content="2018-09-07T07:17:00+00:00" />
+<meta property="article:modified_time" content="2018-09-07T07:17:00+00:00" />
+<meta itemprop="name" content="win10安装latex使用sublime">
+<meta itemprop="description" content="最近要写论文，推荐使用latex书写，由于比较习惯sublime，就安装了一遍。">
+
+
+<meta itemprop="datePublished" content="2018-09-07T07:17:00&#43;00:00" />
+<meta itemprop="dateModified" content="2018-09-07T07:17:00&#43;00:00" />
+<meta itemprop="wordCount" content="1927">
+
+
+
+<meta itemprop="keywords" content="latex,texlive,sublime," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="win10安装latex使用sublime"/>
+<meta name="twitter:description" content="最近要写论文，推荐使用latex书写，由于比较习惯sublime，就安装了一遍。"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">A Lazy Coder</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">首页</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">归档</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">分类</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/friends/">
+        <li class="mobile-menu-item">Friends</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">A Lazy Coder</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">首页</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">归档</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">分类</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/friends/">Friends</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">win10安装latex使用sublime</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2018-09-07 07:17 </span>
+        <div class="post-category">
+            <a href="/categories/tool/"> tool </a>
+            </div>
+          <span class="more-meta"> 约 1927 字 </span>
+          <span class="more-meta"> 预计阅读 4 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#texlive安装">texlive安装</a></li>
+<li><a href="#sublime安装">sublime安装</a></li>
+<li><a href="#sumatrapdf安装">SumatraPDF安装</a></li>
+<li><a href="#latextools配置">Latextools配置</a></li>
+<li><a href="#自动输入">自动输入</a></li>
+<li><a href="#测试">测试</a></li>
+</ul></li>
+</ul>
+</nav>
+  </div>
+</div>
+  <div class="post-outdated">
+    <div class="hint">
+      <p>【注意】最后更新于 <span class="timeago" datetime="2018-09-07T07:17:00" title="September 7, 2018">September 7, 2018</span>，文中内容可能已过时，请谨慎使用。</p>
+    </div>
+  </div>
+    <div class="post-content">
+      <p>最近要写论文，推荐使用latex书写，由于比较习惯sublime，就安装了一遍。</p>
+
+<p>先说一点心得，用了latex后感觉markdown好简陋啊，突然很想用latex写博客了。还没在网上调查有没有什么工具可以实现，不过估计是没有的。</p>
+
+<h2 id="texlive安装">texlive安装</h2>
+
+<p>latex的安装还是比较简单的，可以直接去<a href="http://tug.org/texlive/">官网</a>下载exe安装包，但是后面的下载编译非常慢，我安装到90%左右网络断了，结果要重新装一遍，于是放弃了。
+后来在网上发现有DVD的全安装版，国内清华大学有镜像，于是直接下载镜像安装
+可以选择自己想要的版本进行安装:<a href="https://mirrors.tuna.tsinghua.edu.cn/CTAN/systems/texlive/Images/">https://mirrors.tuna.tsinghua.edu.cn/CTAN/systems/texlive/Images/</a>
+解压后的文件结构如下所示：
+<img src="https://raw.githubusercontent.com/hundredwz/Images/blog/tex_iso.png" alt="文件结构" />
+由于<code>install-tl-windows.bat</code>是默认安装方式，而且安装文件太大，我们选用高级方式进行安装。
+以管理员身份运行，打开后程序界面如下所示
+<img src="https://raw.githubusercontent.com/hundredwz/Images/blog/tex_install_before.png" alt="安装选项" />
+第一步，我们直接选择continue就可以了，杀毒软件无所谓
+第二步，由于我们要自定义安装，所以我们改成scheme-custom
+<img src="https://raw.githubusercontent.com/hundredwz/Images/blog/tex_scheme_custom.png" alt="自定义方案" />
+第三步，安装的内容我们按需选择，我主要选择了汉语以及英语，其他的选项都没有做更改
+<img src="https://raw.githubusercontent.com/hundredwz/Images/blog/tex_custom_collection.png" alt="安装内容" />
+第四步，安装路径，安装到自己想要的位置就可以啦
+第五步，后面的选项都默认就好，如果想要修改也不是不可以
+这个是我配置完成后的界面
+<img src="https://raw.githubusercontent.com/hundredwz/Images/blog/tex_config.png" alt="配置完成" />
+好了，开始漫长的安装吧。
+等到安装完成，在命令行输入</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">tex --version</code></pre></td></tr></table>
+</div>
+</div>
+<p>确认下，显示如下，证明安装完成
+<img src="https://raw.githubusercontent.com/hundredwz/Images/blog/tex_version.png" alt="tex版本" /></p>
+
+<h2 id="sublime安装">sublime安装</h2>
+
+<p>sublime是非常好用的一个文本编辑器，虽然收费但是偶尔弹下购买，不影响使用。可以直接去<a href="https://www.sublimetext.com/">官网</a>下载。
+安装流程无需多言。
+等到安装完成后，在编辑器内按下ctrl+`，输入</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">urllib.request</span><span class="o">,</span><span class="nn">os</span><span class="o">,</span><span class="nn">hashlib</span><span class="p">;</span> <span class="n">h</span> <span class="o">=</span> <span class="s1">&#39;6f4c264a24d933ce70df5dedcf1dcaee&#39;</span> <span class="o">+</span> <span class="s1">&#39;ebe013ee18cced0ef93d5f746d80ef60&#39;</span><span class="p">;</span> <span class="n">pf</span> <span class="o">=</span> <span class="s1">&#39;Package Control.sublime-package&#39;</span><span class="p">;</span> <span class="n">ipp</span> <span class="o">=</span> <span class="n">sublime</span><span class="o">.</span><span class="n">installed_packages_path</span><span class="p">();</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">install_opener</span><span class="p">(</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">build_opener</span><span class="p">(</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">ProxyHandler</span><span class="p">())</span> <span class="p">);</span> <span class="n">by</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span> <span class="s1">&#39;http://packagecontrol.io/&#39;</span> <span class="o">+</span> <span class="n">pf</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="s1">&#39;%20&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">read</span><span class="p">();</span> <span class="n">dh</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span><span class="n">by</span><span class="p">)</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">();</span> <span class="k">print</span><span class="p">(</span><span class="s1">&#39;Error validating download (got </span><span class="si">%s</span><span class="s1"> instead of </span><span class="si">%s</span><span class="s1">), please try manual install&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">dh</span><span class="p">,</span> <span class="n">h</span><span class="p">))</span> <span class="k">if</span> <span class="n">dh</span> <span class="o">!=</span> <span class="n">h</span> <span class="k">else</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span> <span class="n">ipp</span><span class="p">,</span> <span class="n">pf</span><span class="p">),</span> <span class="s1">&#39;wb&#39;</span> <span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">by</span><span class="p">)</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>安装包管理工具
+由于包的哈希会变化，因此推荐来<a href="https://packagecontrol.io/installation">安装网站</a>复制粘贴
+包管理工具安装完成后，我们需要安装LatexTools
+在编辑器内按下<code>ctrl+shift+p</code>，输入pci可以看到如下界面，输入LatexTools即可安装
+<img src="https://raw.githubusercontent.com/hundredwz/Images/blog/tex_sublime_pci.png" alt="包管理" />
+第二步，sublime完成。</p>
+
+<h2 id="sumatrapdf安装">SumatraPDF安装</h2>
+
+<p>这个是一个很干净的pdf阅读器，使用起来很方便，而且使用sublime编译好tex生成pdf后，可以直接使用sumatrapdf.exe打开，除此之外，我们在还可以在pdf中双击内容回到tex源文件上，很是方便。
+下载地址是<a href="https://www.sumatrapdfreader.org/download-free-pdf-viewer.html">https://www.sumatrapdfreader.org/download-free-pdf-viewer.html</a>，下载安装版或者便携版都可以。注意下文件的安装或者放置路径，我们接下来要用。
+目前先假设是</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">D:\\work\\pdf\\SumatraPDF.exe</pre></td></tr></table>
+</div>
+</div>
+<p>打开sumatrapdf.exe，我们需要配置一个内容
+<img src="https://raw.githubusercontent.com/hundredwz/Images/blog/sumatra_config.png" alt="sumatra配置位置" />
+在选项中我们输入</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">&#34;D:\dev\ide\Sublime Text 3\sublime_text.exe&#34; &#34;%f:%l&#34;</pre></td></tr></table>
+</div>
+</div>
+<p>前面就是我们sublime的安装位置
+如图所示
+<img src="https://raw.githubusercontent.com/hundredwz/Images/blog/sumatra_cmd.png" alt="sumatra命令" /></p>
+
+<h2 id="latextools配置">Latextools配置</h2>
+
+<p>在sublime中按照如下方式打开配置
+<img src="https://raw.githubusercontent.com/hundredwz/Images/blog/tex_latextools_setting.png" alt="用户配置" />
+第一次会提示没有配置文件，是否创建，确认创建即可
+首先在文件内搜索<code>texpath</code>，找到对应的系统，由于我们是使用的windows系统，因此主要在windows系统内进行配置，配置内容如下</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-json" data-lang="json"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-json" data-lang="json"><span class="s2">&#34;windows&#34;</span><span class="err">:</span> <span class="p">{</span>
+		<span class="err">//</span> <span class="err">Path</span> <span class="err">used</span> <span class="err">when</span> <span class="err">invoking</span> <span class="err">tex</span> <span class="err">&amp;</span> <span class="err">friends;</span> <span class="nt">&#34;&#34;</span> <span class="err">is</span> <span class="err">fine</span> <span class="err">for</span> <span class="err">MiKTeX</span>
+		<span class="err">//</span> <span class="err">For</span> <span class="err">TeXlive</span> <span class="mi">2011</span> <span class="err">(or</span> <span class="err">other</span> <span class="err">years)</span> <span class="err">use</span>
+		<span class="err">//</span> <span class="s2">&#34;texpath&#34;</span> <span class="p">:</span> <span class="s2">&#34;C:\\texlive\\2011\\bin\\win32;$PATH&#34;</span><span class="p">,</span>
+		<span class="nt">&#34;texpath&#34;</span> <span class="p">:</span> <span class="s2">&#34;D:\\work\\latex\\bin\\win32:$PATH&#34;</span><span class="p">,</span>
+		<span class="err">//</span> <span class="err">TeX</span> <span class="err">distro:</span> <span class="nt">&#34;miktex&#34;</span> <span class="err">or</span> <span class="s2">&#34;texlive&#34;</span>
+		<span class="s2">&#34;distro&#34;</span> <span class="p">:</span> <span class="s2">&#34;texlive&#34;</span><span class="p">,</span>
+		<span class="err">//</span> <span class="err">Command</span> <span class="err">to</span> <span class="err">invoke</span> <span class="err">Sumatra.</span> <span class="err">If</span> <span class="err">blank,</span> <span class="nt">&#34;SumatraPDF.exe&#34;</span> <span class="err">is</span> <span class="err">used</span> <span class="err">(it</span> <span class="err">has</span> <span class="err">to</span> <span class="err">be</span> <span class="err">on</span> <span class="err">your</span> <span class="err">PATH)</span>
+		<span class="s2">&#34;sumatra&#34;</span><span class="p">:</span> <span class="s2">&#34;D:\\work\\pdf\\SumatraPDF.exe&#34;</span><span class="p">,</span>
+		<span class="err">//</span> <span class="err">Command</span> <span class="err">to</span> <span class="err">invoke</span> <span class="err">Sublime</span> <span class="err">Text.</span> <span class="err">Used</span> <span class="err">if</span> <span class="err">the</span> <span class="err">keep_focus</span> <span class="err">toggle</span> <span class="err">is</span> <span class="err">true.</span>
+		<span class="err">//</span> <span class="err">If</span> <span class="err">blank,</span> <span class="nt">&#34;subl.exe&#34;</span> <span class="err">or</span> <span class="s2">&#34;sublime_text.exe&#34;</span> <span class="err">will</span> <span class="err">be</span> <span class="err">used.</span>
+		<span class="s2">&#34;sublime_executable&#34;</span><span class="p">:</span> <span class="s2">&#34;&#34;</span><span class="p">,</span>
+		<span class="err">//</span> <span class="err">how</span> <span class="err">long</span> <span class="err">(in</span> <span class="err">seconds)</span> <span class="err">to</span> <span class="err">wait</span> <span class="err">after</span> <span class="err">the</span> <span class="err">jump_to_pdf</span> <span class="err">command</span> <span class="err">completes</span>
+		<span class="err">//</span> <span class="err">before</span> <span class="err">switching</span> <span class="err">focus</span> <span class="err">back</span> <span class="err">to</span> <span class="err">Sublime</span> <span class="err">Text.</span> <span class="err">This</span> <span class="err">may</span> <span class="err">need</span> <span class="err">to</span> <span class="err">be</span>
+		<span class="err">//</span> <span class="err">adjusted</span> <span class="err">depending</span> <span class="err">on</span> <span class="err">your</span> <span class="err">machine</span> <span class="err">and</span> <span class="err">configuration.</span>
+		<span class="nt">&#34;keep_focus_delay&#34;</span><span class="p">:</span> <span class="mf">0.5</span>
+	<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>很明显，我们可以看到主要的配置是texpath,就是tex的安装位置，然后distro是texlive，以及sumatra的文件位置。按照自己文件所在的位置写入就可以啦。
+理论上来说，到这一步已经全部进行完成了，但是latex的论文中，很喜欢把参考文献单独写在bib文件中，默认的编译方式不支持，因此我们需要手动配置下
+在文中搜索<code>builder_settings</code>，找到windows，写入以下内容</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-json" data-lang="json"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-json" data-lang="json"><span class="s2">&#34;windows&#34;</span> <span class="err">:</span> <span class="p">{</span>
+			<span class="err">//</span> <span class="err">See</span> <span class="err">README</span> <span class="err">or</span> <span class="err">third-party</span> <span class="err">documentation</span>
+			<span class="nt">&#34;script_commands&#34;</span><span class="p">:[</span>
+				<span class="s2">&#34;pdflatex -synctex=1 -interaction=nonstopmode&#34;</span><span class="p">,</span>
+				<span class="s2">&#34;bibtex&#34;</span><span class="p">,</span>
+				<span class="s2">&#34;pdflatex -synctex=1 -interaction=nonstopmode&#34;</span><span class="p">,</span>
+				<span class="s2">&#34;pdflatex -synctex=1 -interaction=nonstopmode&#34;</span>
+			<span class="p">]</span>
+
+		<span class="p">}</span><span class="err">,</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>然后把<code>builder</code>修改为<code>script</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-json" data-lang="json"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-json" data-lang="json"><span class="s2">&#34;builder&#34;</span><span class="err">:</span> <span class="s2">&#34;script&#34;</span><span class="err">,</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>即可。</p>
+
+<h2 id="自动输入">自动输入</h2>
+
+<p>我们有时候想让latex进行自动补全，而sublime默认没有开启，点击<code>preference-settings</code>，输入<code>&quot;auto_complete_selector&quot;: &quot;source, text&quot;,</code>，保存
+<img src="https://raw.githubusercontent.com/hundredwz/Images/blog/sublime_autocomplete.png" alt="自动补全" /></p>
+
+<h2 id="测试">测试</h2>
+
+<p>我们新建一个tex文件，输入以下内容</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-latex" data-lang="latex"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-latex" data-lang="latex"><span class="k">\documentclass</span><span class="nb">{</span>article<span class="nb">}</span>
+<span class="k">\title</span><span class="nb">{</span>One test<span class="nb">}</span>
+<span class="k">\author</span><span class="nb">{</span>Hundred<span class="nb">}</span>
+
+<span class="k">\begin</span><span class="nb">{</span>document<span class="nb">}</span>
+<span class="k">\maketitle</span><span class="nb">{}</span>
+
+<span class="k">\section</span><span class="nb">{</span>introduction<span class="nb">}</span> <span class="c">% (fold)
+</span><span class="c"></span><span class="k">\label</span><span class="nb">{</span>sec:introduction<span class="nb">}</span>
+some introduction about windows10+sublime+sumatrapdf+latextools
+<span class="c">% section introduction (end)
+</span><span class="c"></span>
+<span class="k">\end</span><span class="nb">{</span>document<span class="nb">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>按下<code>ctrl+b</code>，选择script builder即可
+<img src="https://raw.githubusercontent.com/hundredwz/Images/blog/latex_script_builder.png" alt="脚本编译" />
+编译成功就会弹出pdf文件了。以后直接按<code>ctrl+b</code>就会默认使用script模式
+<img src="https://raw.githubusercontent.com/hundredwz/Images/blog/sumatra_tex_file.png" alt="sumatra打开" />
+双击自动回到tex文件
+安装结束！</p>
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">Hundred</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2018-09-07 07:17
+        
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">许可协议</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/latex/">latex</a>
+          <a href="/tags/texlive/">texlive</a>
+          <a href="/tags/sublime/">sublime</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/%E5%8D%81%E5%B9%B4%E7%9A%84%E6%9C%9F%E8%AE%B8/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">十年的期许</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/%E6%8E%8C%E6%8F%A1%E6%AF%94%E7%89%B9%E5%B8%81IV%E8%8A%82%E7%82%B9%E5%8A%9F%E8%83%BDII/">
+            <span class="next-text nav-default">掌握比特币IV:节点功能II</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+  
+  
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="#" class="iconfont icon-cnblogs" title="cnblogs"></a>
+      <a href="mailto:sdwangzhuo@gmail.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/hundredwz" class="iconfont icon-github" title="github"></a>
+      <a href="#" class="iconfont icon-juejin" title="juejin"></a>
+      <a href="#" class="iconfont icon-v2ex" title="v2ex"></a>
+      <a href="https://weibo.com/hundredwz" class="iconfont icon-weibo" title="weibo"></a>
+  <a href="https://hundredwz.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2013 - 
+    2020
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Hundred</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.min.js" integrity="sha256-jwCP0NAdCBloaIWTWHmW4i3snUNMHUNO+jr9rYd2iOI=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.locales.min.js" integrity="sha256-ZwofwC1Lf/faQCzN7nZtfijVV6hSwxjQMwXL4gn9qU8=" crossorigin="anonymous"></script>
+  <script><!-- NOTE: timeago.js uses the language code format like "zh_CN" (underscore and case sensitive) -->
+    var languageCode = "zh-CN".replace(/-/g, '_').replace(/_(.*)/, function ($0, $1) {return $0.replace($1, $1.toUpperCase());});
+    timeago().render(document.querySelectorAll('.timeago'), languageCode);
+    timeago.cancel();  
+  </script>
+<script type="text/javascript" src="/dist/even.26188efa.min.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+      showProcessingMessages: false,
+      messageStyle: 'none'
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"  integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-138883536-1', 'auto');
+	ga('set', 'anonymizeIp', true);
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+
+
+
+
+</body>
+</html>

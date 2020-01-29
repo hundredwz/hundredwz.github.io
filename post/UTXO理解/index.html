@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>UTXO理解 - A Lazy Coder</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="Hundred" /><meta name="description" content="最近在看到区块链的底层内容，看到了UTXO，看的一头雾水，结合网上的帖子有了一些理解。
+" /><meta name="keywords" content="Blockchain, Golang, Fabric, Ethereum, Code" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.56.1 with even 4.0.0" />
+
+
+<link rel="canonical" href="https://hundredwz.github.io/post/UTXO%E7%90%86%E8%A7%A3/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<link href="/dist/even.c2a46f00.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+<link rel="stylesheet" href="/css/reset-even.css">
+
+
+<meta property="og:title" content="UTXO理解" />
+<meta property="og:description" content="最近在看到区块链的底层内容，看到了UTXO，看的一头雾水，结合网上的帖子有了一些理解。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://hundredwz.github.io/post/UTXO%E7%90%86%E8%A7%A3/" />
+<meta property="article:published_time" content="2018-03-09T06:53:00+00:00" />
+<meta property="article:modified_time" content="2018-03-09T06:53:00+00:00" />
+<meta itemprop="name" content="UTXO理解">
+<meta itemprop="description" content="最近在看到区块链的底层内容，看到了UTXO，看的一头雾水，结合网上的帖子有了一些理解。">
+
+
+<meta itemprop="datePublished" content="2018-03-09T06:53:00&#43;00:00" />
+<meta itemprop="dateModified" content="2018-03-09T06:53:00&#43;00:00" />
+<meta itemprop="wordCount" content="1135">
+
+
+
+<meta itemprop="keywords" content="区块链,UTXO," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="UTXO理解"/>
+<meta name="twitter:description" content="最近在看到区块链的底层内容，看到了UTXO，看的一头雾水，结合网上的帖子有了一些理解。"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">A Lazy Coder</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">首页</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">归档</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">分类</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/friends/">
+        <li class="mobile-menu-item">Friends</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">A Lazy Coder</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">首页</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">归档</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">分类</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/friends/">Friends</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">UTXO理解</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2018-03-09 06:53 </span>
+        <div class="post-category">
+            <a href="/categories/program/"> program </a>
+            </div>
+          <span class="more-meta"> 约 1135 字 </span>
+          <span class="more-meta"> 预计阅读 3 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#概念">概念</a></li>
+<li><a href="#流程">流程</a></li>
+<li><a href="#特点">特点</a></li>
+<li><a href="#问题">问题</a></li>
+<li><a href="#参考">参考</a></li>
+</ul></li>
+</ul>
+</nav>
+  </div>
+</div>
+  <div class="post-outdated">
+    <div class="hint">
+      <p>【注意】最后更新于 <span class="timeago" datetime="2018-03-09T06:53:00" title="March 9, 2018">March 9, 2018</span>，文中内容可能已过时，请谨慎使用。</p>
+    </div>
+  </div>
+    <div class="post-content">
+      <p>最近在看到区块链的底层内容，看到了UTXO，看的一头雾水，结合网上的帖子有了一些理解。</p>
+
+<h2 id="概念">概念</h2>
+
+<p>UTXO: Unspent Transaction Output,未花费交易输出。挺奇怪的一个名词。我们先举一个比较直观的例子。
+有一家仓库，每天进货出货，管理员人比较懒，不愿意进仓库看有多少货物，就只记录有多少货进来了，有多少货出去了。
+1. 13:00进来了10支钢笔
+2. 13:05进来了8块橡皮
+3. 14:15出去了2支钢笔
+4. 14:30出去了5块橡皮
+5. ...</p>
+
+<p>我们也不知道仓库里面到底有多少货物，只需要保证出来的货物能够用进来的填充上就好。
+似乎有点跟我们的直观感受不同，我们都是习惯看结果的，保证库存大于取出，就可以方便的存取了。
+我们容易理解的是基于账户的，而比特币是基于交易的，这个就可以理解为区别了。</p>
+
+<h2 id="流程">流程</h2>
+
+<p>我们已经知道了，在UTXO中是没有账户概念的，所以每一笔交易都得保持等值，进来的钱与出去的钱要相等才行。比如以下例子
+1. 小明 挖矿 15￥
+2. 小明 转账 小红 5￥</p>
+
+<p>按照我们直观的理解，剩下的10￥肯定是小明的，但是，记住了，UTXO没有账户，所以需要改写成
+2. 2.1小明 转账 小红 5￥
+   2.2小明 转账 小明 10￥</p>
+
+<p>我们现在看到的都是输出结果，钱从哪来的？第一笔钱是挖矿挣来的，后续的都是通过交易产生的。所以全部的流程应该是这样的。
+交易序列| 输入 | 输出
+:-| - | :-
+1 | 挖矿 | 小明 15￥
+2(1) | 1 | 小红 5￥
+2(2) | 1 |小明 10￥
+3(1) | 2(1) | 小李 3￥
+3(2) | 2(1) | 小红 2￥
+从这个表格我们可以清晰的看出每一笔交易的输入输出，虽然每一个人具体多少钱得去遍历整个交易流水，但是我们可以保证每一笔交易都是正确的，都已经记录在案了。</p>
+
+<h2 id="特点">特点</h2>
+
+<p>比特币交易不是账户的增减，而是相互联系的输入输出交易事务。
+每一笔交易都有一个输入，也有一个输出。这个输出就是我们所说的UTXO了。我们要交易就拿这个交易序列ID进行交易就可以了。
+由于比特币没有账户，所以输入和输出必须等值。这笔输入的交易钱多的话，输出上必须给自己找零钱找回来</p>
+
+<h2 id="问题">问题</h2>
+
+<p>1.我怎么知道这个交易ID是没被使用过的？
+这个就是区块链在研究的了，如何达成一致性。
+我们可以从以下方面来理解
+1. 你是个好人，我就相信你没用这笔交易
+2. 我多找几个人问问，他们都说你没用。我读书少，你们这么多人不会骗我。</p>
+
+<p>2.由于没有账户，怎么说UTXO是我的？
+很简单，在生成UTXO的时候，就用我的私钥加密，然后我在使用的时候，你可以用我的公钥解密，不就证明是我的了吗？
+3.我怎么知道发生了双花？
+这个问题其实很简单，所有交易都是基于UTXO的，只要这笔交易不是UTXO了就不用了！创建一个UTXO交易池就好啦！
+这个问题是跟同学在讨论的时候想到的，理论来说并不复杂，就是两个人都固定思维了，导致蒙了！</p>
+
+<h2 id="参考">参考</h2>
+
+<ol>
+<li><a href="http://8btc.com/article-4381-1.html">其实并没有什么比特币，只有 UTXO</a></li>
+<li><a href="http://book.51cto.com/art/201711/558936.htm">比特币账户模型：UTXO</a></li>
+<li><a href="http://newtech.club/2018/01/26/%E6%AF%94%E7%89%B9%E5%B8%81UTXO%E5%92%8C%E5%8E%BB%E4%B8%AD%E5%BF%83%E5%8C%96%E7%B3%BB%E7%BB%9F%E7%9A%84%E8%AE%BE%E8%AE%A1/">比特币UTXO和去中心化系统的设计</a></li>
+</ol>
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">Hundred</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2018-03-09 06:53
+        
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">许可协议</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/%E5%8C%BA%E5%9D%97%E9%93%BE/">区块链</a>
+          <a href="/tags/UTXO/">UTXO</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/e2e_cli%E5%88%86%E6%9E%90/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">e2e_cli分析</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/go%E8%AF%BB%E5%8F%96%E6%95%B0%E6%8D%AE%E5%BA%93%E5%8F%8D%E5%B0%84%E5%8F%98%E9%87%8F/">
+            <span class="next-text nav-default">go读取数据库反射变量</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+  
+  
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="#" class="iconfont icon-cnblogs" title="cnblogs"></a>
+      <a href="mailto:sdwangzhuo@gmail.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/hundredwz" class="iconfont icon-github" title="github"></a>
+      <a href="#" class="iconfont icon-juejin" title="juejin"></a>
+      <a href="#" class="iconfont icon-v2ex" title="v2ex"></a>
+      <a href="https://weibo.com/hundredwz" class="iconfont icon-weibo" title="weibo"></a>
+  <a href="https://hundredwz.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2013 - 
+    2020
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Hundred</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.min.js" integrity="sha256-jwCP0NAdCBloaIWTWHmW4i3snUNMHUNO+jr9rYd2iOI=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.locales.min.js" integrity="sha256-ZwofwC1Lf/faQCzN7nZtfijVV6hSwxjQMwXL4gn9qU8=" crossorigin="anonymous"></script>
+  <script><!-- NOTE: timeago.js uses the language code format like "zh_CN" (underscore and case sensitive) -->
+    var languageCode = "zh-CN".replace(/-/g, '_').replace(/_(.*)/, function ($0, $1) {return $0.replace($1, $1.toUpperCase());});
+    timeago().render(document.querySelectorAll('.timeago'), languageCode);
+    timeago.cancel();  
+  </script>
+<script type="text/javascript" src="/dist/even.26188efa.min.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+      showProcessingMessages: false,
+      messageStyle: 'none'
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"  integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-138883536-1', 'auto');
+	ga('set', 'anonymizeIp', true);
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+
+
+
+
+</body>
+</html>

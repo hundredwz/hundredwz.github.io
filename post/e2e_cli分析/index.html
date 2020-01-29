@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>e2e_cli分析 - A Lazy Coder</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="Hundred" /><meta name="description" content="经过了将近$\frac{3}{4}$年的浑水摸鱼，我在fabric的道路上越走越偏，也该记录点东西误导下后续的人们了。本片文章分析下我们最常使用的e2e_cli吧。
+" /><meta name="keywords" content="Blockchain, Golang, Fabric, Ethereum, Code" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.56.1 with even 4.0.0" />
+
+
+<link rel="canonical" href="https://hundredwz.github.io/post/e2e_cli%E5%88%86%E6%9E%90/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<link href="/dist/even.c2a46f00.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+<link rel="stylesheet" href="/css/reset-even.css">
+
+
+<meta property="og:title" content="e2e_cli分析" />
+<meta property="og:description" content="经过了将近$\frac{3}{4}$年的浑水摸鱼，我在fabric的道路上越走越偏，也该记录点东西误导下后续的人们了。本片文章分析下我们最常使用的e2e_cli吧。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://hundredwz.github.io/post/e2e_cli%E5%88%86%E6%9E%90/" />
+<meta property="article:published_time" content="2018-03-27T08:52:00+00:00" />
+<meta property="article:modified_time" content="2018-03-27T08:52:00+00:00" />
+<meta itemprop="name" content="e2e_cli分析">
+<meta itemprop="description" content="经过了将近$\frac{3}{4}$年的浑水摸鱼，我在fabric的道路上越走越偏，也该记录点东西误导下后续的人们了。本片文章分析下我们最常使用的e2e_cli吧。">
+
+
+<meta itemprop="datePublished" content="2018-03-27T08:52:00&#43;00:00" />
+<meta itemprop="dateModified" content="2018-03-27T08:52:00&#43;00:00" />
+<meta itemprop="wordCount" content="4404">
+
+
+
+<meta itemprop="keywords" content="docker,区块链,fabric,shell," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="e2e_cli分析"/>
+<meta name="twitter:description" content="经过了将近$\frac{3}{4}$年的浑水摸鱼，我在fabric的道路上越走越偏，也该记录点东西误导下后续的人们了。本片文章分析下我们最常使用的e2e_cli吧。"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">A Lazy Coder</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">首页</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">归档</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">分类</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/friends/">
+        <li class="mobile-menu-item">Friends</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">A Lazy Coder</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">首页</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">归档</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">分类</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/friends/">Friends</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">e2e_cli分析</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2018-03-27 08:52 </span>
+        <div class="post-category">
+            <a href="/categories/program/"> program </a>
+            </div>
+          <span class="more-meta"> 约 4404 字 </span>
+          <span class="more-meta"> 预计阅读 9 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+<ul>
+<li><a href="#前言">前言</a></li>
+<li><a href="#启动">启动</a>
+<ul>
+<li><a href="#变量分析">变量分析</a></li>
+<li><a href="#启动命令">启动命令</a></li>
+</ul></li>
+<li><a href="#证书创世块">证书创世块</a>
+<ul>
+<li><a href="#变量分析-1">变量分析</a></li>
+<li><a href="#生成文件">生成文件</a>
+<ul>
+<li><a href="#证书生成">证书生成</a></li>
+<li><a href="#替换私钥">替换私钥</a></li>
+<li><a href="#生成区块等">生成区块等</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#docker启动">docker启动</a>
+<ul>
+<li><a href="#docker-compose-cli">docker-compose-cli</a>
+<ul>
+<li><a href="#cli">cli</a></li>
+<li><a href="#peer-orderer">peer&amp;orderer</a>
+<ul>
+<li><a href="#orderer">orderer</a></li>
+<li><a href="#peer">peer</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><a href="#运行服务">运行服务</a>
+<ul>
+<li><a href="#基础变量">基础变量</a></li>
+<li><a href="#创建通道">创建通道</a></li>
+<li><a href="#加入通道">加入通道</a></li>
+<li><a href="#更新锚节点">更新锚节点</a></li>
+<li><a href="#安装chaincode">安装chaincode</a></li>
+<li><a href="#初始化chaincode">初始化chaincode</a></li>
+<li><a href="#测试">测试</a></li>
+</ul></li>
+<li><a href="#总结">总结</a></li>
+</ul>
+</nav>
+  </div>
+</div>
+  <div class="post-outdated">
+    <div class="hint">
+      <p>【注意】最后更新于 <span class="timeago" datetime="2018-03-27T08:52:00" title="March 27, 2018">March 27, 2018</span>，文中内容可能已过时，请谨慎使用。</p>
+    </div>
+  </div>
+    <div class="post-content">
+      <p>经过了将近$\frac{3}{4}$年的浑水摸鱼，我在fabric的道路上越走越偏，也该记录点东西误导下后续的人们了。本片文章分析下我们最常使用的e2e_cli吧。</p>
+
+<p>为什么要分析这个例子呢，因为这个比较简单，而且大家也经常使用。最重要的是，网上有好多人都分析过了，我们容易写，不会写的太错。
+闲话少叙，我们开始。</p>
+
+<h1 id="前言">前言</h1>
+
+<p>既然是分析，那么启动环节我就不多说了，可能会穿插在各个环节里面。如果需要看启动的可以参考<a href="https://txiner.top/program/23.html">这篇文章</a>。当然了，那会刚开始学，文章写的很烂，还请见谅。</p>
+
+<h1 id="启动">启动</h1>
+
+<p>我们启动整个环境是执行的</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">./network.sh up</code></pre></td></tr></table>
+</div>
+</div>
+<p>开始的，这里面实现了很多功能，我们来分析一下。</p>
+
+<h2 id="变量分析">变量分析</h2>
+
+<p>在整个脚本文件，开头是这几个变量的定义</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nv">UP_DOWN</span><span class="o">=</span><span class="s2">&#34;</span><span class="nv">$1</span><span class="s2">&#34;</span>
+<span class="nv">CH_NAME</span><span class="o">=</span><span class="s2">&#34;</span><span class="nv">$2</span><span class="s2">&#34;</span>
+<span class="nv">CLI_TIMEOUT</span><span class="o">=</span><span class="s2">&#34;</span><span class="nv">$3</span><span class="s2">&#34;</span>
+<span class="nv">IF_COUCHDB</span><span class="o">=</span><span class="s2">&#34;</span><span class="nv">$4</span><span class="s2">&#34;</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>脚本启动抑或关闭命令，然后是要定义的channel名称，接着是超时时长，最后是否使用couchDB。所以我们也可以这么启动整个脚本</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">./network.sh up testchannel  <span class="m">100</span> couchdb</code></pre></td></tr></table>
+</div>
+</div>
+<p>后面定义了这几个变量</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">: <span class="si">${</span><span class="nv">CLI_TIMEOUT</span><span class="p">:=</span><span class="s2">&#34;10000&#34;</span><span class="si">}</span>
+<span class="nv">COMPOSE_FILE</span><span class="o">=</span>docker-compose-cli.yaml
+<span class="nv">COMPOSE_FILE_COUCH</span><span class="o">=</span>docker-compose-couch.yaml</code></pre></td></tr></table>
+</div>
+</div>
+<p>分别是超时时长，我们启动整个系统（底层是否使用couchDB）所使用的配置文件。</p>
+
+<h2 id="启动命令">启动命令</h2>
+
+<p>在启动整个环境前，脚本首先执行了<code>validateArgs</code>检查名称是否正确</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="k">function</span> validateArgs <span class="o">()</span> <span class="o">{</span>
+	<span class="k">if</span> <span class="o">[</span> -z <span class="s2">&#34;</span><span class="si">${</span><span class="nv">UP_DOWN</span><span class="si">}</span><span class="s2">&#34;</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
+		<span class="nb">echo</span> <span class="s2">&#34;Option up / down / restart not mentioned&#34;</span>
+		printHelp
+		<span class="nb">exit</span> <span class="m">1</span>
+	<span class="k">fi</span>
+	<span class="k">if</span> <span class="o">[</span> -z <span class="s2">&#34;</span><span class="si">${</span><span class="nv">CH_NAME</span><span class="si">}</span><span class="s2">&#34;</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
+		<span class="nb">echo</span> <span class="s2">&#34;setting to default channel &#39;mychannel&#39;&#34;</span>
+		<span class="nv">CH_NAME</span><span class="o">=</span>mychannel
+	<span class="k">fi</span>
+<span class="o">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>内容很简单，就是看看我们有没有写<code>up</code>或者<code>down</code>最基本的命令。而且channel名称是创建过程不可缺少的，所以我们没有指定的话系统默认给我们分配一个<code>mychannel</code>名称。
+继续往后面看，我们可以看到是从<code>networkUp</code>这个函数启动的</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="k">if</span> <span class="o">[</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">UP_DOWN</span><span class="si">}</span><span class="s2">&#34;</span> <span class="o">==</span> <span class="s2">&#34;up&#34;</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
+	networkUp
+<span class="k">elif</span> <span class="o">[</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">UP_DOWN</span><span class="si">}</span><span class="s2">&#34;</span> <span class="o">==</span> <span class="s2">&#34;down&#34;</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span> <span class="c1">## Clear the network</span>
+	networkDown
+<span class="k">elif</span> <span class="o">[</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">UP_DOWN</span><span class="si">}</span><span class="s2">&#34;</span> <span class="o">==</span> <span class="s2">&#34;restart&#34;</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span> <span class="c1">## Restart the network</span>
+	networkDown
+	networkUp
+<span class="k">else</span>
+	printHelp
+	<span class="nb">exit</span> <span class="m">1</span>
+<span class="k">fi</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>最让人无语的是重启就是关闭再启动，也是很有想法（手动狗头）
+比较复杂的地方来了，我们看下环境启动函数</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="k">function</span> networkUp <span class="o">()</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">[</span> -f <span class="s2">&#34;./crypto-config&#34;</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
+      <span class="nb">echo</span> <span class="s2">&#34;crypto-config directory already exists.&#34;</span>
+    <span class="k">else</span>
+      <span class="c1">#Generate all the artifacts that includes org certs, orderer genesis block,</span>
+      <span class="c1"># channel configuration transaction</span>
+      <span class="nb">source</span> generateArtifacts.sh <span class="nv">$CH_NAME</span>
+    <span class="k">fi</span>
+
+    <span class="k">if</span> <span class="o">[</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">IF_COUCHDB</span><span class="si">}</span><span class="s2">&#34;</span> <span class="o">==</span> <span class="s2">&#34;couchdb&#34;</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
+      <span class="nv">CHANNEL_NAME</span><span class="o">=</span><span class="nv">$CH_NAME</span> <span class="nv">TIMEOUT</span><span class="o">=</span><span class="nv">$CLI_TIMEOUT</span> docker-compose -f <span class="nv">$COMPOSE_FILE</span> -f <span class="nv">$COMPOSE_FILE_COUCH</span> up -d <span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
+    <span class="k">else</span>
+      <span class="nv">CHANNEL_NAME</span><span class="o">=</span><span class="nv">$CH_NAME</span> <span class="nv">TIMEOUT</span><span class="o">=</span><span class="nv">$CLI_TIMEOUT</span> docker-compose -f <span class="nv">$COMPOSE_FILE</span> up -d <span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
+    <span class="k">fi</span>
+    <span class="k">if</span> <span class="o">[</span> <span class="nv">$?</span> -ne <span class="m">0</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
+	<span class="nb">echo</span> <span class="s2">&#34;ERROR !!!! Unable to pull the images &#34;</span>
+	<span class="nb">exit</span> <span class="m">1</span>
+    <span class="k">fi</span>
+    docker logs -f cli
+<span class="o">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>函数首先需要检查是否存在<code>crypto-config</code>文件夹，这个文件夹有什么用呢？它是一些证书文件，创世区块所在的文件夹，是必不可少的，通过<code>generateArtifacts.sh</code>脚本文件生成，我们稍后再看。
+到了是否使用<code>couchdb</code>环节，如果使用的话就是多加了这一句<code>-f $COMPOSE_FILE_COUCH</code>，加载这个文件。
+实际上，这个地方就是很普通的使用<code>docker-compose</code>启动docker而已，并不复杂。
+到这个启动完之后，就相当于启动成功了。</p>
+
+<h1 id="证书创世块">证书创世块</h1>
+
+<p>这个脚本文件打开一看，很多乱七八糟的东西。不慌不慌，我们一点一点来。</p>
+
+<h2 id="变量分析-1">变量分析</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nv">CHANNEL_NAME</span><span class="o">=</span><span class="nv">$1</span>
+: <span class="si">${</span><span class="nv">CHANNEL_NAME</span><span class="p">:=</span><span class="s2">&#34;mychannel&#34;</span><span class="si">}</span>
+<span class="nb">echo</span> <span class="nv">$CHANNEL_NAME</span>
+
+<span class="nb">export</span> <span class="nv">FABRIC_ROOT</span><span class="o">=</span><span class="nv">$PWD</span>/../..
+<span class="nb">export</span> <span class="nv">FABRIC_CFG_PATH</span><span class="o">=</span><span class="nv">$PWD</span>
+<span class="nv">OS_ARCH</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span> <span class="s2">&#34;</span><span class="k">$(</span>uname -s<span class="p">|</span>tr <span class="s1">&#39;[:upper:]&#39;</span> <span class="s1">&#39;[:lower:]&#39;</span><span class="p">|</span>sed <span class="s1">&#39;s/mingw64_nt.*/windows/&#39;</span><span class="k">)</span><span class="s2">-</span><span class="k">$(</span>uname -m <span class="p">|</span> sed <span class="s1">&#39;s/x86_64/amd64/g&#39;</span><span class="k">)</span><span class="s2">&#34;</span> <span class="p">|</span> awk <span class="s1">&#39;{print tolower($0)}&#39;</span><span class="k">)</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>大家还能看到我们刚刚生成证书时候执行的指令吧</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nb">source</span> generateArtifacts.sh <span class="nv">$CH_NAME</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>就是把<code>channelname</code>传递了过来，然后<code>FABRIC_ROOT</code>是什么位置呢？就是我们fabric的根路径，是用来查找生成证书的可执行文件的。<code>FABRIC_CFG_PATH</code>就是我们当前路径了。而<code>OS_ARCH</code>就是系统版本了。</p>
+
+<h2 id="生成文件">生成文件</h2>
+
+<p>生成所需文件很简单，三个函数</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">generateCerts
+replacePrivateKey
+generateChannelArtifacts</code></pre></td></tr></table>
+</div>
+</div>
+<p>第一个生成证书，第二个替换私钥（估计很多人会纠结什么意思），第三个是生成channel所需文件。</p>
+
+<h3 id="证书生成">证书生成</h3>
+
+<p>首先检查文件是否存在，如果不存在，就需要编译生成所需文件</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nv">CRYPTOGEN</span><span class="o">=</span><span class="nv">$FABRIC_ROOT</span>/release/<span class="nv">$OS_ARCH</span>/bin/cryptogen
+
+<span class="k">if</span> <span class="o">[</span> -f <span class="s2">&#34;</span><span class="nv">$CRYPTOGEN</span><span class="s2">&#34;</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
+        <span class="nb">echo</span> <span class="s2">&#34;Using cryptogen -&gt; </span><span class="nv">$CRYPTOGEN</span><span class="s2">&#34;</span>
+<span class="k">else</span>
+    <span class="nb">echo</span> <span class="s2">&#34;Building cryptogen&#34;</span>
+    make -C <span class="nv">$FABRIC_ROOT</span> release
+<span class="k">fi</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>得到了生成证书所需的文件<code>CRYPTOGEN</code>就开始生成文件吧。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nv">$CRYPTOGEN</span> generate --config<span class="o">=</span>./crypto-config.yaml</code></pre></td></tr></table>
+</div>
+</div>
+<p>通过使用一个特定的文件<code>crypto-config.yaml</code>来生成所需要的证书文件。
+我们简单看下这个文件吧</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">OrdererOrgs<span class="p">:</span><span class="w">
+</span><span class="w">  </span>-<span class="w"> </span>Name<span class="p">:</span><span class="w"> </span>Orderer<span class="w">
+</span><span class="w">    </span>Domain<span class="p">:</span><span class="w"> </span>example.com<span class="w">
+</span><span class="w">    </span>Specs<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>Hostname<span class="p">:</span><span class="w"> </span>orderer<span class="w">
+</span><span class="w"></span>PeerOrgs<span class="p">:</span><span class="w">
+</span><span class="w">  </span>-<span class="w"> </span>Name<span class="p">:</span><span class="w"> </span>Org1<span class="w">
+</span><span class="w">    </span>Domain<span class="p">:</span><span class="w"> </span>org1.example.com<span class="w">
+</span><span class="w">    </span>Template<span class="p">:</span><span class="w">
+</span><span class="w">      </span>Count<span class="p">:</span><span class="w"> </span><span class="m">2</span><span class="w">
+</span><span class="w">    </span>Users<span class="p">:</span><span class="w">
+</span><span class="w">      </span>Count<span class="p">:</span><span class="w"> </span><span class="m">1</span><span class="w">
+</span><span class="w">  </span>-<span class="w"> </span>Name<span class="p">:</span><span class="w"> </span>Org2<span class="w">
+</span><span class="w">    </span>Domain<span class="p">:</span><span class="w"> </span>org2.example.com<span class="w">
+</span><span class="w">    </span>Template<span class="p">:</span><span class="w">
+</span><span class="w">      </span>Count<span class="p">:</span><span class="w"> </span><span class="m">2</span><span class="w">
+</span><span class="w">    </span>Users<span class="p">:</span><span class="w">
+</span><span class="w">      </span>Count<span class="p">:</span><span class="w"> </span><span class="m">1</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>为了方便阅读我就把注释都删除了
+整体的含义就是我有<code>OrdererOrgs</code>和<code>PeerOrgs</code>，根据我指定的要求生成证书文件。
+生成的文件在哪？就在启动时候检查的<code>crypto-config</code>文件夹下面的<code>peerOrg...</code>和<code>orderOrg...</code>下面。包含msp,tls等等所需要的文件。</p>
+
+<h3 id="替换私钥">替换私钥</h3>
+
+<p>我们上一步生成了证书文件之后，需要在启动的时候使用，也就是说我在启动docker容器的时候就要指定，那现在就得把docker-compose-file文件里面替换了。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="k">function</span> replacePrivateKey <span class="o">()</span> <span class="o">{</span>
+	<span class="nv">ARCH</span><span class="o">=</span><span class="sb">`</span>uname -s <span class="p">|</span> grep Darwin<span class="sb">`</span>
+	<span class="k">if</span> <span class="o">[</span> <span class="s2">&#34;</span><span class="nv">$ARCH</span><span class="s2">&#34;</span> <span class="o">==</span> <span class="s2">&#34;Darwin&#34;</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
+		<span class="nv">OPTS</span><span class="o">=</span><span class="s2">&#34;-it&#34;</span>
+	<span class="k">else</span>
+		<span class="nv">OPTS</span><span class="o">=</span><span class="s2">&#34;-i&#34;</span>
+	<span class="k">fi</span>
+
+	cp docker-compose-e2e-template.yaml docker-compose-e2e.yaml
+
+        <span class="nv">CURRENT_DIR</span><span class="o">=</span><span class="nv">$PWD</span>
+        <span class="nb">cd</span> crypto-config/peerOrganizations/org1.example.com/ca/
+        <span class="nv">PRIV_KEY</span><span class="o">=</span><span class="k">$(</span>ls *_sk<span class="k">)</span>
+        <span class="nb">cd</span> <span class="nv">$CURRENT_DIR</span>
+        sed <span class="nv">$OPTS</span> <span class="s2">&#34;s/CA1_PRIVATE_KEY/</span><span class="si">${</span><span class="nv">PRIV_KEY</span><span class="si">}</span><span class="s2">/g&#34;</span> docker-compose-e2e.yaml
+        <span class="nb">cd</span> crypto-config/peerOrganizations/org2.example.com/ca/
+        <span class="nv">PRIV_KEY</span><span class="o">=</span><span class="k">$(</span>ls *_sk<span class="k">)</span>
+        <span class="nb">cd</span> <span class="nv">$CURRENT_DIR</span>
+        sed <span class="nv">$OPTS</span> <span class="s2">&#34;s/CA2_PRIVATE_KEY/</span><span class="si">${</span><span class="nv">PRIV_KEY</span><span class="si">}</span><span class="s2">/g&#34;</span> docker-compose-e2e.yaml
+<span class="o">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>就是我导出了<code>docker-compose-e2e.yaml</code>文件后，替换里面的<code>CA_PRIVATE_KEY</code>为我们的私钥名称。
+因为e2e_cli是测试的两个组织，所以就有两个private_key了。
+<em>然而，很尴尬的是，我们的网络并没有用到这个<code>docker-compose-e2e.yaml</code>文件，所以，这一步并没有什么用处。</em></p>
+
+<h3 id="生成区块等">生成区块等</h3>
+
+<p>本函数没有那么复杂，就是很单纯的生成指定的文件。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nv">CONFIGTXGEN</span><span class="o">=</span><span class="nv">$FABRIC_ROOT</span>/release/<span class="nv">$OS_ARCH</span>/bin/configtxgen
+<span class="k">if</span> <span class="o">[</span> -f <span class="s2">&#34;</span><span class="nv">$CONFIGTXGEN</span><span class="s2">&#34;</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
+        <span class="nb">echo</span> <span class="s2">&#34;Using configtxgen -&gt; </span><span class="nv">$CONFIGTXGEN</span><span class="s2">&#34;</span>
+<span class="k">else</span>
+    <span class="nb">echo</span> <span class="s2">&#34;Building configtxgen&#34;</span>
+    make -C <span class="nv">$FABRIC_ROOT</span> release
+<span class="k">fi</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>跟<code>cryptogen</code>一样，没有的话就编译出来。
+下面就到了关键的步骤</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nv">$CONFIGTXGEN</span> -profile TwoOrgsOrdererGenesis -outputBlock ./channel-artifacts/genesis.block
+<span class="nv">$CONFIGTXGEN</span> -profile TwoOrgsChannel -outputCreateChannelTx ./channel-artifacts/channel.tx -channelID <span class="nv">$CHANNEL_NAME</span>
+<span class="nv">$CONFIGTXGEN</span> -profile TwoOrgsChannel -outputAnchorPeersUpdate ./channel-artifacts/Org1MSPanchors.tx -channelID <span class="nv">$CHANNEL_NAME</span> -asOrg Org1MSP
+<span class="nv">$CONFIGTXGEN</span> -profile TwoOrgsChannel -outputAnchorPeersUpdate ./channel-artifacts/Org2MSPanchors.tx -channelID <span class="nv">$CHANNEL_NAME</span> -asOrg Org2MSP</code></pre></td></tr></table>
+</div>
+</div>
+<p>第一句，根据profile生成创世块。等等！profile文件呢？
+就是这个<code>configtx.yaml</code>文件了</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">Profiles<span class="p">:</span><span class="w">
+</span><span class="w">
+</span><span class="w">    </span>TwoOrgsOrdererGenesis<span class="p">:</span><span class="w">
+</span><span class="w">        </span>Orderer<span class="p">:</span><span class="w">
+</span><span class="w">            </span>&lt;&lt;<span class="p">:</span><span class="w"> </span><span class="cp">*OrdererDefaults</span><span class="w">
+</span><span class="w">            </span>Organizations<span class="p">:</span><span class="w">
+</span><span class="w">                </span>-<span class="w"> </span><span class="cp">*OrdererOrg</span><span class="w">
+</span><span class="w">        </span>Consortiums<span class="p">:</span><span class="w">
+</span><span class="w">            </span>SampleConsortium<span class="p">:</span><span class="w">
+</span><span class="w">                </span>Organizations<span class="p">:</span><span class="w">
+</span><span class="w">                    </span>-<span class="w"> </span><span class="cp">*Org1</span><span class="w">
+</span><span class="w">                    </span>-<span class="w"> </span><span class="cp">*Org2</span><span class="w">
+</span><span class="w">    </span>TwoOrgsChannel<span class="p">:</span><span class="w">
+</span><span class="w">        </span>Consortium<span class="p">:</span><span class="w"> </span>SampleConsortium<span class="w">
+</span><span class="w">        </span>Application<span class="p">:</span><span class="w">
+</span><span class="w">            </span>&lt;&lt;<span class="p">:</span><span class="w"> </span><span class="cp">*ApplicationDefaults</span><span class="w">
+</span><span class="w">            </span>Organizations<span class="p">:</span><span class="w">
+</span><span class="w">                </span>-<span class="w"> </span><span class="cp">*Org1</span><span class="w">
+</span><span class="w">                </span>-<span class="w"> </span><span class="cp">*Org2</span><span class="w">
+</span><span class="w"></span>Organizations<span class="p">:</span><span class="w">
+</span><span class="w">    </span>-<span class="w"> </span><span class="cp">&amp;OrdererOrg</span><span class="w">
+</span><span class="w">        </span>Name<span class="p">:</span><span class="w"> </span>OrdererOrg<span class="w">
+</span><span class="w"></span>....</code></pre></td></tr></table>
+</div>
+</div>
+<p>文件内容有点长，我不全部粘贴了。这个文件就是配置了组织，channel等等内容。根据这个文件进行生成。
+第二句，生成channel，因为我们只有两个组织嘛，这个两个组织加入到同一个channel就可以了，因此我们只配置生成了一个channel。
+三四句就是组织加入到channel的过程所需要的交易文件。
+到此为止，我们启动docker的准备工作都已经完成了，开始进行下一步操作了。</p>
+
+<h1 id="docker启动">docker启动</h1>
+
+<p>为了简化流程，我们暂时先不考虑使用couchdb，也就是我们使用这句指令启动</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nv">CHANNEL_NAME</span><span class="o">=</span><span class="nv">$CH_NAME</span> <span class="nv">TIMEOUT</span><span class="o">=</span><span class="nv">$CLI_TIMEOUT</span> docker-compose -f <span class="nv">$COMPOSE_FILE</span> up -d <span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>好吧，我们需要看下这个<code>$COMPOSE_FILE</code>也就是<code>docker-compose-cli.yaml</code>文件的内容了。</p>
+
+<h2 id="docker-compose-cli">docker-compose-cli</h2>
+
+<p>在目前1.1版中，使用了<code>zookeeper</code>和<code>kafka</code>架构，但是并没有做到具体的使用，我们就先忽略。</p>
+
+<h3 id="cli">cli</h3>
+
+<p>由于我们日常操作都是使用cli服务，所以我们先看这个服务。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">cli<span class="p">:</span><span class="w">
+</span><span class="w">    </span>container_name<span class="p">:</span><span class="w"> </span>cli<span class="w">
+</span><span class="w">    </span>image<span class="p">:</span><span class="w"> </span>hyperledger/fabric-tools<span class="w">
+</span><span class="w">    </span>tty<span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span><span class="w">    </span>environment<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>GOPATH=/opt/gopath<span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>CORE_VM_ENDPOINT=unix<span class="p">:</span>///host/var/run/docker.sock<span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>CORE_LOGGING_LEVEL=DEBUG<span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>CORE_PEER_ID=cli<span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>CORE_PEER_ADDRESS=peer0.org1.example.com<span class="p">:</span><span class="m">7051</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>CORE_PEER_LOCALMSPID=Org1MSP<span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>CORE_PEER_TLS_ENABLED=<span class="kc">true</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/server.crt<span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/server.key<span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt<span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp<span class="w">
+</span><span class="w">    </span>working_dir<span class="p">:</span><span class="w"> </span>/opt/gopath/src/github.com/hyperledger/fabric/peer<span class="w">
+</span><span class="w">    </span>command<span class="p">:</span><span class="w"> </span>/bin/bash<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;./scripts/script.sh ${CHANNEL_NAME}; sleep $TIMEOUT&#39;</span><span class="w">
+</span><span class="w">    </span>volumes<span class="p">:</span><span class="w">
+</span><span class="w">        </span>-<span class="w"> </span>/var/run/<span class="p">:</span>/host/var/run/<span class="w">
+</span><span class="w">        </span>-<span class="w"> </span>../chaincode/go/<span class="p">:</span>/opt/gopath/src/github.com/hyperledger/fabric/examples/chaincode/go<span class="w">
+</span><span class="w">        </span>-<span class="w"> </span>./crypto-config<span class="p">:</span>/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/<span class="w">
+</span><span class="w">        </span>-<span class="w"> </span>./scripts<span class="p">:</span>/opt/gopath/src/github.com/hyperledger/fabric/peer/scripts/<span class="w">
+</span><span class="w">        </span>-<span class="w"> </span>./channel-artifacts<span class="p">:</span>/opt/gopath/src/github.com/hyperledger/fabric/peer/channel-artifacts<span class="w">
+</span><span class="w">    </span>depends_on<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>orderer.example.com<span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>peer0.org1.example.com<span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>peer1.org1.example.com<span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>peer0.org2.example.com<span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>peer1.org2.example.com</code></pre></td></tr></table>
+</div>
+</div>
+<p>真长！
+我们先分析文件映射。首先，是把<code>../chaincode/go/</code>映射了进去，所以我们的代码要放到上一层也就是<code>example</code>的<code>chaincode/go</code>文件夹里面。
+其次，把证书文件夹映射到了<code>peer/crypto/</code>文件，把通道区块文件夹映射到了<code>peer/channel-artifacts</code>文件夹。
+最后映射了一个<code>scripts</code>文件夹，很奇怪吧！我们一会就发现了是干什么用的。
+再看环境变量，制定了一堆安全相关的变量，包括tls文件和msp文件。这些就是比较固定的内容！但是注意到了吗？这个client客户端是连接的org的peer0哟！
+有一个<code>CORE_PEER_MSPCONFIGPATH</code>是干什么用的呢？指定了mspconfigpath，就是代表了哪一个实体，这个会体现到交易头里面。
+最后我们再看下启动后的命令
+执行了一句话</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">./scripts/script.sh <span class="si">${</span><span class="nv">CHANNEL_NAME</span><span class="si">}</span><span class="p">;</span> sleep <span class="nv">$TIMEOUT</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>核心内容就是这个<code>script.sh</code>文件了！对cli的分析先告一段落！</p>
+
+<h3 id="peer-orderer">peer&amp;orderer</h3>
+
+<p>我们可以发现peer和orderer都是继承了<code>base/docker-compose-base.yaml</code>文件的服务，这就是直接定义了一个服务，因此我们需要查看这个base文件。</p>
+
+<h4 id="orderer">orderer</h4>
+
+<p>整个服务和cli相比还是少了不少内容</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">orderer.example.com<span class="p">:</span><span class="w">
+</span><span class="w">    </span>container_name<span class="p">:</span><span class="w"> </span>orderer.example.com<span class="w">
+</span><span class="w">    </span>image<span class="p">:</span><span class="w"> </span>hyperledger/fabric-orderer<span class="w">
+</span><span class="w">    </span>environment<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>ORDERER_GENERAL_LOGLEVEL=debug<span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>ORDERER_GENERAL_LISTENADDRESS=<span class="m">0.0.0.0</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>ORDERER_GENERAL_GENESISMETHOD=file<span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>ORDERER_GENERAL_GENESISFILE=/var/hyperledger/orderer/orderer.genesis.block<span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>ORDERER_GENERAL_LOCALMSPID=OrdererMSP<span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer/msp<span class="w">
+</span><span class="w">      </span><span class="c"># enabled TLS</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>ORDERER_GENERAL_TLS_ENABLED=<span class="kc">true</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>ORDERER_GENERAL_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key<span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>ORDERER_GENERAL_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt<span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>ORDERER_GENERAL_TLS_ROOTCAS=<span class="p">[</span>/var/hyperledger/orderer/tls/ca.crt<span class="p">]</span><span class="w">
+</span><span class="w">    </span>working_dir<span class="p">:</span><span class="w"> </span>/opt/gopath/src/github.com/hyperledger/fabric<span class="w">
+</span><span class="w">    </span>command<span class="p">:</span><span class="w"> </span>orderer<span class="w">
+</span><span class="w">    </span>volumes<span class="p">:</span><span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>../channel-artifacts/genesis.block<span class="p">:</span>/var/hyperledger/orderer/orderer.genesis.block<span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>../crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/msp<span class="p">:</span>/var/hyperledger/orderer/msp<span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>../crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/tls/<span class="p">:</span>/var/hyperledger/orderer/tls<span class="w">
+</span><span class="w">    </span>ports<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span><span class="m">7050</span><span class="p">:</span><span class="m">7050</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>按照和cli一样的分析模式来看。
+首先文件映射，映射进去了创世区块，msp主体和tls安全文件。
+其次环境变量，指定了创世区块，还有安全相关的证书文件。
+然后是执行指令，就是直接启动<code>orderer</code>
+最后是一个端口映射，没有对端口进行改变。
+(多说一句，为什么要进行端口映射？因为在一台电脑上运行，肯定会有端口占用冲突的)</p>
+
+<h4 id="peer">peer</h4>
+
+<p>分析peer服务的话，这四个几乎是一样的,我们举一个例子</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">peer0.org1.example.com<span class="p">:</span><span class="w">
+</span><span class="w">    </span>container_name<span class="p">:</span><span class="w"> </span>peer0.org1.example.com<span class="w">
+</span><span class="w">    </span>extends<span class="p">:</span><span class="w">
+</span><span class="w">      </span>file<span class="p">:</span><span class="w"> </span>peer-base.yaml<span class="w">
+</span><span class="w">      </span>service<span class="p">:</span><span class="w"> </span>peer-base<span class="w">
+</span><span class="w">    </span>environment<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>CORE_PEER_ID=peer0.org1.example.com<span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>CORE_PEER_ADDRESS=peer0.org1.example.com<span class="p">:</span><span class="m">7051</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>CORE_PEER_CHAINCODELISTENADDRESS=peer0.org1.example.com<span class="p">:</span><span class="m">7052</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.org1.example.com<span class="p">:</span><span class="m">7051</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>CORE_PEER_LOCALMSPID=Org1MSP<span class="w">
+</span><span class="w">    </span>volumes<span class="p">:</span><span class="w">
+</span><span class="w">        </span>-<span class="w"> </span>/var/run/<span class="p">:</span>/host/var/run/<span class="w">
+</span><span class="w">        </span>-<span class="w"> </span>../crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/msp<span class="p">:</span>/etc/hyperledger/fabric/msp<span class="w">
+</span><span class="w">        </span>-<span class="w"> </span>../crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls<span class="p">:</span>/etc/hyperledger/fabric/tls<span class="w">
+</span><span class="w">    </span>ports<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span><span class="m">7051</span><span class="p">:</span><span class="m">7051</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span><span class="m">7052</span><span class="p">:</span><span class="m">7052</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span><span class="m">7053</span><span class="p">:</span><span class="m">7053</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>看到没有，环境映射和order是相同的套路，peer的msp和tls是在通信时候不可缺少的，代表了具体的实体。
+环境变量代表了本实体和监听的文件端口。
+等等！怎么还继承了一个文件？</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">peer-base<span class="p">:</span><span class="w">
+</span><span class="w">    </span>image<span class="p">:</span><span class="w"> </span>hyperledger/fabric-peer<span class="w">
+</span><span class="w">    </span>environment<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>CORE_VM_ENDPOINT=unix<span class="p">:</span>///host/var/run/docker.sock<span class="w">
+</span><span class="w">      </span><span class="c"># the following setting starts chaincode containers on the same</span><span class="w">
+</span><span class="w">      </span><span class="c"># bridge network as the peers</span><span class="w">
+</span><span class="w">      </span><span class="c"># https://docs.docker.com/compose/networking/</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=e2ecli_default<span class="w">
+</span><span class="w">      </span><span class="c">#- CORE_LOGGING_LEVEL=ERROR</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>CORE_LOGGING_LEVEL=DEBUG<span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>CORE_PEER_TLS_ENABLED=<span class="kc">true</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>CORE_PEER_GOSSIP_USELEADERELECTION=<span class="kc">true</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>CORE_PEER_GOSSIP_ORGLEADER=<span class="kc">false</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>CORE_PEER_PROFILE_ENABLED=<span class="kc">true</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt<span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key<span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt<span class="w">
+</span><span class="w">    </span>working_dir<span class="p">:</span><span class="w"> </span>/opt/gopath/src/github.com/hyperledger/fabric/peer<span class="w">
+</span><span class="w">    </span>command<span class="p">:</span><span class="w"> </span>peer<span class="w"> </span>node<span class="w"> </span>start</code></pre></td></tr></table>
+</div>
+</div>
+<p>还好还好，就是对peer服务的基础配置。
+启动的指令是<code>peer node start</code>，启动peer节点的服务。
+<em>到此为止整个服务启动完毕</em></p>
+
+<h1 id="运行服务">运行服务</h1>
+
+<p>还记得在cli服务里面，我们执行的<code>script.sh</code>吗？现在就到了这一步了。
+看到这高达241行的文件，不免让人心慌！</p>
+
+<h2 id="基础变量">基础变量</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nv">CHANNEL_NAME</span><span class="o">=</span><span class="s2">&#34;</span><span class="nv">$1</span><span class="s2">&#34;</span>
+: <span class="si">${</span><span class="nv">CHANNEL_NAME</span><span class="p">:=</span><span class="s2">&#34;mychannel&#34;</span><span class="si">}</span>
+: <span class="si">${</span><span class="nv">TIMEOUT</span><span class="p">:=</span><span class="s2">&#34;60&#34;</span><span class="si">}</span>
+<span class="nv">COUNTER</span><span class="o">=</span><span class="m">1</span>
+<span class="nv">MAX_RETRY</span><span class="o">=</span><span class="m">5</span>
+<span class="nv">ORDERER_CA</span><span class="o">=</span>/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem</code></pre></td></tr></table>
+</div>
+</div>
+<p><code>CHANNEL_NAME</code>是我们老伙计了。<code>ORDERER_CA</code>干什么用的呢？我们一会就用到了。
+其他的这几个变量就是在运行时候需要用到的。我们现在开始。</p>
+
+<h2 id="创建通道">创建通道</h2>
+
+<p>进行fabric，必须得有channel啊！要不然组织之间怎么通信？</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">createChannel<span class="o">()</span> <span class="o">{</span>
+	setGlobals <span class="m">0</span>
+
+    <span class="k">if</span> <span class="o">[</span> -z <span class="s2">&#34;</span><span class="nv">$CORE_PEER_TLS_ENABLED</span><span class="s2">&#34;</span> -o <span class="s2">&#34;</span><span class="nv">$CORE_PEER_TLS_ENABLED</span><span class="s2">&#34;</span> <span class="o">=</span> <span class="s2">&#34;false&#34;</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
+		peer channel create -o orderer.example.com:7050 -c <span class="nv">$CHANNEL_NAME</span> -f ./channel-artifacts/channel.tx &gt;<span class="p">&amp;</span>log.txt
+	<span class="k">else</span>
+		peer channel create -o orderer.example.com:7050 -c <span class="nv">$CHANNEL_NAME</span> -f ./channel-artifacts/channel.tx --tls <span class="nv">$CORE_PEER_TLS_ENABLED</span> --cafile <span class="nv">$ORDERER_CA</span> &gt;<span class="p">&amp;</span>log.txt
+	<span class="k">fi</span>
+	<span class="nv">res</span><span class="o">=</span><span class="nv">$?</span>
+	cat log.txt
+	verifyResult <span class="nv">$res</span> <span class="s2">&#34;Channel creation failed&#34;</span>
+	<span class="nb">echo</span> <span class="s2">&#34;===================== Channel \&#34;</span><span class="nv">$CHANNEL_NAME</span><span class="s2">\&#34; is created successfully ===================== &#34;</span>
+	<span class="nb">echo</span>
+<span class="o">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>setGlobals很奇怪的一句指令，干什么用的呢？就是指定是在哪个peer上进行操作的
+我们先假设不用tls把。这个地方无所谓的！
+创建的指令就一句话</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">peer channel create -o orderer.example.com:7050 -c <span class="nv">$CHANNEL_NAME</span> -f ./channel-artifacts/channel.tx</code></pre></td></tr></table>
+</div>
+</div>
+<p>指定通道的交易，通道名，orderer地址！ok！</p>
+
+<h2 id="加入通道">加入通道</h2>
+
+<p>我们还记得，一共是两个org，一个org下面有两个peer，也就是说一共有四个peer。
+那么我们就需要把每个peer都加入进去！</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">joinChannel <span class="o">()</span> <span class="o">{</span>
+	<span class="k">for</span> ch in <span class="m">0</span> <span class="m">1</span> <span class="m">2</span> <span class="m">3</span><span class="p">;</span> <span class="k">do</span>
+		setGlobals <span class="nv">$ch</span>
+		joinWithRetry <span class="nv">$ch</span>
+		<span class="nb">echo</span> <span class="s2">&#34;===================== PEER</span><span class="nv">$ch</span><span class="s2"> joined on the channel \&#34;</span><span class="nv">$CHANNEL_NAME</span><span class="s2">\&#34; ===================== &#34;</span>
+		sleep <span class="m">2</span>
+		<span class="nb">echo</span>
+	<span class="k">done</span>
+<span class="o">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>加入到对应的channel很简单，就一句话</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">peer channel join -b <span class="nv">$CHANNEL_NAME</span>.block</code></pre></td></tr></table>
+</div>
+</div>
+<p>脚本中说比较慢，所以需要重试几次。</p>
+
+<h2 id="更新锚节点">更新锚节点</h2>
+
+<p>我们这两个组织都得更新上去，所以需要进行以下操作</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">peer channel update -o orderer.example.com:7050 -c <span class="nv">$CHANNEL_NAME</span> -f ./channel-artifacts/<span class="si">${</span><span class="nv">CORE_PEER_LOCALMSPID</span><span class="si">}</span>anchors.tx</code></pre></td></tr></table>
+</div>
+</div>
+<p>我们在很久之前使用的configtxlator就是创建的锚节点交易。
+当然，更新锚节点没必要在四个节点上都执行一遍，在org上面的一个peer执行下就好啦。</p>
+
+<h2 id="安装chaincode">安装chaincode</h2>
+
+<p>channel都做好了，就该安装chaincode了</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">peer chaincode install -n mycc -v <span class="m">1</span>.0 -p github.com/hyperledger/fabric/examples/chaincode/go/chaincode_example02</code></pre></td></tr></table>
+</div>
+</div>
+<p>当然，这个也不需要在每个peer上都执行一遍，像更新锚节点那样，在org上面的一个peer执行下就好啦。</p>
+
+<h2 id="初始化chaincode">初始化chaincode</h2>
+
+<p>到了这一步，都加入了通道，并且都安装了chaincode，就可以初始化了！
+没错！在一个节点上初始化，就会同步到整个网络了！</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">peer chaincode instantiate -o orderer.example.com:7050 -C <span class="nv">$CHANNEL_NAME</span> -n mycc -v <span class="m">1</span>.0 -c <span class="s1">&#39;{&#34;Args&#34;:[&#34;init&#34;,&#34;a&#34;,&#34;100&#34;,&#34;b&#34;,&#34;200&#34;]}&#39;</span> -P <span class="s2">&#34;OR	(&#39;Org1MSP.member&#39;,&#39;Org2MSP.member&#39;)&#34;</span> </code></pre></td></tr></table>
+</div>
+</div>
+<h2 id="测试">测试</h2>
+
+<p>这个更简单了，就是执行</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">peer chaincode query -C <span class="nv">$CHANNEL_NAME</span> -n mycc -c <span class="s1">&#39;{&#34;Args&#34;:[&#34;query&#34;,&#34;a&#34;]}&#39;</span></code></pre></td></tr></table>
+</div>
+</div>
+<h1 id="总结">总结</h1>
+
+<p>我们这样就全部通读了一遍，有机会的话，我一条一条执行一遍，然后截图，对于整个过程会理解的更充分些。</p>
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">Hundred</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2018-03-27 08:52
+        
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">许可协议</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/docker/">docker</a>
+          <a href="/tags/%E5%8C%BA%E5%9D%97%E9%93%BE/">区块链</a>
+          <a href="/tags/fabric/">fabric</a>
+          <a href="/tags/shell/">shell</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/BFS%E7%AE%97%E6%B3%95/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">BFS算法</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/UTXO%E7%90%86%E8%A7%A3/">
+            <span class="next-text nav-default">UTXO理解</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+  
+  
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="#" class="iconfont icon-cnblogs" title="cnblogs"></a>
+      <a href="mailto:sdwangzhuo@gmail.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/hundredwz" class="iconfont icon-github" title="github"></a>
+      <a href="#" class="iconfont icon-juejin" title="juejin"></a>
+      <a href="#" class="iconfont icon-v2ex" title="v2ex"></a>
+      <a href="https://weibo.com/hundredwz" class="iconfont icon-weibo" title="weibo"></a>
+  <a href="https://hundredwz.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2013 - 
+    2020
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Hundred</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.min.js" integrity="sha256-jwCP0NAdCBloaIWTWHmW4i3snUNMHUNO+jr9rYd2iOI=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.locales.min.js" integrity="sha256-ZwofwC1Lf/faQCzN7nZtfijVV6hSwxjQMwXL4gn9qU8=" crossorigin="anonymous"></script>
+  <script><!-- NOTE: timeago.js uses the language code format like "zh_CN" (underscore and case sensitive) -->
+    var languageCode = "zh-CN".replace(/-/g, '_').replace(/_(.*)/, function ($0, $1) {return $0.replace($1, $1.toUpperCase());});
+    timeago().render(document.querySelectorAll('.timeago'), languageCode);
+    timeago.cancel();  
+  </script>
+<script type="text/javascript" src="/dist/even.26188efa.min.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+      showProcessingMessages: false,
+      messageStyle: 'none'
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"  integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-138883536-1', 'auto');
+	ga('set', 'anonymizeIp', true);
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+
+
+
+
+</body>
+</html>

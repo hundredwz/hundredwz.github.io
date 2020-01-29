@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>以太坊RLP编码 - A Lazy Coder</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="Hundred" /><meta name="description" content="在进行以太坊相关学习或者开发的时候，一个trie还有一个rlp都是绕不开的数据结构。这次我们先来讨论讨论rlp。
+数据结构我们也了解过很多了，比如树、链表、图等；如果说数据的序列化方式，像json、xml、protobuf、klv等都是一些很成熟的序列化方式，可是以太坊为什么要用rlp呢？
+" /><meta name="keywords" content="Blockchain, Golang, Fabric, Ethereum, Code" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.56.1 with even 4.0.0" />
+
+
+<link rel="canonical" href="https://hundredwz.github.io/post/%E4%BB%A5%E5%A4%AA%E5%9D%8ARLP%E7%BC%96%E7%A0%81/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<link href="/dist/even.c2a46f00.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+<link rel="stylesheet" href="/css/reset-even.css">
+
+
+<meta property="og:title" content="以太坊RLP编码" />
+<meta property="og:description" content="在进行以太坊相关学习或者开发的时候，一个trie还有一个rlp都是绕不开的数据结构。这次我们先来讨论讨论rlp。
+
+数据结构我们也了解过很多了，比如树、链表、图等；如果说数据的序列化方式，像json、xml、protobuf、klv等都是一些很成熟的序列化方式，可是以太坊为什么要用rlp呢？" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://hundredwz.github.io/post/%E4%BB%A5%E5%A4%AA%E5%9D%8ARLP%E7%BC%96%E7%A0%81/" />
+<meta property="article:published_time" content="2019-08-05T11:43:06+00:00" />
+<meta property="article:modified_time" content="2019-08-05T11:43:06+00:00" />
+<meta itemprop="name" content="以太坊RLP编码">
+<meta itemprop="description" content="在进行以太坊相关学习或者开发的时候，一个trie还有一个rlp都是绕不开的数据结构。这次我们先来讨论讨论rlp。
+
+数据结构我们也了解过很多了，比如树、链表、图等；如果说数据的序列化方式，像json、xml、protobuf、klv等都是一些很成熟的序列化方式，可是以太坊为什么要用rlp呢？">
+
+
+<meta itemprop="datePublished" content="2019-08-05T11:43:06&#43;00:00" />
+<meta itemprop="dateModified" content="2019-08-05T11:43:06&#43;00:00" />
+<meta itemprop="wordCount" content="1988">
+
+
+
+<meta itemprop="keywords" content="" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="以太坊RLP编码"/>
+<meta name="twitter:description" content="在进行以太坊相关学习或者开发的时候，一个trie还有一个rlp都是绕不开的数据结构。这次我们先来讨论讨论rlp。
+
+数据结构我们也了解过很多了，比如树、链表、图等；如果说数据的序列化方式，像json、xml、protobuf、klv等都是一些很成熟的序列化方式，可是以太坊为什么要用rlp呢？"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">A Lazy Coder</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">首页</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">归档</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">分类</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/friends/">
+        <li class="mobile-menu-item">Friends</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">A Lazy Coder</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">首页</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">归档</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">分类</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/friends/">Friends</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">以太坊RLP编码</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2019-08-05 11:43 </span>
+        
+          <span class="more-meta"> 约 1988 字 </span>
+          <span class="more-meta"> 预计阅读 4 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#定义">定义</a></li>
+<li><a href="#处理方式">处理方式</a>
+<ul>
+<li><a href="#字节数组">字节数组</a></li>
+<li><a href="#数组的数组">数组的数组</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+  </div>
+</div>
+    <div class="post-content">
+      <p>在进行以太坊相关学习或者开发的时候，一个trie还有一个rlp都是绕不开的数据结构。这次我们先来讨论讨论rlp。</p>
+
+<p>数据结构我们也了解过很多了，比如树、链表、图等；如果说数据的序列化方式，像json、xml、protobuf、klv等都是一些很成熟的序列化方式，可是以太坊为什么要用rlp呢？</p>
+
+<h4 id="定义">定义</h4>
+
+<p>在以太坊黄皮书的定义中，对RLP的定义是</p>
+
+<blockquote>
+<p>Recursive Length Prefix</p>
+
+<p>This is a serialisation method for encoding arbitrarily structured binary data (byte arrays).</p>
+</blockquote>
+
+<p>是递归长度前缀，是一种任意结构的<code>二进制数据(数组)</code>的序列化方式。</p>
+
+<p>我认为，这个<code>binary data</code>是需要注意的一个内容。</p>
+
+<p>在黄皮书中，为了说明rlp能够处理的数据类型，用了一个数学形式的定义：</p>
+
+<p>$\mathbb{T}  \equiv  \mathbb{L} \uplus \mathbb{B}$</p>
+
+<p>$\mathbb{L}  \equiv  { \mathbf{t}: \mathbf{t} = ( \mathbf{t}[0], \mathbf{t}[1], ... ) \; \wedge \; \forall n &lt; \lVert \mathbf{t} \rVert : \mathbf{t}[n] \in \mathbb{T} }$</p>
+
+<p>$\mathbb{B}  \equiv  { \mathbf{b}: \mathbf{b} = ( \mathbf{b}[0], \mathbf{b}[1], ... ) \; \wedge \; \forall n &lt; \lVert \mathbf{b} \rVert : \mathbf{b}[n] \in \mathbb{O} }$</p>
+
+<p>定义的很复杂，不是很理解。但是我们只需要关注两个最基本的集合</p>
+
+<ol>
+<li>$\mathbb{O}$是字节（8位bytes）的集合，所以我们就可以知道，实际上$\mathbb{B}$就是字节数组</li>
+<li>$\mathbb{T}$是字节数组（或类似的结构）的集合，所以$\mathbb{L}$就是一个集合。集合的元素可以是字节数组，也可以是集合。</li>
+</ol>
+
+<h4 id="处理方式">处理方式</h4>
+
+<p>对于这两种数据结构，有两种处理办法。</p>
+
+<h5 id="字节数组">字节数组</h5>
+
+<p>$\mathbb{B}$好理解，就是一个字节数组，按照每数组中的每一位进行处理，可以获取结果，更详细的定义是这样子的。</p>
+
+<ol>
+<li><p>如果$\mathbb{B}$的长度是1，然后数值大小小于128，编码的结果就是自身。</p>
+
+<p>可能有些人好奇，如果数值大小大于128呢？该怎么编码？</p>
+
+<p>实际是这个原因，每一个字符的ascii编码都是0~127，所以是不可能大于128的</p></li>
+
+<li><p>如果$\mathbb{B}$的长度小于56，假设是L，那么编码结果就是(128+L)~原始数组</p>
+
+<p>我们举一个例子:</p>
+
+<p>假设数组是[1,2,3,4],那么结果就应当是[128+4,1,2,3,4]</p></li>
+
+<li><p>如果长度大于56的话，并且长度小于$2^{64}$的话，编码结果就是(183+BE(L))~BE(L)~原始内容</p>
+
+<p>BE是什么呢？我们不妨这么解释下，就是长度L的大端显示占据的长度</p>
+
+<p>我们依然举一个例子：</p>
+
+<p>假设原始数组是[1,2,3,...,58]，那么长度就是58，大端编码占据内存一位，编码成十六进制数组就是0x3a，我们又知道，两个是一位，所以BE(L)就是[183+1,58,1,2,3,...,58]</p></li>
+
+<li><p>如果长度大于$2^{64}$呢？以太坊就弄了个很不负责的方法，直接不支持这个类型的数据。</p>
+
+<p>这个地方以太坊的处理方式很不厚道，万一有人就写的超出了呢！</p>
+
+<p>为什么要做这个限制？是因为以太坊规定如果第一位的长度超出了192就是数组的数组。假设一个长度是$2^{64}$，也就是说这个长度在内存中占用的是64bits，换成bytes就是64/8=8;183+8=181&lt;192;所以如果超出这个长度就会跟后面混淆了。</p></li>
+</ol>
+
+<h5 id="数组的数组">数组的数组</h5>
+
+<p>$\mathbb{T}$是数组的数组,比如一个例子<code>[[1,2,3],[1,3,5],[]]</code>。这个地方的处理就体现出rlp中的r的概念啦。</p>
+
+<ol>
+<li><p>我们还是以<code>[[1,2,3],[1,3,5],[]]</code>举例。为了方便理解，我们以自底向上的方式来解读。</p>
+
+<p>数组的第一个元素是<code>[1,2,3]</code>，对这个元素的编码是<code>[128+3,1,2,3]</code></p>
+
+<p>数组的第二个元素是<code>[1,3,5]</code>,对这个的编码是<code>[128+3,1,3,5]</code></p>
+
+<p>数组的第三个元素是<code>[]</code>,也就是说对这个的编码是<code>[128]</code></p>
+
+<p>这三个编码合起来的结果是<code>[131,1,2,3,131,1,3,5,128]</code>，总长度是9，小于56，那么最终的编码结果就是</p>
+
+<p><code>[192+9,131,1,2,3,131,1,3,5,130,2,4]</code></p>
+
+<p>也就是说，是递归的处理子结果，直到处理的类型是最基本的字节数组类型数据，然后一层一层的网上套，算出来结果</p></li>
+
+<li><p>如果嵌套的数组长度大于56呢？我们再举一个例子<code>[[1,2,3,...,58],[1,2,3],[2,4]]</code></p>
+
+<p>数组的第一个元素是<code>[1,2,3,...,58]</code>，对这个元素的编码是<code>[183+1,58,1,2,3,...,58]</code></p>
+
+<p>数组的第二个元素是<code>[1,2,3]</code>，对这个元素的编码是<code>[128+3,1,2,3]</code></p>
+
+<p>数组的第三个元素是<code>[2，4]</code>,对这个的编码是<code>[128+2,2,4]</code></p>
+
+<p>三个编码合起来的结果是<code>[191,58,1,2,3,...,58,131,1,2,3,130,2,4]</code>，总长度是67，大端编码占据内存还是1位，结果就是</p>
+
+<p><code>[247+1,247,191,58,1,2,3,...,58,131,1,2,3,130,2,4]</code></p>
+
+<p>而且，以太坊也是要求这个合并起来的list长度不能大于$2^{64}$。这个原因就好理解了，根据刚刚我们的分析我们知道最大的字节长度是8位，247+8=255，也就是在内存中一字节能够表示的最大大小了，如果超出就无法表示了。</p></li>
+</ol>
+
+<p>到了此处，似乎有一些好奇，这里面存储的数据全是在<code>[0,127]</code>之间的整数，如果是负数或者小数呢？</p>
+
+<p>在黄皮书上是这么写的</p>
+
+<blockquote>
+<p>There is no specific canonical encoding format for signed or floating-point values.</p>
+</blockquote>
+
+<p>但是肯定会有需求的，所以我们需要看看源码是怎么实现的了。</p>
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">Hundred</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2019-08-05 11:43
+        
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">许可协议</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+<footer class="post-footer">
+      
+      <nav class="post-nav">
+        <a class="prev" href="/post/ethereum%E5%88%86%E7%89%87/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">Ethereum分片</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/Tendermint%E9%98%85%E8%AF%BBXI/">
+            <span class="next-text nav-default">Tendermint阅读XI</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+  
+  
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="#" class="iconfont icon-cnblogs" title="cnblogs"></a>
+      <a href="mailto:sdwangzhuo@gmail.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/hundredwz" class="iconfont icon-github" title="github"></a>
+      <a href="#" class="iconfont icon-juejin" title="juejin"></a>
+      <a href="#" class="iconfont icon-v2ex" title="v2ex"></a>
+      <a href="https://weibo.com/hundredwz" class="iconfont icon-weibo" title="weibo"></a>
+  <a href="https://hundredwz.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2013 - 
+    2020
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Hundred</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.min.js" integrity="sha256-jwCP0NAdCBloaIWTWHmW4i3snUNMHUNO+jr9rYd2iOI=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.locales.min.js" integrity="sha256-ZwofwC1Lf/faQCzN7nZtfijVV6hSwxjQMwXL4gn9qU8=" crossorigin="anonymous"></script>
+  <script><!-- NOTE: timeago.js uses the language code format like "zh_CN" (underscore and case sensitive) -->
+    var languageCode = "zh-CN".replace(/-/g, '_').replace(/_(.*)/, function ($0, $1) {return $0.replace($1, $1.toUpperCase());});
+    timeago().render(document.querySelectorAll('.timeago'), languageCode);
+    timeago.cancel();  
+  </script>
+<script type="text/javascript" src="/dist/even.26188efa.min.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+      showProcessingMessages: false,
+      messageStyle: 'none'
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"  integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-138883536-1', 'auto');
+	ga('set', 'anonymizeIp', true);
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+
+
+
+
+</body>
+</html>

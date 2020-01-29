@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>blockchain on A Lazy Coder</title>
+    <link>https://hundredwz.github.io/tags/blockchain/</link>
+    <description>Recent content in blockchain on A Lazy Coder</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Wed, 29 Jan 2020 03:08:43 +0000</lastBuildDate>
+    
+	<atom:link href="https://hundredwz.github.io/tags/blockchain/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Tendermint II</title>
+      <link>https://hundredwz.github.io/post/Tendermint-II/</link>
+      <pubDate>Wed, 29 Jan 2020 03:08:43 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Tendermint-II/</guid>
+      <description>我们知道，在启动一个节点前，需要执行tendermint init完成相关系统文件的生成，具体如何处理的我们查看下InitFilesCmd 查看</description>
+    </item>
+    
+    <item>
+      <title>Tendermint I</title>
+      <link>https://hundredwz.github.io/post/Tendermint-I/</link>
+      <pubDate>Wed, 29 Jan 2020 03:05:57 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Tendermint-I/</guid>
+      <description>由于新型肺炎，不得不宅在家里面，闲着也是闲着，不如再认真地过一遍Tendermint源码吧。之前看的比较粗略，理解的也不够深。正好毕设使用了</description>
+    </item>
+    
+    <item>
+      <title>Tendermint源码学习I</title>
+      <link>https://hundredwz.github.io/post/Tendermint%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0I/</link>
+      <pubDate>Wed, 20 Feb 2019 03:26:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Tendermint%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0I/</guid>
+      <description>&lt;p&gt;作为一个区块链研究生&amp;amp;码农，没有系统的阅读过一个区块链系统的源码，实在不好意思说出去。
+之前我阅读过几天的Fabric，结果发现读起来有点难以理解。于是放弃了好久。
+以前了解了Tendermint，发现是一个研究生的毕设，而且目前应用也挺广泛，就沉下心来阅读一下吧。
+当然啦，我自己直接阅读起来发现还是有一些问题，就看着github上以为大神的内容，阅读了一遍。
+github大佬的地址为&lt;a href=&#34;https://github.com/wupeaking/tendermint_code_analysis&#34; target=&#34;_blank&#34;&gt;通用区块链平台tendermint源码分析&lt;/a&gt;&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

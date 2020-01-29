@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>grpc on A Lazy Coder</title>
+    <link>https://hundredwz.github.io/tags/grpc/</link>
+    <description>Recent content in grpc on A Lazy Coder</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Fri, 13 Apr 2018 07:35:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://hundredwz.github.io/tags/grpc/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Raft造轮子II</title>
+      <link>https://hundredwz.github.io/post/Raft%E9%80%A0%E8%BD%AE%E5%AD%90II/</link>
+      <pubDate>Fri, 13 Apr 2018 07:35:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Raft%E9%80%A0%E8%BD%AE%E5%AD%90II/</guid>
+      <description>&lt;p&gt;读过文章之后，我们虽然不知道具体的程序要怎么动笔，但是让我们说出来怎么选举领导人，怎么复制日志，对大家来说问题不大了。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>grpc学习</title>
+      <link>https://hundredwz.github.io/post/grpc%E5%AD%A6%E4%B9%A0/</link>
+      <pubDate>Wed, 22 Nov 2017 07:39:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/grpc%E5%AD%A6%E4%B9%A0/</guid>
+      <description>&lt;p&gt;在学习区块链的途中，看到了grpc。很久之前就听说过rpc，这次就仔细来一探究竟。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>写了一个基于golang的博客系统 - A Lazy Coder</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="Hundred" /><meta name="description" content="最近这段时间，把所有的空闲无聊时间都利用了下，通过使用gin框架，开发了自己的第一套博客系统。
+" /><meta name="keywords" content="Blockchain, Golang, Fabric, Ethereum, Code" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.56.1 with even 4.0.0" />
+
+
+<link rel="canonical" href="https://hundredwz.github.io/post/%E5%86%99%E4%BA%86%E4%B8%80%E4%B8%AA%E5%9F%BA%E4%BA%8Egolang%E7%9A%84%E5%8D%9A%E5%AE%A2%E7%B3%BB%E7%BB%9F/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<link href="/dist/even.c2a46f00.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+<link rel="stylesheet" href="/css/reset-even.css">
+
+
+<meta property="og:title" content="写了一个基于golang的博客系统" />
+<meta property="og:description" content="最近这段时间，把所有的空闲无聊时间都利用了下，通过使用gin框架，开发了自己的第一套博客系统。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://hundredwz.github.io/post/%E5%86%99%E4%BA%86%E4%B8%80%E4%B8%AA%E5%9F%BA%E4%BA%8Egolang%E7%9A%84%E5%8D%9A%E5%AE%A2%E7%B3%BB%E7%BB%9F/" />
+<meta property="article:published_time" content="2018-12-12T12:20:07+00:00" />
+<meta property="article:modified_time" content="2018-12-12T12:20:07+00:00" />
+<meta itemprop="name" content="写了一个基于golang的博客系统">
+<meta itemprop="description" content="最近这段时间，把所有的空闲无聊时间都利用了下，通过使用gin框架，开发了自己的第一套博客系统。">
+
+
+<meta itemprop="datePublished" content="2018-12-12T12:20:07&#43;00:00" />
+<meta itemprop="dateModified" content="2018-12-12T12:20:07&#43;00:00" />
+<meta itemprop="wordCount" content="1300">
+
+
+
+<meta itemprop="keywords" content="golang,博客系统,项目," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="写了一个基于golang的博客系统"/>
+<meta name="twitter:description" content="最近这段时间，把所有的空闲无聊时间都利用了下，通过使用gin框架，开发了自己的第一套博客系统。"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">A Lazy Coder</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">首页</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">归档</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">分类</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/friends/">
+        <li class="mobile-menu-item">Friends</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">A Lazy Coder</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">首页</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">归档</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">分类</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/friends/">Friends</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">写了一个基于golang的博客系统</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2018-12-12 12:20 </span>
+        <div class="post-category">
+            <a href="/categories/program/"> program </a>
+            </div>
+          <span class="more-meta"> 约 1300 字 </span>
+          <span class="more-meta"> 预计阅读 3 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    
+  </div>
+</div>
+  <div class="post-outdated">
+    <div class="hint">
+      <p>【注意】最后更新于 <span class="timeago" datetime="2018-12-12T12:20:07" title="December 12, 2018">December 12, 2018</span>，文中内容可能已过时，请谨慎使用。</p>
+    </div>
+  </div>
+    <div class="post-content">
+      <p>最近这段时间，把所有的空闲无聊时间都利用了下，通过使用gin框架，开发了自己的第一套博客系统。</p>
+
+<p>为什么想要开发自己的博客系统呢？主要是闲的。</p>
+
+<p>不开玩笑，主要是使用了typecho很久了，现在的博客系统也是使用的typecho建设的。然后用着感觉很不错，想想自己虽然一直说非常喜欢敲代码，但是一个完全自己独立做出来的项目都没有，有点心虚，就从头好好做一个吧。</p>
+
+<p>在之前学javaweb的时候，学到ssm那块，当时就有点心动了，就想做了，结果github上建了个repo，就不了了之了。这次给几个同学说，咱们一起来做吧。相当于有一点来自同学的压力，可以努力的做下来。</p>
+
+<p>当时由于写的太差，在GitHub上一直是私密仓库，但是看着从最开始的一个commit，到今天完成的76个commit，心里面还是充满了成就感。可惜的是GitHub的活跃不显示。很痛苦。</p>
+
+<p>等到这个项目测试通过后，把私有仓库一删，重新建立一个公开的项目。希望大家可以去看一看，如果感觉有改进的可以通知我呀。</p>
+
+<p>再说一些心得，这次算是我从头到尾做完的一个项目，很不容易，因为我写代码总喜欢半途而废。而这次有同学催着，然后没事的时候给女朋友汇报下进度，不知不觉就坚持了下来。</p>
+
+<p>有的时候写代码真的写的头疼了，正好跟女朋友聊一会，感觉就能重新恢复精力，能够继续做下来了。</p>
+
+<p>这个完整的项目真得要好好感谢下我女朋友一直以来默默的给我的鼓励。</p>
+
+<p>好了，秀完恩爱，在说一说技术上的收获。</p>
+
+<p>这次写的时候，技术选型很迷。最开始的时候我想着用纯golang来写，不用框架，结果后来发现别人用库做的很好，就忍不住，推倒了部分代码，改用了gin和gorm。
+结果用了一天，发现gorm的关联表我用的很晕，官方的文档介绍的也不过详细（我才不会说是我mysql不好）。好吧，那就换成纯sql。</p>
+
+<p>在这个时候，项目已经进行一半了，我这瞎折腾的能力有多强吧！还好，当时项目整体的层次结构已经做好了，我只需要修改dao层就好了。虽然话是这样，但也是不小的工作量！</p>
+
+<p>后来，我发现我也没必要用gin，用远程的http也完全能应付我这些业务逻辑，还好打消了这个念头！要不然还真不知道要改到什么时候！</p>
+
+<p>当时在写纯sql的时候，我发现一直动手写好麻烦，怪不得别人都喜欢用框架，简单呀！</p>
+
+<p>于是，我也做了一个简单的封装，反射做了一部分插入和新建，然后其他的都用map来实现动态修改！</p>
+
+<p>无论如何，也算满足了我大部分的需求。</p>
+
+<p>由于我是完全参考我现在的typecho来做的，所以界面上没有太多不同的，内在的业务逻辑我也不知道有多大区别！</p>
+
+<p>但是，我现在才发现，为什么有一些人喜欢用php来写web，是真简单啊！我使用golang，前端想要实现一个函数，还得手动传入函数，弄不好还报错。</p>
+
+<p>但是这次写完，对golang的主要函数库都有了一定的了解，目前可能还差携程以及通道那块了解的不够深。以后再深入学习吧。</p>
+
+<p>最后，欢迎大家对我的博客系统提出意见，很多问题是一定的，只是得慢慢找时间来改。</p>
+
+<p>git地址是<a href="https://github.com/hundredwz/GBlog">GBlog</a>！如果大家想要测试的话，可以直接下载bin里面我写好的，直接运行就好了。</p>
+
+<p>默认端口是701，是我和女朋友的纪念日。想不到吧，最后又来了个狗粮！</p>
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">Hundred</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2018-12-12 12:20
+        
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">许可协议</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/golang/">golang</a>
+          <a href="/tags/%E5%8D%9A%E5%AE%A2%E7%B3%BB%E7%BB%9F/">博客系统</a>
+          <a href="/tags/%E9%A1%B9%E7%9B%AE/">项目</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/Tendermint%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0I/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">Tendermint源码学习I</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/golang%E7%9A%84slice%E5%A4%84%E7%90%86/">
+            <span class="next-text nav-default">golang的slice处理</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+  
+  
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="#" class="iconfont icon-cnblogs" title="cnblogs"></a>
+      <a href="mailto:sdwangzhuo@gmail.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/hundredwz" class="iconfont icon-github" title="github"></a>
+      <a href="#" class="iconfont icon-juejin" title="juejin"></a>
+      <a href="#" class="iconfont icon-v2ex" title="v2ex"></a>
+      <a href="https://weibo.com/hundredwz" class="iconfont icon-weibo" title="weibo"></a>
+  <a href="https://hundredwz.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2013 - 
+    2020
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Hundred</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.min.js" integrity="sha256-jwCP0NAdCBloaIWTWHmW4i3snUNMHUNO+jr9rYd2iOI=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.locales.min.js" integrity="sha256-ZwofwC1Lf/faQCzN7nZtfijVV6hSwxjQMwXL4gn9qU8=" crossorigin="anonymous"></script>
+  <script><!-- NOTE: timeago.js uses the language code format like "zh_CN" (underscore and case sensitive) -->
+    var languageCode = "zh-CN".replace(/-/g, '_').replace(/_(.*)/, function ($0, $1) {return $0.replace($1, $1.toUpperCase());});
+    timeago().render(document.querySelectorAll('.timeago'), languageCode);
+    timeago.cancel();  
+  </script>
+<script type="text/javascript" src="/dist/even.26188efa.min.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+      showProcessingMessages: false,
+      messageStyle: 'none'
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"  integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-138883536-1', 'auto');
+	ga('set', 'anonymizeIp', true);
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+
+
+
+
+</body>
+</html>

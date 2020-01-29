@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>比特币 on A Lazy Coder</title>
+    <link>https://hundredwz.github.io/tags/%E6%AF%94%E7%89%B9%E5%B8%81/</link>
+    <description>Recent content in 比特币 on A Lazy Coder</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Sun, 15 Jul 2018 09:41:09 +0000</lastBuildDate>
+    
+	<atom:link href="https://hundredwz.github.io/tags/%E6%AF%94%E7%89%B9%E5%B8%81/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>掌握比特币IV:节点功能II</title>
+      <link>https://hundredwz.github.io/post/%E6%8E%8C%E6%8F%A1%E6%AF%94%E7%89%B9%E5%B8%81IV%E8%8A%82%E7%82%B9%E5%8A%9F%E8%83%BDII/</link>
+      <pubDate>Sun, 15 Jul 2018 09:41:09 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/%E6%8E%8C%E6%8F%A1%E6%AF%94%E7%89%B9%E5%B8%81IV%E8%8A%82%E7%82%B9%E5%8A%9F%E8%83%BDII/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://txiner.top/tool/91.html&#34;&gt;上一篇&lt;/a&gt;大体讲了比特币中节点主要全节点的功能，本文分析下轻节点等相关的功能。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>掌握比特币III:节点功能I</title>
+      <link>https://hundredwz.github.io/post/%E6%8E%8C%E6%8F%A1%E6%AF%94%E7%89%B9%E5%B8%81III%E8%8A%82%E7%82%B9%E5%8A%9F%E8%83%BDI/</link>
+      <pubDate>Fri, 13 Jul 2018 06:15:17 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/%E6%8E%8C%E6%8F%A1%E6%AF%94%E7%89%B9%E5%B8%81III%E8%8A%82%E7%82%B9%E5%8A%9F%E8%83%BDI/</guid>
+      <description>&lt;p&gt;比特币的节点分为好多种，但是功能都是钱包、矿工、完整区块链以及网络路由节点组成。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>掌握比特币II:支付方式</title>
+      <link>https://hundredwz.github.io/post/%E6%8E%8C%E6%8F%A1%E6%AF%94%E7%89%B9%E5%B8%81II%E6%94%AF%E4%BB%98%E6%96%B9%E5%BC%8F/</link>
+      <pubDate>Thu, 12 Jul 2018 03:11:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/%E6%8E%8C%E6%8F%A1%E6%AF%94%E7%89%B9%E5%B8%81II%E6%94%AF%E4%BB%98%E6%96%B9%E5%BC%8F/</guid>
+      <description>&lt;p&gt;今天了解了下比特币的支付方式，发现以前的了解太麻烦了，今天就多查了查资料弄明白点。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>掌握比特币I：钱包功能学习</title>
+      <link>https://hundredwz.github.io/post/%E6%8E%8C%E6%8F%A1%E6%AF%94%E7%89%B9%E5%B8%81I%E9%92%B1%E5%8C%85%E5%8A%9F%E8%83%BD%E5%AD%A6%E4%B9%A0/</link>
+      <pubDate>Tue, 10 Jul 2018 08:42:37 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/%E6%8E%8C%E6%8F%A1%E6%AF%94%E7%89%B9%E5%B8%81I%E9%92%B1%E5%8C%85%E5%8A%9F%E8%83%BD%E5%AD%A6%E4%B9%A0/</guid>
+      <description>&lt;p&gt;最近看了挺多区块链相关的论文，发现有挺多是解决比特币的一些问题的。仔细一看，发现这些问题我也能够想到，但是前提是对比特币的了解足够清楚。因此想着最近多看一看比特币的相关原理。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>比特币协议论文阅读</title>
+      <link>https://hundredwz.github.io/post/%E6%AF%94%E7%89%B9%E5%B8%81%E5%8D%8F%E8%AE%AE%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/</link>
+      <pubDate>Wed, 13 Jun 2018 06:16:28 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/%E6%AF%94%E7%89%B9%E5%B8%81%E5%8D%8F%E8%AE%AE%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/</guid>
+      <description>&lt;p&gt;前一阵出差了一趟，这几天把Garay的The Bitcoin Backbone Protocol:Analysis and Applications读完了，有了些新的收获。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

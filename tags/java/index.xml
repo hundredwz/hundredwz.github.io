@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>java on A Lazy Coder</title>
+    <link>https://hundredwz.github.io/tags/java/</link>
+    <description>Recent content in java on A Lazy Coder</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Fri, 26 Jan 2018 02:13:58 +0000</lastBuildDate>
+    
+	<atom:link href="https://hundredwz.github.io/tags/java/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>java设计模式之观察者模式</title>
+      <link>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E8%A7%82%E5%AF%9F%E8%80%85%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Fri, 26 Jan 2018 02:13:58 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E8%A7%82%E5%AF%9F%E8%80%85%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;本文来看下java设计模式之观察者模式。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>java设计模式之备忘录模式</title>
+      <link>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%A4%87%E5%BF%98%E5%BD%95%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Thu, 25 Jan 2018 02:28:10 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%A4%87%E5%BF%98%E5%BD%95%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;本文我们来讨论下java设计模式之备忘录模式。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>java设计模式之中介者模式</title>
+      <link>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E4%B8%AD%E4%BB%8B%E8%80%85%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Wed, 24 Jan 2018 02:26:41 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E4%B8%AD%E4%BB%8B%E8%80%85%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;本文来说一说java设计模式之中介者模式。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>java设计模式之迭代器模式</title>
+      <link>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E8%BF%AD%E4%BB%A3%E5%99%A8%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Tue, 23 Jan 2018 02:10:01 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E8%BF%AD%E4%BB%A3%E5%99%A8%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;本文我们来讨论下java设计模式之迭代器模式。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>java设计模式之解释器模式</title>
+      <link>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E8%A7%A3%E9%87%8A%E5%99%A8%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Mon, 22 Jan 2018 03:02:11 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E8%A7%A3%E9%87%8A%E5%99%A8%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;本文来说下java设计模式之解释器模式。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>java设计模式之命令模式</title>
+      <link>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%91%BD%E4%BB%A4%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Fri, 19 Jan 2018 02:15:31 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%91%BD%E4%BB%A4%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;本文我们来讨论下java设计模式之命令模式.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>java设计模式之责任链模式</title>
+      <link>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E8%B4%A3%E4%BB%BB%E9%93%BE%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Thu, 18 Jan 2018 02:39:24 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E8%B4%A3%E4%BB%BB%E9%93%BE%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;本文来讨论下java设计模式之责任链模式。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>java设计模式之享元模式</title>
+      <link>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E4%BA%AB%E5%85%83%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Wed, 17 Jan 2018 06:49:21 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E4%BA%AB%E5%85%83%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;本篇来讨论下java设计模式之享元模式。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>java设计模式之外观模式</title>
+      <link>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%A4%96%E8%A7%82%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Tue, 16 Jan 2018 01:55:50 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%A4%96%E8%A7%82%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;本片文章是java设计模式的外观模式。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>java设计模式之装饰模式</title>
+      <link>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E8%A3%85%E9%A5%B0%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Mon, 15 Jan 2018 02:00:33 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E8%A3%85%E9%A5%B0%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;本文来讨论下java设计模式之装饰模式。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>java设计模式之组合模式</title>
+      <link>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E7%BB%84%E5%90%88%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Fri, 12 Jan 2018 07:11:54 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E7%BB%84%E5%90%88%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;这一篇来说一说java设计模式之组合模式。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>java设计模式之桥接模式</title>
+      <link>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E6%A1%A5%E6%8E%A5%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Fri, 22 Dec 2017 07:28:28 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E6%A1%A5%E6%8E%A5%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;这篇来聊一聊java设计模式之桥接模式。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>java设计模式之适配器模式</title>
+      <link>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Thu, 21 Dec 2017 03:24:25 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;本篇来聊一聊java设计模式之适配器模式。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>java设计模式之原型模式</title>
+      <link>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%8E%9F%E5%9E%8B%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Wed, 20 Dec 2017 08:07:49 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%8E%9F%E5%9E%8B%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;本篇来说一说java设计模式之原型模式。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>java设计模式之创建者模式</title>
+      <link>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%88%9B%E5%BB%BA%E8%80%85%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Tue, 19 Dec 2017 02:54:58 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%88%9B%E5%BB%BA%E8%80%85%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;这篇来说一说java设计模式之builder模式&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>java设计模式之抽象工厂模式</title>
+      <link>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E6%8A%BD%E8%B1%A1%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Mon, 18 Dec 2017 02:52:16 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E6%8A%BD%E8%B1%A1%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;本篇来说一说java设计模式之抽象工厂模式。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>java设计模式之工厂模式</title>
+      <link>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Fri, 15 Dec 2017 08:19:34 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;本文来介绍下java设计模式之工厂模式?&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>java设计模式之多例模式</title>
+      <link>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%A4%9A%E4%BE%8B%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Fri, 15 Dec 2017 07:34:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%A4%9A%E4%BE%8B%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;本文来介绍下java设计模式之多例模式！&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>java设计模式之单例模式</title>
+      <link>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Fri, 15 Dec 2017 07:01:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;本文来看一看java设计模式之单例模式。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>java设计模式之代理模式</title>
+      <link>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Fri, 15 Dec 2017 06:28:29 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;本篇来看java设计模式之代理模式.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>java设计模式之策略模式</title>
+      <link>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Fri, 15 Dec 2017 03:05:32 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;最近有点迷茫，就想着来看些东西吧。java里面的设计模式一直没有系统学习过，就开一篇来学一学。本篇讲的是策略模式。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>fabric源码阅读2：chaincode函数理解II</title>
+      <link>https://hundredwz.github.io/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB2chaincode%E5%87%BD%E6%95%B0%E7%90%86%E8%A7%A3II/</link>
+      <pubDate>Thu, 19 Oct 2017 07:14:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB2chaincode%E5%87%BD%E6%95%B0%E7%90%86%E8%A7%A3II/</guid>
+      <description>&lt;p&gt;上一篇讲了在chaincode端函数GetFuncAndParameters()的使用，但是在客户端这块使用还是有一点问题，就在此进一步解释下.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>fabric-sdk-java初探</title>
+      <link>https://hundredwz.github.io/post/fabric-sdk-java%E5%88%9D%E6%8E%A2/</link>
+      <pubDate>Tue, 10 Oct 2017 11:43:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/fabric-sdk-java%E5%88%9D%E6%8E%A2/</guid>
+      <description>&lt;p&gt;最近在学习fabric，中间遇到了好多坑。而由于fabric更新迭代版本比较快，网上的很多教程也都不安全适用了。我反正也在学习过程中，就尽力的把自己所学习到的东西都记录下来吧。希望能够帮助到需要的人。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>ssm学习过程中的问题</title>
+      <link>https://hundredwz.github.io/post/ssm%E5%AD%A6%E4%B9%A0%E8%BF%87%E7%A8%8B%E4%B8%AD%E7%9A%84%E9%97%AE%E9%A2%98/</link>
+      <pubDate>Thu, 24 Aug 2017 02:56:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/ssm%E5%AD%A6%E4%B9%A0%E8%BF%87%E7%A8%8B%E4%B8%AD%E7%9A%84%E9%97%AE%E9%A2%98/</guid>
+      <description>&lt;p&gt;最近在学习ssm，在进行配置的时候遇到了点问题，在此记录下，希望对有同样遇到问题的人有帮助。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>jdbc连接mysql8小时</title>
+      <link>https://hundredwz.github.io/post/jdbc%E8%BF%9E%E6%8E%A5mysql8%E5%B0%8F%E6%97%B6/</link>
+      <pubDate>Thu, 11 May 2017 02:14:28 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/jdbc%E8%BF%9E%E6%8E%A5mysql8%E5%B0%8F%E6%97%B6/</guid>
+      <description>&lt;p&gt;最近是跟jdbc以及mysql刚上了，一直在做这块的代码。
+最近就遇到了一个问题，mysql数据库有个自动连接断开时间。如果8个小时之内没有数据操作，这个连接就断开了，但是程序上不知道，这就出问题了。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>java socket inputstream</title>
+      <link>https://hundredwz.github.io/post/java-socket-inputstream/</link>
+      <pubDate>Mon, 06 Mar 2017 02:38:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/java-socket-inputstream/</guid>
+      <description>&lt;p&gt;最近在做一个项目，要用到socket传输数据，而且考虑到跨平台，不得不使用字节传输，结果总是遇到一些问题。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>java NIO的socket编程</title>
+      <link>https://hundredwz.github.io/post/java-NIO%E7%9A%84socket%E7%BC%96%E7%A8%8B/</link>
+      <pubDate>Sun, 20 Dec 2015 05:56:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/java-NIO%E7%9A%84socket%E7%BC%96%E7%A8%8B/</guid>
+      <description>&lt;p&gt;前某个星期用java的阻塞式io写了一个socket的程序后，感觉用来玩玩还可以，连接量一上来就完了。
+然后又看到推荐说nio，就一直想着学学，结果中间这几天考试复习给耽搁了。正好今天没什么考试了，就找时间学了学。
+nio网上讲的也挺多的了，我也没必要班门弄斧，就是说说自己的理解吧。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>快速傅里叶变换 java实现</title>
+      <link>https://hundredwz.github.io/post/%E5%BF%AB%E9%80%9F%E5%82%85%E9%87%8C%E5%8F%B6%E5%8F%98%E6%8D%A2-java%E5%AE%9E%E7%8E%B0/</link>
+      <pubDate>Wed, 09 Dec 2015 15:05:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/%E5%BF%AB%E9%80%9F%E5%82%85%E9%87%8C%E5%8F%B6%E5%8F%98%E6%8D%A2-java%E5%AE%9E%E7%8E%B0/</guid>
+      <description>&lt;p&gt;昨天晚上数字信号处理粗略的复习了下，感觉快速傅里叶变换对于使用挺重要的，就想着编程实现它。
+今天上午没课，想着一上午实现吧，结果到晚上才编出来。
+反正是出结果了，我也不管结果对不对了，反正原理算是差不多了解了。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Servlet乱码</title>
+      <link>https://hundredwz.github.io/post/Servlet%E4%B9%B1%E7%A0%81/</link>
+      <pubDate>Fri, 06 Nov 2015 07:20:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Servlet%E4%B9%B1%E7%A0%81/</guid>
+      <description>&lt;p&gt;最近学长分配了一个小任务，让做个微信公众号，想想就是一个servlet就够了，就开始做吧，结果不做没发现，一做发现问题太多了。 其中问题最大的就是中文乱码问题。&lt;/p&gt;
+
+&lt;p&gt;和学长研究了一下午都没找到具体什么地方出的问题，各种百度，什么方法都尝试过了，结果都解决不了。&lt;/p&gt;
+
+&lt;p&gt;甚至怕由于jdk的io不对又重新从官网下载了jdk。真心无语了！&lt;/p&gt;
+
+&lt;p&gt;最后无奈，我脱离了idea，试了试eclipse，然后发现乱码问题竟然神奇的解决啦！&lt;/p&gt;
+
+&lt;p&gt;想想eclipse绝对比idea高明不到那去啊，凭什么idea就不行？&lt;/p&gt;
+
+&lt;p&gt;最后发现错的很无语！&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>表达式求值中后缀转换</title>
+      <link>https://hundredwz.github.io/post/%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%B1%82%E5%80%BC%E4%B8%AD%E5%90%8E%E7%BC%80%E8%BD%AC%E6%8D%A2/</link>
+      <pubDate>Mon, 05 Oct 2015 14:15:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%B1%82%E5%80%BC%E4%B8%AD%E5%90%8E%E7%BC%80%E8%BD%AC%E6%8D%A2/</guid>
+      <description>&lt;p&gt;这几天闲着无聊用安卓编个计算器，实现方法有很多种。&lt;/p&gt;
+
+&lt;p&gt;想想学过的算法课，干脆点击监听录入表达式，然后中缀转为后缀计算吧&lt;/p&gt;
+
+&lt;p&gt;顺便复习下栈的应用，也不算白学一门课。&lt;/p&gt;
+
+&lt;p&gt;由于学的是c语言的，然后上课没好好听，只好边发文章边学了。&lt;/p&gt;
+
+&lt;p&gt;书上讲的中后缀表达式转换可能对于人工来说相对麻烦点&lt;/p&gt;
+
+&lt;p&gt;忘了在哪看到的一篇帖子，快速的转换，下面列出来方法&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

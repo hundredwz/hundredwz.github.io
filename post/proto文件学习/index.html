@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>proto文件学习 - A Lazy Coder</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="Hundred" /><meta name="description" content="最近在看fabric源码的时候看到了proto文件，以前没接触过，这次好好来看看.
+" /><meta name="keywords" content="Blockchain, Golang, Fabric, Ethereum, Code" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.56.1 with even 4.0.0" />
+
+
+<link rel="canonical" href="https://hundredwz.github.io/post/proto%E6%96%87%E4%BB%B6%E5%AD%A6%E4%B9%A0/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<link href="/dist/even.c2a46f00.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+<link rel="stylesheet" href="/css/reset-even.css">
+
+
+<meta property="og:title" content="proto文件学习" />
+<meta property="og:description" content="最近在看fabric源码的时候看到了proto文件，以前没接触过，这次好好来看看." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://hundredwz.github.io/post/proto%E6%96%87%E4%BB%B6%E5%AD%A6%E4%B9%A0/" />
+<meta property="article:published_time" content="2017-11-08T07:00:40+00:00" />
+<meta property="article:modified_time" content="2017-11-08T07:00:40+00:00" />
+<meta itemprop="name" content="proto文件学习">
+<meta itemprop="description" content="最近在看fabric源码的时候看到了proto文件，以前没接触过，这次好好来看看.">
+
+
+<meta itemprop="datePublished" content="2017-11-08T07:00:40&#43;00:00" />
+<meta itemprop="dateModified" content="2017-11-08T07:00:40&#43;00:00" />
+<meta itemprop="wordCount" content="1591">
+
+
+
+<meta itemprop="keywords" content="fabric,go,proto," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="proto文件学习"/>
+<meta name="twitter:description" content="最近在看fabric源码的时候看到了proto文件，以前没接触过，这次好好来看看."/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">A Lazy Coder</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">首页</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">归档</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">分类</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/friends/">
+        <li class="mobile-menu-item">Friends</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">A Lazy Coder</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">首页</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">归档</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">分类</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/friends/">Friends</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">proto文件学习</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2017-11-08 07:00 </span>
+        <div class="post-category">
+            <a href="/categories/program/"> program </a>
+            </div>
+          <span class="more-meta"> 约 1591 字 </span>
+          <span class="more-meta"> 预计阅读 4 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    
+  </div>
+</div>
+  <div class="post-outdated">
+    <div class="warn">
+      <p>【注意】最后更新于 <span class="timeago" datetime="2017-11-08T07:00:40" title="November 8, 2017">November 8, 2017</span>，文中内容可能已过时，请谨慎使用。</p>
+    </div>
+  </div>
+    <div class="post-content">
+      <p>最近在看fabric源码的时候看到了proto文件，以前没接触过，这次好好来看看.</p>
+
+<p>网上说的很多的就都不详细说了，proto全称是<code>protocol buffer</code>，就是一种数据格式。是使用二进制进行的数据封装。
+主要的结构是message，类似与go的struct(由于最近一直再用go，就全部用go进行对比)。然后也是支持这些基本的数据结构，像<code>int32</code>，<code>bool</code>，<code>string</code>等等，在复杂的可以自己进行封装。
+然后还可以进行import进行操作，具体的可以参看官网。
+不过在使用的时候我遇到了一些问题。
+#1.protoc的安转
+由于我在使用go语言，在官网的release中并没有，很奇怪。只好自己去下载源码编译了。
+首先是从官网下载<a href="https://github.com/google/protobuf/releases">zip文件</a>。解压出来之后在根目录执行</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">./autogen.sh
+./configure
+make
+make install
+/sbin/ldconfig -v</code></pre></td></tr></table>
+</div>
+</div>
+<p>（以上指令均在超级管理员身份下执行）
+然后执行命令</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">protoc -h</code></pre></td></tr></table>
+</div>
+</div>
+<p>出现帮助文档就好了。
+然后安装针对Go的库</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">go get -u github.com/golang/protobuf/protoc-gen-go</code></pre></td></tr></table>
+</div>
+</div>
+<p>执行结束
+#2.proto的编写
+proto提供了一系列数据结构，具体的可以在<a href="https://developers.google.com/protocol-buffers/docs/proto3#simple">官网</a>查阅.
+我写了一个如下的结构</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-proro" data-lang="proro"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-proro" data-lang="proro"><span class="nx">syntax</span><span class="p">=</span><span class="s">&#34;proto3&#34;</span><span class="p">;</span>
+<span class="kn">package</span> <span class="nx">contact</span><span class="p">;</span>
+<span class="nx">message</span> <span class="nx">Address</span><span class="p">{</span>
+    <span class="nx">repeated</span> <span class="kt">string</span> <span class="nx">address</span><span class="p">=</span><span class="mi">1</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nx">enum</span> <span class="nx">PhoneType</span><span class="p">{</span>
+        <span class="nx">HOME</span><span class="p">=</span><span class="mi">0</span><span class="p">;</span>
+        <span class="nx">OFFICE</span><span class="p">=</span><span class="mi">1</span><span class="p">;</span>
+        <span class="nx">MOBILE</span><span class="p">=</span><span class="mi">2</span><span class="p">;</span>
+    <span class="p">}</span>
+
+<span class="nx">message</span> <span class="nx">Contact</span><span class="p">{</span>
+    <span class="kt">string</span> <span class="nx">phoneNum</span><span class="p">=</span><span class="mi">1</span><span class="p">;</span>
+    <span class="nx">PhoneType</span> <span class="nx">phoneType</span><span class="p">=</span><span class="mi">2</span><span class="p">;</span>
+    <span class="nx">Address</span> <span class="nx">address</span><span class="p">=</span><span class="mi">3</span><span class="p">;</span>
+    <span class="kt">string</span> <span class="nx">birthday</span><span class="p">=</span><span class="mi">4</span><span class="p">;</span>
+    <span class="kt">string</span> <span class="nx">occupy</span><span class="p">=</span><span class="mi">5</span><span class="p">;</span>
+    <span class="kt">string</span> <span class="nx">web</span><span class="p">=</span><span class="mi">6</span><span class="p">;</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>就是一个联系人结构。使用以下指令</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">protoc --go_out<span class="o">=</span>. contact.proto</code></pre></td></tr></table>
+</div>
+</div>
+<p>就生成了针对这个文件的go文件--contact.pb.go。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// Code generated by protoc-gen-go. DO NOT EDIT.
+</span><span class="c1">// source: contact.proto
+</span><span class="c1"></span>
+<span class="cm">/*
+</span><span class="cm">Package contact is a generated protocol buffer package.
+</span><span class="cm">
+</span><span class="cm">It is generated from these files:
+</span><span class="cm">	contact.proto
+</span><span class="cm">
+</span><span class="cm">It has these top-level messages:
+</span><span class="cm">	Address
+</span><span class="cm">	Contact
+</span><span class="cm">*/</span>
+<span class="kn">package</span> <span class="nx">contact</span>
+
+<span class="kn">import</span> <span class="nx">proto</span> <span class="s">&#34;github.com/golang/protobuf/proto&#34;</span>
+<span class="kn">import</span> <span class="nx">fmt</span> <span class="s">&#34;fmt&#34;</span>
+<span class="kn">import</span> <span class="nx">math</span> <span class="s">&#34;math&#34;</span>
+
+<span class="c1">// Reference imports to suppress errors if they are not otherwise used.
+</span><span class="c1"></span><span class="kd">var</span> <span class="nx">_</span> <span class="p">=</span> <span class="nx">proto</span><span class="p">.</span><span class="nx">Marshal</span>
+<span class="kd">var</span> <span class="nx">_</span> <span class="p">=</span> <span class="nx">fmt</span><span class="p">.</span><span class="nx">Errorf</span>
+<span class="kd">var</span> <span class="nx">_</span> <span class="p">=</span> <span class="nx">math</span><span class="p">.</span><span class="nx">Inf</span>
+
+<span class="c1">// This is a compile-time assertion to ensure that this generated file
+</span><span class="c1">// is compatible with the proto package it is being compiled against.
+</span><span class="c1">// A compilation error at this line likely means your copy of the
+</span><span class="c1">// proto package needs to be updated.
+</span><span class="c1"></span><span class="kd">const</span> <span class="nx">_</span> <span class="p">=</span> <span class="nx">proto</span><span class="p">.</span><span class="nx">ProtoPackageIsVersion2</span> <span class="c1">// please upgrade the proto package
+</span><span class="c1"></span>
+<span class="kd">type</span> <span class="nx">PhoneType</span> <span class="kt">int32</span>
+
+<span class="kd">const</span> <span class="p">(</span>
+	<span class="nx">PhoneType_HOME</span>   <span class="nx">PhoneType</span> <span class="p">=</span> <span class="mi">0</span>
+	<span class="nx">PhoneType_OFFICE</span> <span class="nx">PhoneType</span> <span class="p">=</span> <span class="mi">1</span>
+	<span class="nx">PhoneType_MOBILE</span> <span class="nx">PhoneType</span> <span class="p">=</span> <span class="mi">2</span>
+<span class="p">)</span>
+<span class="o">.........</span><span class="p">.</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>以下省略，做修改还是修改proto文件，而不是针对这个进行修改。
+然后使用下试试看</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+	<span class="nx">pb</span> <span class="s">&#34;contact&#34;</span>
+	<span class="s">&#34;fmt&#34;</span>
+	<span class="s">&#34;github.com/golang/protobuf/proto&#34;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">addr</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">pb</span><span class="p">.</span><span class="nx">Address</span><span class="p">{}</span>
+	<span class="nx">addr</span><span class="p">.</span><span class="nx">Address</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">addr</span><span class="p">.</span><span class="nx">Address</span><span class="p">,</span> <span class="s">&#34;beijing&#34;</span><span class="p">)</span>
+	<span class="nx">cont</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">pb</span><span class="p">.</span><span class="nx">Contact</span><span class="p">{}</span>
+	<span class="nx">cont</span><span class="p">.</span><span class="nx">PhoneNum</span> <span class="p">=</span> <span class="s">&#34;12345&#34;</span>
+	<span class="nx">cont</span><span class="p">.</span><span class="nx">PhoneType</span> <span class="p">=</span> <span class="nx">pb</span><span class="p">.</span><span class="nx">PhoneType_MOBILE</span>
+	<span class="nx">cont</span><span class="p">.</span><span class="nx">Address</span> <span class="p">=</span> <span class="nx">addr</span>
+	<span class="nx">cont</span><span class="p">.</span><span class="nx">Birthday</span> <span class="p">=</span> <span class="s">&#34;1995&#34;</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">cont</span><span class="p">)</span>
+	<span class="nx">data</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">proto</span><span class="p">.</span><span class="nf">Marshal</span><span class="p">(</span><span class="nx">cont</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;marshal err&#34;</span><span class="p">)</span>
+	<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="nx">cont1</span> <span class="o">:=</span> <span class="nx">pb</span><span class="p">.</span><span class="nx">Contact</span><span class="p">{}</span>
+	<span class="nx">err</span> <span class="p">=</span> <span class="nx">proto</span><span class="p">.</span><span class="nf">Unmarshal</span><span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">cont1</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;unmarshal err&#34;</span><span class="p">)</span>
+	<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">cont1</span><span class="p">)</span>
+	<span class="p">}</span>
+
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>很简单的内容。
+显示的结果就暂时不贴了。
+#proto的意义
+如标题，我为什么要使用proto结构啊，而不是使用json,xml之类的呢？
+做几个例子一探究竟。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">phoneNum:&#34;12345&#34; phoneType:MOBILE address:&lt;address:&#34;beijing&#34; &gt; birthday:&#34;1995&#34; 
+2017-11-08 14:48:43.43385463 +0800 CST
+Marshal time:  35.041µs
+[10 5 49 50 51 52 53 16 2 26 9 10 7 98 101 105 106 105 110 103 34 4 49 57 57 53]
+data len: 26
+2017-11-08 14:48:43.433901395 +0800 CST
+Unmarshal time:  11.412µs
+{12345 MOBILE address:&#34;beijing&#34;  1995  }</pre></td></tr></table>
+</div>
+</div>
+<p>这个是运行输出结果。可以看出封装是µs级别，解封装一样。数据大小只有26.
+同理，我改一改代码，生成JSON看一看。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">phoneNum:&#34;12345&#34; phoneType:MOBILE address:&lt;address:&#34;beijing&#34; &gt; birthday:&#34;1995&#34; 
+2017-11-08 14:51:12.712623597 +0800 CST
+Marshal time:  81.038µs
+[123 34 112 104 111 110 101 78 117 109 34 58 34 49 50 51 52 53 34 44 34 112 104 111 110 101 84 121 112 101 34 58 50 44 34 97 100 100 114 101 115 115 34 58 123 34 97 100 100 114 101 115 115 34 58 91 34 98 101 105 106 105 110 103 34 93 125 44 34 98 105 114 116 104 100 97 121 34 58 34 49 57 57 53 34 125]
+data len: 86
+2017-11-08 14:51:12.712729353 +0800 CST
+Unmarshal time:  28.866µs
+{12345 MOBILE address:&#34;beijing&#34;  1995  }</pre></td></tr></table>
+</div>
+</div>
+<p>要封装的数据是一样的内容，但是数据大小达到了三倍多，序列化反序列化时间也都达到了两倍多。
+再来试一试巨无霸xml</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">phoneNum:&#34;12345&#34; phoneType:MOBILE address:&lt;address:&#34;beijing&#34; &gt; birthday:&#34;1995&#34; 
+2017-11-08 14:55:02.136333004 +0800 CST
+Marshal time:  60.451µs
+[60 67 111 110 116 97 99 116 62 60 80 104 111 110 101 78 117 109 62 49 50 51 52 53 60 47 80 104 111 110 101 78 117 109 62 60 80 104 111 110 101 84 121 112 101 62 50 60 47 80 104 111 110 101 84 121 112 101 62 60 65 100 100 114 101 115 115 62 60 65 100 100 114 101 115 115 62 98 101 105 106 105 110 103 60 47 65 100 100 114 101 115 115 62 60 47 65 100 100 114 101 115 115 62 60 66 105 114 116 104 100 97 121 62 49 57 57 53 60 47 66 105 114 116 104 100 97 121 62 60 79 99 99 117 112 121 62 60 47 79 99 99 117 112 121 62 60 87 101 98 62 60 47 87 101 98 62 60 47 67 111 110 116 97 99 116 62]
+data len: 167
+2017-11-08 14:55:02.136420589 +0800 CST
+Unmarshal time:  74.649µs
+{12345 MOBILE address:&#34;beijing&#34;  1995  }</pre></td></tr></table>
+</div>
+</div>
+<p>令人比较吃惊地是解析时间跟封装时间差不多。
+可以看到proto还是比较占据优势的，除了可读性很坑之外。在网络数据传输中会占据一席之地的。
+#结语
+也没有什么好说的了，proto这个是google大佬做的，还是比较好用的。</p>
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">Hundred</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2017-11-08 07:00
+        
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">许可协议</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/fabric/">fabric</a>
+          <a href="/tags/go/">go</a>
+          <a href="/tags/proto/">proto</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB3PutStateampGetState%E7%90%86%E8%A7%A3/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">fabric源码阅读3：PutState&amp;amp;GetState理解</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB2chaincode%E5%87%BD%E6%95%B0%E7%90%86%E8%A7%A3II/">
+            <span class="next-text nav-default">fabric源码阅读2：chaincode函数理解II</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+  
+  
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="#" class="iconfont icon-cnblogs" title="cnblogs"></a>
+      <a href="mailto:sdwangzhuo@gmail.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/hundredwz" class="iconfont icon-github" title="github"></a>
+      <a href="#" class="iconfont icon-juejin" title="juejin"></a>
+      <a href="#" class="iconfont icon-v2ex" title="v2ex"></a>
+      <a href="https://weibo.com/hundredwz" class="iconfont icon-weibo" title="weibo"></a>
+  <a href="https://hundredwz.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2013 - 
+    2020
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Hundred</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.min.js" integrity="sha256-jwCP0NAdCBloaIWTWHmW4i3snUNMHUNO+jr9rYd2iOI=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.locales.min.js" integrity="sha256-ZwofwC1Lf/faQCzN7nZtfijVV6hSwxjQMwXL4gn9qU8=" crossorigin="anonymous"></script>
+  <script><!-- NOTE: timeago.js uses the language code format like "zh_CN" (underscore and case sensitive) -->
+    var languageCode = "zh-CN".replace(/-/g, '_').replace(/_(.*)/, function ($0, $1) {return $0.replace($1, $1.toUpperCase());});
+    timeago().render(document.querySelectorAll('.timeago'), languageCode);
+    timeago.cancel();  
+  </script>
+<script type="text/javascript" src="/dist/even.26188efa.min.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+      showProcessingMessages: false,
+      messageStyle: 'none'
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"  integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-138883536-1', 'auto');
+	ga('set', 'anonymizeIp', true);
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+
+
+
+
+</body>
+</html>

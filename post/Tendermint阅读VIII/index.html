@@ -1,0 +1,1328 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Tendermint阅读VIII - A Lazy Coder</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="Hundred" /><meta name="description" content="我们在上一篇文章中提到，block处理有处理state，以及相应的执行过程。我们这一节就来看一看。
+" /><meta name="keywords" content="Blockchain, Golang, Fabric, Ethereum, Code" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.56.1 with even 4.0.0" />
+
+
+<link rel="canonical" href="https://hundredwz.github.io/post/Tendermint%E9%98%85%E8%AF%BBVIII/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<link href="/dist/even.c2a46f00.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+<link rel="stylesheet" href="/css/reset-even.css">
+
+
+<meta property="og:title" content="Tendermint阅读VIII" />
+<meta property="og:description" content="我们在上一篇文章中提到，block处理有处理state，以及相应的执行过程。我们这一节就来看一看。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://hundredwz.github.io/post/Tendermint%E9%98%85%E8%AF%BBVIII/" />
+<meta property="article:published_time" content="2019-03-06T02:32:00+00:00" />
+<meta property="article:modified_time" content="2019-03-06T02:32:00+00:00" />
+<meta itemprop="name" content="Tendermint阅读VIII">
+<meta itemprop="description" content="我们在上一篇文章中提到，block处理有处理state，以及相应的执行过程。我们这一节就来看一看。">
+
+
+<meta itemprop="datePublished" content="2019-03-06T02:32:00&#43;00:00" />
+<meta itemprop="dateModified" content="2019-03-06T02:32:00&#43;00:00" />
+<meta itemprop="wordCount" content="3231">
+
+
+
+<meta itemprop="keywords" content="区块链,golang,源码,tendermint," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Tendermint阅读VIII"/>
+<meta name="twitter:description" content="我们在上一篇文章中提到，block处理有处理state，以及相应的执行过程。我们这一节就来看一看。"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">A Lazy Coder</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">首页</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">归档</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">分类</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/friends/">
+        <li class="mobile-menu-item">Friends</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">A Lazy Coder</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">首页</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">归档</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">分类</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/friends/">Friends</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">Tendermint阅读VIII</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2019-03-06 02:32 </span>
+        <div class="post-category">
+            <a href="/categories/program/"> program </a>
+            </div>
+          <span class="more-meta"> 约 3231 字 </span>
+          <span class="more-meta"> 预计阅读 7 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    
+  </div>
+</div>
+    <div class="post-content">
+      <p>我们在上一篇文章中提到，block处理有处理state，以及相应的执行过程。我们这一节就来看一看。</p>
+
+<p>我们先看一下State的定义</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">State</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">Version</span> <span class="nx">Version</span>
+
+	<span class="c1">// immutable
+</span><span class="c1"></span>	<span class="nx">ChainID</span> <span class="kt">string</span>
+
+	<span class="c1">// LastBlockHeight=0 at genesis (ie. block(H=0) does not exist)
+</span><span class="c1"></span>	<span class="nx">LastBlockHeight</span>  <span class="kt">int64</span>
+	<span class="nx">LastBlockTotalTx</span> <span class="kt">int64</span>
+	<span class="nx">LastBlockID</span>      <span class="nx">types</span><span class="p">.</span><span class="nx">BlockID</span>
+	<span class="nx">LastBlockTime</span>    <span class="nx">time</span><span class="p">.</span><span class="nx">Time</span>
+
+	<span class="c1">// LastValidators is used to validate block.LastCommit.
+</span><span class="c1"></span>	<span class="c1">// Validators are persisted to the database separately every time they change,
+</span><span class="c1"></span>	<span class="c1">// so we can query for historical validator sets.
+</span><span class="c1"></span>	<span class="c1">// Note that if s.LastBlockHeight causes a valset change,
+</span><span class="c1"></span>	<span class="c1">// we set s.LastHeightValidatorsChanged = s.LastBlockHeight + 1 + 1
+</span><span class="c1"></span>	<span class="c1">// Extra +1 due to nextValSet delay.
+</span><span class="c1"></span>	<span class="nx">NextValidators</span>              <span class="o">*</span><span class="nx">types</span><span class="p">.</span><span class="nx">ValidatorSet</span>
+	<span class="nx">Validators</span>                  <span class="o">*</span><span class="nx">types</span><span class="p">.</span><span class="nx">ValidatorSet</span>
+	<span class="nx">LastValidators</span>              <span class="o">*</span><span class="nx">types</span><span class="p">.</span><span class="nx">ValidatorSet</span>
+	<span class="nx">LastHeightValidatorsChanged</span> <span class="kt">int64</span>
+
+	<span class="c1">// Consensus parameters used for validating blocks.
+</span><span class="c1"></span>	<span class="c1">// Changes returned by EndBlock and updated after Commit.
+</span><span class="c1"></span>	<span class="nx">ConsensusParams</span>                  <span class="nx">types</span><span class="p">.</span><span class="nx">ConsensusParams</span>
+	<span class="nx">LastHeightConsensusParamsChanged</span> <span class="kt">int64</span>
+
+	<span class="c1">// Merkle root of the results from executing prev block
+</span><span class="c1"></span>	<span class="nx">LastResultsHash</span> <span class="p">[]</span><span class="kt">byte</span>
+
+	<span class="c1">// the latest AppHash we&#39;ve received from calling abci.Commit()
+</span><span class="c1"></span>	<span class="nx">AppHash</span> <span class="p">[]</span><span class="kt">byte</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>看这个结构，也可以发现State是一个记录上一个区块链的状态集合。包括上一个已经提交区块的高度，交易信息，上一个区块的时间和ID。然后是一系列的验证节点集合，包括下一次的验证节点集合，所有的验证节点以及上一个区块的验证节点。
+根据要求，State的状态是不能直接修改的，要使用得自己Copy出去，或者用NextState生成一个新的状态。
+这些都是一些基本的，重要的是生成区块，我们看下是怎么封装成区块的</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">state</span> <span class="nx">State</span><span class="p">)</span> <span class="nf">MakeBlock</span><span class="p">(</span>
+	<span class="nx">height</span> <span class="kt">int64</span><span class="p">,</span>
+	<span class="nx">txs</span> <span class="p">[]</span><span class="nx">types</span><span class="p">.</span><span class="nx">Tx</span><span class="p">,</span>
+	<span class="nx">commit</span> <span class="o">*</span><span class="nx">types</span><span class="p">.</span><span class="nx">Commit</span><span class="p">,</span>
+	<span class="nx">evidence</span> <span class="p">[]</span><span class="nx">types</span><span class="p">.</span><span class="nx">Evidence</span><span class="p">,</span>
+	<span class="nx">proposerAddress</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">,</span>
+<span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="nx">types</span><span class="p">.</span><span class="nx">Block</span><span class="p">,</span> <span class="o">*</span><span class="nx">types</span><span class="p">.</span><span class="nx">PartSet</span><span class="p">)</span> <span class="p">{</span>
+
+	<span class="c1">// Build base block with block data.
+</span><span class="c1"></span>	<span class="nx">block</span> <span class="o">:=</span> <span class="nx">types</span><span class="p">.</span><span class="nf">MakeBlock</span><span class="p">(</span><span class="nx">height</span><span class="p">,</span> <span class="nx">txs</span><span class="p">,</span> <span class="nx">commit</span><span class="p">,</span> <span class="nx">evidence</span><span class="p">)</span>
+
+	<span class="c1">// Set time.
+</span><span class="c1"></span>	<span class="kd">var</span> <span class="nx">timestamp</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Time</span>
+	<span class="k">if</span> <span class="nx">height</span> <span class="o">==</span> <span class="mi">1</span> <span class="p">{</span>
+		<span class="nx">timestamp</span> <span class="p">=</span> <span class="nx">state</span><span class="p">.</span><span class="nx">LastBlockTime</span> <span class="c1">// genesis time
+</span><span class="c1"></span>	<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+		<span class="nx">timestamp</span> <span class="p">=</span> <span class="nf">MedianTime</span><span class="p">(</span><span class="nx">commit</span><span class="p">,</span> <span class="nx">state</span><span class="p">.</span><span class="nx">LastValidators</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="c1">// Fill rest of header with state data.
+</span><span class="c1"></span>	<span class="nx">block</span><span class="p">.</span><span class="nx">Header</span><span class="p">.</span><span class="nf">Populate</span><span class="p">(</span>
+		<span class="nx">state</span><span class="p">.</span><span class="nx">Version</span><span class="p">.</span><span class="nx">Consensus</span><span class="p">,</span> <span class="nx">state</span><span class="p">.</span><span class="nx">ChainID</span><span class="p">,</span>
+		<span class="nx">timestamp</span><span class="p">,</span> <span class="nx">state</span><span class="p">.</span><span class="nx">LastBlockID</span><span class="p">,</span> <span class="nx">state</span><span class="p">.</span><span class="nx">LastBlockTotalTx</span><span class="o">+</span><span class="nx">block</span><span class="p">.</span><span class="nx">NumTxs</span><span class="p">,</span>
+		<span class="nx">state</span><span class="p">.</span><span class="nx">Validators</span><span class="p">.</span><span class="nf">Hash</span><span class="p">(),</span> <span class="nx">state</span><span class="p">.</span><span class="nx">NextValidators</span><span class="p">.</span><span class="nf">Hash</span><span class="p">(),</span>
+		<span class="nx">state</span><span class="p">.</span><span class="nx">ConsensusParams</span><span class="p">.</span><span class="nf">Hash</span><span class="p">(),</span> <span class="nx">state</span><span class="p">.</span><span class="nx">AppHash</span><span class="p">,</span> <span class="nx">state</span><span class="p">.</span><span class="nx">LastResultsHash</span><span class="p">,</span>
+		<span class="nx">proposerAddress</span><span class="p">,</span>
+	<span class="p">)</span>
+
+	<span class="k">return</span> <span class="nx">block</span><span class="p">,</span> <span class="nx">block</span><span class="p">.</span><span class="nf">MakePartSet</span><span class="p">(</span><span class="nx">types</span><span class="p">.</span><span class="nx">BlockPartSizeBytes</span><span class="p">)</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>这个看着还好理解，就是把区块的内容封装起来，生成一个完整的区块信息。这个地方使用了一个中值时间，主要的目标就是防止有恶意节点估计篡改区块生成时间，因为是所有的中间值，在出现之前很难修改成功。
+我们再来看下block是怎么被执行的。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">BlockExecutor</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="c1">// save state, validators, consensus params, abci responses here
+</span><span class="c1"></span>	<span class="nx">db</span> <span class="nx">dbm</span><span class="p">.</span><span class="nx">DB</span>
+
+	<span class="c1">// execute the app against this
+</span><span class="c1"></span>	<span class="nx">proxyApp</span> <span class="nx">proxy</span><span class="p">.</span><span class="nx">AppConnConsensus</span>
+
+	<span class="c1">// events
+</span><span class="c1"></span>	<span class="nx">eventBus</span> <span class="nx">types</span><span class="p">.</span><span class="nx">BlockEventPublisher</span>
+
+	<span class="c1">// update these with block results after commit
+</span><span class="c1"></span>	<span class="nx">mempool</span> <span class="nx">Mempool</span>
+	<span class="nx">evpool</span>  <span class="nx">EvidencePool</span>
+
+	<span class="nx">logger</span> <span class="nx">log</span><span class="p">.</span><span class="nx">Logger</span>
+
+	<span class="nx">metrics</span> <span class="o">*</span><span class="nx">Metrics</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>没什么大问题，存储状态，更新内存池，和ABCI程序通信。
+怎么执行的呢？</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">blockExec</span> <span class="o">*</span><span class="nx">BlockExecutor</span><span class="p">)</span> <span class="nf">ApplyBlock</span><span class="p">(</span><span class="nx">state</span> <span class="nx">State</span><span class="p">,</span> <span class="nx">blockID</span> <span class="nx">types</span><span class="p">.</span><span class="nx">BlockID</span><span class="p">,</span> <span class="nx">block</span> <span class="o">*</span><span class="nx">types</span><span class="p">.</span><span class="nx">Block</span><span class="p">)</span> <span class="p">(</span><span class="nx">State</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// 验证区块是否正确
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">blockExec</span><span class="p">.</span><span class="nf">ValidateBlock</span><span class="p">(</span><span class="nx">state</span><span class="p">,</span> <span class="nx">block</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">state</span><span class="p">,</span> <span class="nf">ErrInvalidBlock</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+    <span class="c1">// 让ABCI程序验证
+</span><span class="c1"></span>	<span class="nx">startTime</span> <span class="o">:=</span> <span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">().</span><span class="nf">UnixNano</span><span class="p">()</span>
+	<span class="nx">abciResponses</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nf">execBlockOnProxyApp</span><span class="p">(</span><span class="nx">blockExec</span><span class="p">.</span><span class="nx">logger</span><span class="p">,</span> <span class="nx">blockExec</span><span class="p">.</span><span class="nx">proxyApp</span><span class="p">,</span> <span class="nx">block</span><span class="p">,</span> <span class="nx">state</span><span class="p">.</span><span class="nx">LastValidators</span><span class="p">,</span> <span class="nx">blockExec</span><span class="p">.</span><span class="nx">db</span><span class="p">)</span>
+	<span class="nx">endTime</span> <span class="o">:=</span> <span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">().</span><span class="nf">UnixNano</span><span class="p">()</span>
+	<span class="nx">blockExec</span><span class="p">.</span><span class="nx">metrics</span><span class="p">.</span><span class="nx">BlockProcessingTime</span><span class="p">.</span><span class="nf">Observe</span><span class="p">(</span><span class="nb">float64</span><span class="p">(</span><span class="nx">endTime</span><span class="o">-</span><span class="nx">startTime</span><span class="p">)</span> <span class="o">/</span> <span class="mi">1000000</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">state</span><span class="p">,</span> <span class="nf">ErrProxyAppConn</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="nx">fail</span><span class="p">.</span><span class="nf">Fail</span><span class="p">()</span> <span class="c1">// XXX
+</span><span class="c1"></span>
+	<span class="c1">// 把返回的结果记录到数据库
+</span><span class="c1"></span>	<span class="nf">saveABCIResponses</span><span class="p">(</span><span class="nx">blockExec</span><span class="p">.</span><span class="nx">db</span><span class="p">,</span> <span class="nx">block</span><span class="p">.</span><span class="nx">Height</span><span class="p">,</span> <span class="nx">abciResponses</span><span class="p">)</span>
+
+	<span class="nx">fail</span><span class="p">.</span><span class="nf">Fail</span><span class="p">()</span> <span class="c1">// XXX
+</span><span class="c1"></span>
+	<span class="c1">// 更新验证节点集合
+</span><span class="c1"></span>	<span class="nx">abciValUpdates</span> <span class="o">:=</span> <span class="nx">abciResponses</span><span class="p">.</span><span class="nx">EndBlock</span><span class="p">.</span><span class="nx">ValidatorUpdates</span>
+	<span class="nx">err</span> <span class="p">=</span> <span class="nf">validateValidatorUpdates</span><span class="p">(</span><span class="nx">abciValUpdates</span><span class="p">,</span> <span class="nx">state</span><span class="p">.</span><span class="nx">ConsensusParams</span><span class="p">.</span><span class="nx">Validator</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">state</span><span class="p">,</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;Error in validator updates: %v&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="nx">validatorUpdates</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">types</span><span class="p">.</span><span class="nx">PB2TM</span><span class="p">.</span><span class="nf">ValidatorUpdates</span><span class="p">(</span><span class="nx">abciValUpdates</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">state</span><span class="p">,</span> <span class="nx">err</span>
+	<span class="p">}</span>
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">validatorUpdates</span><span class="p">)</span> <span class="p">&gt;</span> <span class="mi">0</span> <span class="p">{</span>
+		<span class="nx">blockExec</span><span class="p">.</span><span class="nx">logger</span><span class="p">.</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;Updates to validators&#34;</span><span class="p">,</span> <span class="s">&#34;updates&#34;</span><span class="p">,</span> <span class="nf">makeValidatorUpdatesLogString</span><span class="p">(</span><span class="nx">validatorUpdates</span><span class="p">))</span>
+	<span class="p">}</span>
+
+	<span class="c1">// 根据验证的结果，获取写一个区块链状态
+</span><span class="c1"></span>	<span class="nx">state</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nf">updateState</span><span class="p">(</span><span class="nx">state</span><span class="p">,</span> <span class="nx">blockID</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">block</span><span class="p">.</span><span class="nx">Header</span><span class="p">,</span> <span class="nx">abciResponses</span><span class="p">,</span> <span class="nx">validatorUpdates</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">state</span><span class="p">,</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;Commit failed for application: %v&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="c1">// 调用ABCI程序，获取APPHASH，并且更新下内存池
+</span><span class="c1"></span>	<span class="nx">appHash</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">blockExec</span><span class="p">.</span><span class="nf">Commit</span><span class="p">(</span><span class="nx">state</span><span class="p">,</span> <span class="nx">block</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">state</span><span class="p">,</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;Commit failed for application: %v&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="c1">// 更新证据池
+</span><span class="c1"></span>	<span class="nx">blockExec</span><span class="p">.</span><span class="nx">evpool</span><span class="p">.</span><span class="nf">Update</span><span class="p">(</span><span class="nx">block</span><span class="p">,</span> <span class="nx">state</span><span class="p">)</span>
+
+	<span class="nx">fail</span><span class="p">.</span><span class="nf">Fail</span><span class="p">()</span> <span class="c1">// XXX
+</span><span class="c1"></span>
+	<span class="c1">// 保存状态
+</span><span class="c1"></span>	<span class="nx">state</span><span class="p">.</span><span class="nx">AppHash</span> <span class="p">=</span> <span class="nx">appHash</span>
+	<span class="nf">SaveState</span><span class="p">(</span><span class="nx">blockExec</span><span class="p">.</span><span class="nx">db</span><span class="p">,</span> <span class="nx">state</span><span class="p">)</span>
+
+	<span class="nx">fail</span><span class="p">.</span><span class="nf">Fail</span><span class="p">()</span> <span class="c1">// XXX
+</span><span class="c1"></span>
+	<span class="c1">// Events are fired after everything else.
+</span><span class="c1"></span>	<span class="c1">// NOTE: if we crash between Commit and Save, events wont be fired during replay
+</span><span class="c1"></span>	<span class="nf">fireEvents</span><span class="p">(</span><span class="nx">blockExec</span><span class="p">.</span><span class="nx">logger</span><span class="p">,</span> <span class="nx">blockExec</span><span class="p">.</span><span class="nx">eventBus</span><span class="p">,</span> <span class="nx">block</span><span class="p">,</span> <span class="nx">abciResponses</span><span class="p">,</span> <span class="nx">validatorUpdates</span><span class="p">)</span>
+
+	<span class="k">return</span> <span class="nx">state</span><span class="p">,</span> <span class="kc">nil</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>看着我们代码里面的注释，还能够理解出来，主要的流程就是
+1. 验证当前区块是否合法
+2. 把数据提交给ABCI,获取对应的响应结果
+3. 根绝当前区块信息还有ABCI的结果，生成新的区块
+4. 调用下ABCI的commit返回APPHASH,这时候才算要保存了
+5. 保存状态，生成下一个状态
+怎么验证的呢？</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">  1
+</span><span class="lnt">  2
+</span><span class="lnt">  3
+</span><span class="lnt">  4
+</span><span class="lnt">  5
+</span><span class="lnt">  6
+</span><span class="lnt">  7
+</span><span class="lnt">  8
+</span><span class="lnt">  9
+</span><span class="lnt"> 10
+</span><span class="lnt"> 11
+</span><span class="lnt"> 12
+</span><span class="lnt"> 13
+</span><span class="lnt"> 14
+</span><span class="lnt"> 15
+</span><span class="lnt"> 16
+</span><span class="lnt"> 17
+</span><span class="lnt"> 18
+</span><span class="lnt"> 19
+</span><span class="lnt"> 20
+</span><span class="lnt"> 21
+</span><span class="lnt"> 22
+</span><span class="lnt"> 23
+</span><span class="lnt"> 24
+</span><span class="lnt"> 25
+</span><span class="lnt"> 26
+</span><span class="lnt"> 27
+</span><span class="lnt"> 28
+</span><span class="lnt"> 29
+</span><span class="lnt"> 30
+</span><span class="lnt"> 31
+</span><span class="lnt"> 32
+</span><span class="lnt"> 33
+</span><span class="lnt"> 34
+</span><span class="lnt"> 35
+</span><span class="lnt"> 36
+</span><span class="lnt"> 37
+</span><span class="lnt"> 38
+</span><span class="lnt"> 39
+</span><span class="lnt"> 40
+</span><span class="lnt"> 41
+</span><span class="lnt"> 42
+</span><span class="lnt"> 43
+</span><span class="lnt"> 44
+</span><span class="lnt"> 45
+</span><span class="lnt"> 46
+</span><span class="lnt"> 47
+</span><span class="lnt"> 48
+</span><span class="lnt"> 49
+</span><span class="lnt"> 50
+</span><span class="lnt"> 51
+</span><span class="lnt"> 52
+</span><span class="lnt"> 53
+</span><span class="lnt"> 54
+</span><span class="lnt"> 55
+</span><span class="lnt"> 56
+</span><span class="lnt"> 57
+</span><span class="lnt"> 58
+</span><span class="lnt"> 59
+</span><span class="lnt"> 60
+</span><span class="lnt"> 61
+</span><span class="lnt"> 62
+</span><span class="lnt"> 63
+</span><span class="lnt"> 64
+</span><span class="lnt"> 65
+</span><span class="lnt"> 66
+</span><span class="lnt"> 67
+</span><span class="lnt"> 68
+</span><span class="lnt"> 69
+</span><span class="lnt"> 70
+</span><span class="lnt"> 71
+</span><span class="lnt"> 72
+</span><span class="lnt"> 73
+</span><span class="lnt"> 74
+</span><span class="lnt"> 75
+</span><span class="lnt"> 76
+</span><span class="lnt"> 77
+</span><span class="lnt"> 78
+</span><span class="lnt"> 79
+</span><span class="lnt"> 80
+</span><span class="lnt"> 81
+</span><span class="lnt"> 82
+</span><span class="lnt"> 83
+</span><span class="lnt"> 84
+</span><span class="lnt"> 85
+</span><span class="lnt"> 86
+</span><span class="lnt"> 87
+</span><span class="lnt"> 88
+</span><span class="lnt"> 89
+</span><span class="lnt"> 90
+</span><span class="lnt"> 91
+</span><span class="lnt"> 92
+</span><span class="lnt"> 93
+</span><span class="lnt"> 94
+</span><span class="lnt"> 95
+</span><span class="lnt"> 96
+</span><span class="lnt"> 97
+</span><span class="lnt"> 98
+</span><span class="lnt"> 99
+</span><span class="lnt">100
+</span><span class="lnt">101
+</span><span class="lnt">102
+</span><span class="lnt">103
+</span><span class="lnt">104
+</span><span class="lnt">105
+</span><span class="lnt">106
+</span><span class="lnt">107
+</span><span class="lnt">108
+</span><span class="lnt">109
+</span><span class="lnt">110
+</span><span class="lnt">111
+</span><span class="lnt">112
+</span><span class="lnt">113
+</span><span class="lnt">114
+</span><span class="lnt">115
+</span><span class="lnt">116
+</span><span class="lnt">117
+</span><span class="lnt">118
+</span><span class="lnt">119
+</span><span class="lnt">120
+</span><span class="lnt">121
+</span><span class="lnt">122
+</span><span class="lnt">123
+</span><span class="lnt">124
+</span><span class="lnt">125
+</span><span class="lnt">126
+</span><span class="lnt">127
+</span><span class="lnt">128
+</span><span class="lnt">129
+</span><span class="lnt">130
+</span><span class="lnt">131
+</span><span class="lnt">132
+</span><span class="lnt">133
+</span><span class="lnt">134
+</span><span class="lnt">135
+</span><span class="lnt">136
+</span><span class="lnt">137
+</span><span class="lnt">138
+</span><span class="lnt">139
+</span><span class="lnt">140
+</span><span class="lnt">141
+</span><span class="lnt">142
+</span><span class="lnt">143
+</span><span class="lnt">144
+</span><span class="lnt">145
+</span><span class="lnt">146
+</span><span class="lnt">147
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">validateBlock</span><span class="p">(</span><span class="nx">stateDB</span> <span class="nx">dbm</span><span class="p">.</span><span class="nx">DB</span><span class="p">,</span> <span class="nx">state</span> <span class="nx">State</span><span class="p">,</span> <span class="nx">block</span> <span class="o">*</span><span class="nx">types</span><span class="p">.</span><span class="nx">Block</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+	<span class="c1">// Validate internal consistency.
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">block</span><span class="p">.</span><span class="nf">ValidateBasic</span><span class="p">();</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">err</span>
+	<span class="p">}</span>
+
+	<span class="c1">// Validate basic info.
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">block</span><span class="p">.</span><span class="nx">Version</span> <span class="o">!=</span> <span class="nx">state</span><span class="p">.</span><span class="nx">Version</span><span class="p">.</span><span class="nx">Consensus</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;Wrong Block.Header.Version. Expected %v, got %v&#34;</span><span class="p">,</span>
+			<span class="nx">state</span><span class="p">.</span><span class="nx">Version</span><span class="p">.</span><span class="nx">Consensus</span><span class="p">,</span>
+			<span class="nx">block</span><span class="p">.</span><span class="nx">Version</span><span class="p">,</span>
+		<span class="p">)</span>
+	<span class="p">}</span>
+	<span class="k">if</span> <span class="nx">block</span><span class="p">.</span><span class="nx">ChainID</span> <span class="o">!=</span> <span class="nx">state</span><span class="p">.</span><span class="nx">ChainID</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;Wrong Block.Header.ChainID. Expected %v, got %v&#34;</span><span class="p">,</span>
+			<span class="nx">state</span><span class="p">.</span><span class="nx">ChainID</span><span class="p">,</span>
+			<span class="nx">block</span><span class="p">.</span><span class="nx">ChainID</span><span class="p">,</span>
+		<span class="p">)</span>
+	<span class="p">}</span>
+	<span class="k">if</span> <span class="nx">block</span><span class="p">.</span><span class="nx">Height</span> <span class="o">!=</span> <span class="nx">state</span><span class="p">.</span><span class="nx">LastBlockHeight</span><span class="o">+</span><span class="mi">1</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;Wrong Block.Header.Height. Expected %v, got %v&#34;</span><span class="p">,</span>
+			<span class="nx">state</span><span class="p">.</span><span class="nx">LastBlockHeight</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span>
+			<span class="nx">block</span><span class="p">.</span><span class="nx">Height</span><span class="p">,</span>
+		<span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="c1">// Validate prev block info.
+</span><span class="c1"></span>	<span class="k">if</span> <span class="p">!</span><span class="nx">block</span><span class="p">.</span><span class="nx">LastBlockID</span><span class="p">.</span><span class="nf">Equals</span><span class="p">(</span><span class="nx">state</span><span class="p">.</span><span class="nx">LastBlockID</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;Wrong Block.Header.LastBlockID.  Expected %v, got %v&#34;</span><span class="p">,</span>
+			<span class="nx">state</span><span class="p">.</span><span class="nx">LastBlockID</span><span class="p">,</span>
+			<span class="nx">block</span><span class="p">.</span><span class="nx">LastBlockID</span><span class="p">,</span>
+		<span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="nx">newTxs</span> <span class="o">:=</span> <span class="nb">int64</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nx">block</span><span class="p">.</span><span class="nx">Data</span><span class="p">.</span><span class="nx">Txs</span><span class="p">))</span>
+	<span class="k">if</span> <span class="nx">block</span><span class="p">.</span><span class="nx">TotalTxs</span> <span class="o">!=</span> <span class="nx">state</span><span class="p">.</span><span class="nx">LastBlockTotalTx</span><span class="o">+</span><span class="nx">newTxs</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;Wrong Block.Header.TotalTxs. Expected %v, got %v&#34;</span><span class="p">,</span>
+			<span class="nx">state</span><span class="p">.</span><span class="nx">LastBlockTotalTx</span><span class="o">+</span><span class="nx">newTxs</span><span class="p">,</span>
+			<span class="nx">block</span><span class="p">.</span><span class="nx">TotalTxs</span><span class="p">,</span>
+		<span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="c1">// Validate app info
+</span><span class="c1"></span>	<span class="k">if</span> <span class="p">!</span><span class="nx">bytes</span><span class="p">.</span><span class="nf">Equal</span><span class="p">(</span><span class="nx">block</span><span class="p">.</span><span class="nx">AppHash</span><span class="p">,</span> <span class="nx">state</span><span class="p">.</span><span class="nx">AppHash</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;Wrong Block.Header.AppHash.  Expected %X, got %v&#34;</span><span class="p">,</span>
+			<span class="nx">state</span><span class="p">.</span><span class="nx">AppHash</span><span class="p">,</span>
+			<span class="nx">block</span><span class="p">.</span><span class="nx">AppHash</span><span class="p">,</span>
+		<span class="p">)</span>
+	<span class="p">}</span>
+	<span class="k">if</span> <span class="p">!</span><span class="nx">bytes</span><span class="p">.</span><span class="nf">Equal</span><span class="p">(</span><span class="nx">block</span><span class="p">.</span><span class="nx">ConsensusHash</span><span class="p">,</span> <span class="nx">state</span><span class="p">.</span><span class="nx">ConsensusParams</span><span class="p">.</span><span class="nf">Hash</span><span class="p">())</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;Wrong Block.Header.ConsensusHash.  Expected %X, got %v&#34;</span><span class="p">,</span>
+			<span class="nx">state</span><span class="p">.</span><span class="nx">ConsensusParams</span><span class="p">.</span><span class="nf">Hash</span><span class="p">(),</span>
+			<span class="nx">block</span><span class="p">.</span><span class="nx">ConsensusHash</span><span class="p">,</span>
+		<span class="p">)</span>
+	<span class="p">}</span>
+	<span class="k">if</span> <span class="p">!</span><span class="nx">bytes</span><span class="p">.</span><span class="nf">Equal</span><span class="p">(</span><span class="nx">block</span><span class="p">.</span><span class="nx">LastResultsHash</span><span class="p">,</span> <span class="nx">state</span><span class="p">.</span><span class="nx">LastResultsHash</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;Wrong Block.Header.LastResultsHash.  Expected %X, got %v&#34;</span><span class="p">,</span>
+			<span class="nx">state</span><span class="p">.</span><span class="nx">LastResultsHash</span><span class="p">,</span>
+			<span class="nx">block</span><span class="p">.</span><span class="nx">LastResultsHash</span><span class="p">,</span>
+		<span class="p">)</span>
+	<span class="p">}</span>
+	<span class="k">if</span> <span class="p">!</span><span class="nx">bytes</span><span class="p">.</span><span class="nf">Equal</span><span class="p">(</span><span class="nx">block</span><span class="p">.</span><span class="nx">ValidatorsHash</span><span class="p">,</span> <span class="nx">state</span><span class="p">.</span><span class="nx">Validators</span><span class="p">.</span><span class="nf">Hash</span><span class="p">())</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;Wrong Block.Header.ValidatorsHash.  Expected %X, got %v&#34;</span><span class="p">,</span>
+			<span class="nx">state</span><span class="p">.</span><span class="nx">Validators</span><span class="p">.</span><span class="nf">Hash</span><span class="p">(),</span>
+			<span class="nx">block</span><span class="p">.</span><span class="nx">ValidatorsHash</span><span class="p">,</span>
+		<span class="p">)</span>
+	<span class="p">}</span>
+	<span class="k">if</span> <span class="p">!</span><span class="nx">bytes</span><span class="p">.</span><span class="nf">Equal</span><span class="p">(</span><span class="nx">block</span><span class="p">.</span><span class="nx">NextValidatorsHash</span><span class="p">,</span> <span class="nx">state</span><span class="p">.</span><span class="nx">NextValidators</span><span class="p">.</span><span class="nf">Hash</span><span class="p">())</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;Wrong Block.Header.NextValidatorsHash.  Expected %X, got %v&#34;</span><span class="p">,</span>
+			<span class="nx">state</span><span class="p">.</span><span class="nx">NextValidators</span><span class="p">.</span><span class="nf">Hash</span><span class="p">(),</span>
+			<span class="nx">block</span><span class="p">.</span><span class="nx">NextValidatorsHash</span><span class="p">,</span>
+		<span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="c1">// Validate block LastCommit.
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">block</span><span class="p">.</span><span class="nx">Height</span> <span class="o">==</span> <span class="mi">1</span> <span class="p">{</span>
+		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">block</span><span class="p">.</span><span class="nx">LastCommit</span><span class="p">.</span><span class="nx">Precommits</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span> <span class="p">{</span>
+			<span class="k">return</span> <span class="nx">errors</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="s">&#34;Block at height 1 can&#39;t have LastCommit precommits&#34;</span><span class="p">)</span>
+		<span class="p">}</span>
+	<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">block</span><span class="p">.</span><span class="nx">LastCommit</span><span class="p">.</span><span class="nx">Precommits</span><span class="p">)</span> <span class="o">!=</span> <span class="nx">state</span><span class="p">.</span><span class="nx">LastValidators</span><span class="p">.</span><span class="nf">Size</span><span class="p">()</span> <span class="p">{</span>
+			<span class="k">return</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;Invalid block commit size. Expected %v, got %v&#34;</span><span class="p">,</span>
+				<span class="nx">state</span><span class="p">.</span><span class="nx">LastValidators</span><span class="p">.</span><span class="nf">Size</span><span class="p">(),</span>
+				<span class="nb">len</span><span class="p">(</span><span class="nx">block</span><span class="p">.</span><span class="nx">LastCommit</span><span class="p">.</span><span class="nx">Precommits</span><span class="p">),</span>
+			<span class="p">)</span>
+        <span class="p">}</span>
+        <span class="c1">// 此处和其他人理解有点不一致。我认为是用状态记录的区块验证集合，跟区块中的
+</span><span class="c1"></span>        <span class="c1">// 验证集合进行对比。而不是用这个的信息去验证上一个区块。
+</span><span class="c1"></span>		<span class="nx">err</span> <span class="o">:=</span> <span class="nx">state</span><span class="p">.</span><span class="nx">LastValidators</span><span class="p">.</span><span class="nf">VerifyCommit</span><span class="p">(</span>
+			<span class="nx">state</span><span class="p">.</span><span class="nx">ChainID</span><span class="p">,</span> <span class="nx">state</span><span class="p">.</span><span class="nx">LastBlockID</span><span class="p">,</span> <span class="nx">block</span><span class="p">.</span><span class="nx">Height</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">block</span><span class="p">.</span><span class="nx">LastCommit</span><span class="p">)</span>
+		<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="k">return</span> <span class="nx">err</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+
+	<span class="c1">// Validate block Time
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">block</span><span class="p">.</span><span class="nx">Height</span> <span class="p">&gt;</span> <span class="mi">1</span> <span class="p">{</span>
+		<span class="k">if</span> <span class="p">!</span><span class="nx">block</span><span class="p">.</span><span class="nx">Time</span><span class="p">.</span><span class="nf">After</span><span class="p">(</span><span class="nx">state</span><span class="p">.</span><span class="nx">LastBlockTime</span><span class="p">)</span> <span class="p">{</span>
+			<span class="k">return</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;Block time %v not greater than last block time %v&#34;</span><span class="p">,</span>
+				<span class="nx">block</span><span class="p">.</span><span class="nx">Time</span><span class="p">,</span>
+				<span class="nx">state</span><span class="p">.</span><span class="nx">LastBlockTime</span><span class="p">,</span>
+			<span class="p">)</span>
+		<span class="p">}</span>
+
+		<span class="nx">medianTime</span> <span class="o">:=</span> <span class="nf">MedianTime</span><span class="p">(</span><span class="nx">block</span><span class="p">.</span><span class="nx">LastCommit</span><span class="p">,</span> <span class="nx">state</span><span class="p">.</span><span class="nx">LastValidators</span><span class="p">)</span>
+		<span class="k">if</span> <span class="p">!</span><span class="nx">block</span><span class="p">.</span><span class="nx">Time</span><span class="p">.</span><span class="nf">Equal</span><span class="p">(</span><span class="nx">medianTime</span><span class="p">)</span> <span class="p">{</span>
+			<span class="k">return</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;Invalid block time. Expected %v, got %v&#34;</span><span class="p">,</span>
+				<span class="nx">medianTime</span><span class="p">,</span>
+				<span class="nx">block</span><span class="p">.</span><span class="nx">Time</span><span class="p">,</span>
+			<span class="p">)</span>
+		<span class="p">}</span>
+	<span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="nx">block</span><span class="p">.</span><span class="nx">Height</span> <span class="o">==</span> <span class="mi">1</span> <span class="p">{</span>
+		<span class="nx">genesisTime</span> <span class="o">:=</span> <span class="nx">state</span><span class="p">.</span><span class="nx">LastBlockTime</span>
+		<span class="k">if</span> <span class="p">!</span><span class="nx">block</span><span class="p">.</span><span class="nx">Time</span><span class="p">.</span><span class="nf">Equal</span><span class="p">(</span><span class="nx">genesisTime</span><span class="p">)</span> <span class="p">{</span>
+			<span class="k">return</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;Block time %v is not equal to genesis time %v&#34;</span><span class="p">,</span>
+				<span class="nx">block</span><span class="p">.</span><span class="nx">Time</span><span class="p">,</span>
+				<span class="nx">genesisTime</span><span class="p">,</span>
+			<span class="p">)</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+
+	<span class="c1">// Limit the amount of evidence
+</span><span class="c1"></span>	<span class="nx">maxEvidenceBytes</span> <span class="o">:=</span> <span class="nx">types</span><span class="p">.</span><span class="nf">MaxEvidenceBytesPerBlock</span><span class="p">(</span><span class="nx">state</span><span class="p">.</span><span class="nx">ConsensusParams</span><span class="p">.</span><span class="nx">BlockSize</span><span class="p">.</span><span class="nx">MaxBytes</span><span class="p">)</span>
+	<span class="nx">evidenceBytes</span> <span class="o">:=</span> <span class="nb">int64</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nx">block</span><span class="p">.</span><span class="nx">Evidence</span><span class="p">.</span><span class="nx">Evidence</span><span class="p">))</span> <span class="o">*</span> <span class="nx">types</span><span class="p">.</span><span class="nx">MaxEvidenceBytes</span>
+	<span class="k">if</span> <span class="nx">evidenceBytes</span> <span class="p">&gt;</span> <span class="nx">maxEvidenceBytes</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">types</span><span class="p">.</span><span class="nf">NewErrEvidenceOverflow</span><span class="p">(</span><span class="nx">maxEvidenceBytes</span><span class="p">,</span> <span class="nx">evidenceBytes</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="c1">// Validate all evidence.
+</span><span class="c1"></span>	<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">ev</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">block</span><span class="p">.</span><span class="nx">Evidence</span><span class="p">.</span><span class="nx">Evidence</span> <span class="p">{</span>
+		<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nf">VerifyEvidence</span><span class="p">(</span><span class="nx">stateDB</span><span class="p">,</span> <span class="nx">state</span><span class="p">,</span> <span class="nx">ev</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="k">return</span> <span class="nx">types</span><span class="p">.</span><span class="nf">NewErrEvidenceInvalid</span><span class="p">(</span><span class="nx">ev</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+
+	<span class="c1">// NOTE: We can&#39;t actually verify it&#39;s the right proposer because we dont
+</span><span class="c1"></span>	<span class="c1">// know what round the block was first proposed. So just check that it&#39;s
+</span><span class="c1"></span>	<span class="c1">// a legit address and a known validator.
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">block</span><span class="p">.</span><span class="nx">ProposerAddress</span><span class="p">)</span> <span class="o">!=</span> <span class="nx">crypto</span><span class="p">.</span><span class="nx">AddressSize</span> <span class="o">||</span>
+		<span class="p">!</span><span class="nx">state</span><span class="p">.</span><span class="nx">Validators</span><span class="p">.</span><span class="nf">HasAddress</span><span class="p">(</span><span class="nx">block</span><span class="p">.</span><span class="nx">ProposerAddress</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;Block.Header.ProposerAddress, %X, is not a validator&#34;</span><span class="p">,</span>
+			<span class="nx">block</span><span class="p">.</span><span class="nx">ProposerAddress</span><span class="p">,</span>
+		<span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="k">return</span> <span class="kc">nil</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>主要的就是验证区块的各块信息是否正确，能否达成一致。不一致就返回错误信息。
+接下来我们要看一下是怎么传给ABCI程序执行的</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">execBlockOnProxyApp</span><span class="p">(</span>
+	<span class="nx">logger</span> <span class="nx">log</span><span class="p">.</span><span class="nx">Logger</span><span class="p">,</span>
+	<span class="nx">proxyAppConn</span> <span class="nx">proxy</span><span class="p">.</span><span class="nx">AppConnConsensus</span><span class="p">,</span>
+	<span class="nx">block</span> <span class="o">*</span><span class="nx">types</span><span class="p">.</span><span class="nx">Block</span><span class="p">,</span>
+	<span class="nx">lastValSet</span> <span class="o">*</span><span class="nx">types</span><span class="p">.</span><span class="nx">ValidatorSet</span><span class="p">,</span>
+	<span class="nx">stateDB</span> <span class="nx">dbm</span><span class="p">.</span><span class="nx">DB</span><span class="p">,</span>
+<span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="nx">ABCIResponses</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+	<span class="kd">var</span> <span class="nx">validTxs</span><span class="p">,</span> <span class="nx">invalidTxs</span> <span class="p">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+
+	<span class="nx">txIndex</span> <span class="o">:=</span> <span class="mi">0</span>
+	<span class="nx">abciResponses</span> <span class="o">:=</span> <span class="nf">NewABCIResponses</span><span class="p">(</span><span class="nx">block</span><span class="p">)</span>
+
+	<span class="c1">// Execute transactions and get hash.
+</span><span class="c1"></span>	<span class="nx">proxyCb</span> <span class="o">:=</span> <span class="kd">func</span><span class="p">(</span><span class="nx">req</span> <span class="o">*</span><span class="nx">abci</span><span class="p">.</span><span class="nx">Request</span><span class="p">,</span> <span class="nx">res</span> <span class="o">*</span><span class="nx">abci</span><span class="p">.</span><span class="nx">Response</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">switch</span> <span class="nx">r</span> <span class="o">:=</span> <span class="nx">res</span><span class="p">.</span><span class="nx">Value</span><span class="p">.(</span><span class="kd">type</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">case</span> <span class="o">*</span><span class="nx">abci</span><span class="p">.</span><span class="nx">Response_DeliverTx</span><span class="p">:</span>
+			<span class="c1">// TODO: make use of res.Log
+</span><span class="c1"></span>			<span class="c1">// TODO: make use of this info
+</span><span class="c1"></span>			<span class="c1">// Blocks may include invalid txs.
+</span><span class="c1"></span>			<span class="nx">txRes</span> <span class="o">:=</span> <span class="nx">r</span><span class="p">.</span><span class="nx">DeliverTx</span>
+			<span class="k">if</span> <span class="nx">txRes</span><span class="p">.</span><span class="nx">Code</span> <span class="o">==</span> <span class="nx">abci</span><span class="p">.</span><span class="nx">CodeTypeOK</span> <span class="p">{</span>
+				<span class="nx">validTxs</span><span class="o">++</span>
+			<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+				<span class="nx">logger</span><span class="p">.</span><span class="nf">Debug</span><span class="p">(</span><span class="s">&#34;Invalid tx&#34;</span><span class="p">,</span> <span class="s">&#34;code&#34;</span><span class="p">,</span> <span class="nx">txRes</span><span class="p">.</span><span class="nx">Code</span><span class="p">,</span> <span class="s">&#34;log&#34;</span><span class="p">,</span> <span class="nx">txRes</span><span class="p">.</span><span class="nx">Log</span><span class="p">)</span>
+				<span class="nx">invalidTxs</span><span class="o">++</span>
+			<span class="p">}</span>
+			<span class="nx">abciResponses</span><span class="p">.</span><span class="nx">DeliverTx</span><span class="p">[</span><span class="nx">txIndex</span><span class="p">]</span> <span class="p">=</span> <span class="nx">txRes</span>
+			<span class="nx">txIndex</span><span class="o">++</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+	<span class="nx">proxyAppConn</span><span class="p">.</span><span class="nf">SetResponseCallback</span><span class="p">(</span><span class="nx">proxyCb</span><span class="p">)</span>
+
+	<span class="nx">commitInfo</span><span class="p">,</span> <span class="nx">byzVals</span> <span class="o">:=</span> <span class="nf">getBeginBlockValidatorInfo</span><span class="p">(</span><span class="nx">block</span><span class="p">,</span> <span class="nx">lastValSet</span><span class="p">,</span> <span class="nx">stateDB</span><span class="p">)</span>
+
+	<span class="c1">// Begin block
+</span><span class="c1"></span>	<span class="kd">var</span> <span class="nx">err</span> <span class="kt">error</span>
+	<span class="nx">abciResponses</span><span class="p">.</span><span class="nx">BeginBlock</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">proxyAppConn</span><span class="p">.</span><span class="nf">BeginBlockSync</span><span class="p">(</span><span class="nx">abci</span><span class="p">.</span><span class="nx">RequestBeginBlock</span><span class="p">{</span>
+		<span class="nx">Hash</span><span class="p">:</span>                <span class="nx">block</span><span class="p">.</span><span class="nf">Hash</span><span class="p">(),</span>
+		<span class="nx">Header</span><span class="p">:</span>              <span class="nx">types</span><span class="p">.</span><span class="nx">TM2PB</span><span class="p">.</span><span class="nf">Header</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">block</span><span class="p">.</span><span class="nx">Header</span><span class="p">),</span>
+		<span class="nx">LastCommitInfo</span><span class="p">:</span>      <span class="nx">commitInfo</span><span class="p">,</span>
+		<span class="nx">ByzantineValidators</span><span class="p">:</span> <span class="nx">byzVals</span><span class="p">,</span>
+	<span class="p">})</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">logger</span><span class="p">.</span><span class="nf">Error</span><span class="p">(</span><span class="s">&#34;Error in proxyAppConn.BeginBlock&#34;</span><span class="p">,</span> <span class="s">&#34;err&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+		<span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
+	<span class="p">}</span>
+
+	<span class="c1">// Run txs of block.
+</span><span class="c1"></span>	<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">tx</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">block</span><span class="p">.</span><span class="nx">Txs</span> <span class="p">{</span>
+		<span class="nx">proxyAppConn</span><span class="p">.</span><span class="nf">DeliverTxAsync</span><span class="p">(</span><span class="nx">tx</span><span class="p">)</span>
+		<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">proxyAppConn</span><span class="p">.</span><span class="nf">Error</span><span class="p">();</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+
+	<span class="c1">// End block.
+</span><span class="c1"></span>	<span class="nx">abciResponses</span><span class="p">.</span><span class="nx">EndBlock</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">proxyAppConn</span><span class="p">.</span><span class="nf">EndBlockSync</span><span class="p">(</span><span class="nx">abci</span><span class="p">.</span><span class="nx">RequestEndBlock</span><span class="p">{</span><span class="nx">Height</span><span class="p">:</span> <span class="nx">block</span><span class="p">.</span><span class="nx">Height</span><span class="p">})</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">logger</span><span class="p">.</span><span class="nf">Error</span><span class="p">(</span><span class="s">&#34;Error in proxyAppConn.EndBlock&#34;</span><span class="p">,</span> <span class="s">&#34;err&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+		<span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
+	<span class="p">}</span>
+
+	<span class="nx">logger</span><span class="p">.</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;Executed block&#34;</span><span class="p">,</span> <span class="s">&#34;height&#34;</span><span class="p">,</span> <span class="nx">block</span><span class="p">.</span><span class="nx">Height</span><span class="p">,</span> <span class="s">&#34;validTxs&#34;</span><span class="p">,</span> <span class="nx">validTxs</span><span class="p">,</span> <span class="s">&#34;invalidTxs&#34;</span><span class="p">,</span> <span class="nx">invalidTxs</span><span class="p">)</span>
+
+	<span class="k">return</span> <span class="nx">abciResponses</span><span class="p">,</span> <span class="kc">nil</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>整体的流程是，首先通知abci程序，需要进行生成区块了，等待ABCI程序的结果。所以，我们如果了解ABCI的话，我们会发现，我们可以自己实现BeginBlock的操作，返回结果，不过，官方例都没有做。
+接下来是把TX一个一个的发给ABCI，这个官方历程都做了，最后是EndBlock，嗯，没做示例。
+到这个地方，和abci的通信已经做完了，接下来就是更新自己的状态内容了。跟ABCI没关系了。
+接下来是updateState</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">updateState</span><span class="p">(</span>
+	<span class="nx">state</span> <span class="nx">State</span><span class="p">,</span>
+	<span class="nx">blockID</span> <span class="nx">types</span><span class="p">.</span><span class="nx">BlockID</span><span class="p">,</span>
+	<span class="nx">header</span> <span class="o">*</span><span class="nx">types</span><span class="p">.</span><span class="nx">Header</span><span class="p">,</span>
+	<span class="nx">abciResponses</span> <span class="o">*</span><span class="nx">ABCIResponses</span><span class="p">,</span>
+	<span class="nx">validatorUpdates</span> <span class="p">[]</span><span class="o">*</span><span class="nx">types</span><span class="p">.</span><span class="nx">Validator</span><span class="p">,</span>
+<span class="p">)</span> <span class="p">(</span><span class="nx">State</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+
+	<span class="c1">// Copy the valset so we can apply changes from EndBlock
+</span><span class="c1"></span>	<span class="c1">// and update s.LastValidators and s.Validators.
+</span><span class="c1"></span>	<span class="nx">nValSet</span> <span class="o">:=</span> <span class="nx">state</span><span class="p">.</span><span class="nx">NextValidators</span><span class="p">.</span><span class="nf">Copy</span><span class="p">()</span>
+
+	<span class="c1">// Update the validator set with the latest abciResponses.
+</span><span class="c1"></span>	<span class="nx">lastHeightValsChanged</span> <span class="o">:=</span> <span class="nx">state</span><span class="p">.</span><span class="nx">LastHeightValidatorsChanged</span>
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">validatorUpdates</span><span class="p">)</span> <span class="p">&gt;</span> <span class="mi">0</span> <span class="p">{</span>
+		<span class="nx">err</span> <span class="o">:=</span> <span class="nf">updateValidators</span><span class="p">(</span><span class="nx">nValSet</span><span class="p">,</span> <span class="nx">validatorUpdates</span><span class="p">)</span>
+		<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="k">return</span> <span class="nx">state</span><span class="p">,</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;Error changing validator set: %v&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+		<span class="p">}</span>
+		<span class="c1">// Change results from this height but only applies to the next next height.
+</span><span class="c1"></span>		<span class="nx">lastHeightValsChanged</span> <span class="p">=</span> <span class="nx">header</span><span class="p">.</span><span class="nx">Height</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">1</span>
+	<span class="p">}</span>
+
+	<span class="c1">// Update validator proposer priority and set state variables.
+</span><span class="c1"></span>	<span class="nx">nValSet</span><span class="p">.</span><span class="nf">IncrementProposerPriority</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+	<span class="c1">// Update the params with the latest abciResponses.
+</span><span class="c1"></span>	<span class="nx">nextParams</span> <span class="o">:=</span> <span class="nx">state</span><span class="p">.</span><span class="nx">ConsensusParams</span>
+	<span class="nx">lastHeightParamsChanged</span> <span class="o">:=</span> <span class="nx">state</span><span class="p">.</span><span class="nx">LastHeightConsensusParamsChanged</span>
+	<span class="k">if</span> <span class="nx">abciResponses</span><span class="p">.</span><span class="nx">EndBlock</span><span class="p">.</span><span class="nx">ConsensusParamUpdates</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="c1">// NOTE: must not mutate s.ConsensusParams
+</span><span class="c1"></span>		<span class="nx">nextParams</span> <span class="p">=</span> <span class="nx">state</span><span class="p">.</span><span class="nx">ConsensusParams</span><span class="p">.</span><span class="nf">Update</span><span class="p">(</span><span class="nx">abciResponses</span><span class="p">.</span><span class="nx">EndBlock</span><span class="p">.</span><span class="nx">ConsensusParamUpdates</span><span class="p">)</span>
+		<span class="nx">err</span> <span class="o">:=</span> <span class="nx">nextParams</span><span class="p">.</span><span class="nf">Validate</span><span class="p">()</span>
+		<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="k">return</span> <span class="nx">state</span><span class="p">,</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;Error updating consensus params: %v&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+		<span class="p">}</span>
+		<span class="c1">// Change results from this height but only applies to the next height.
+</span><span class="c1"></span>		<span class="nx">lastHeightParamsChanged</span> <span class="p">=</span> <span class="nx">header</span><span class="p">.</span><span class="nx">Height</span> <span class="o">+</span> <span class="mi">1</span>
+	<span class="p">}</span>
+
+	<span class="c1">// TODO: allow app to upgrade version
+</span><span class="c1"></span>	<span class="nx">nextVersion</span> <span class="o">:=</span> <span class="nx">state</span><span class="p">.</span><span class="nx">Version</span>
+
+	<span class="c1">// NOTE: the AppHash has not been populated.
+</span><span class="c1"></span>	<span class="c1">// It will be filled on state.Save.
+</span><span class="c1"></span>	<span class="k">return</span> <span class="nx">State</span><span class="p">{</span>
+		<span class="nx">Version</span><span class="p">:</span>                          <span class="nx">nextVersion</span><span class="p">,</span>
+		<span class="nx">ChainID</span><span class="p">:</span>                          <span class="nx">state</span><span class="p">.</span><span class="nx">ChainID</span><span class="p">,</span>
+		<span class="nx">LastBlockHeight</span><span class="p">:</span>                  <span class="nx">header</span><span class="p">.</span><span class="nx">Height</span><span class="p">,</span>
+		<span class="nx">LastBlockTotalTx</span><span class="p">:</span>                 <span class="nx">state</span><span class="p">.</span><span class="nx">LastBlockTotalTx</span> <span class="o">+</span> <span class="nx">header</span><span class="p">.</span><span class="nx">NumTxs</span><span class="p">,</span>
+		<span class="nx">LastBlockID</span><span class="p">:</span>                      <span class="nx">blockID</span><span class="p">,</span>
+		<span class="nx">LastBlockTime</span><span class="p">:</span>                    <span class="nx">header</span><span class="p">.</span><span class="nx">Time</span><span class="p">,</span>
+		<span class="nx">NextValidators</span><span class="p">:</span>                   <span class="nx">nValSet</span><span class="p">,</span>
+		<span class="nx">Validators</span><span class="p">:</span>                       <span class="nx">state</span><span class="p">.</span><span class="nx">NextValidators</span><span class="p">.</span><span class="nf">Copy</span><span class="p">(),</span>
+		<span class="nx">LastValidators</span><span class="p">:</span>                   <span class="nx">state</span><span class="p">.</span><span class="nx">Validators</span><span class="p">.</span><span class="nf">Copy</span><span class="p">(),</span>
+		<span class="nx">LastHeightValidatorsChanged</span><span class="p">:</span>      <span class="nx">lastHeightValsChanged</span><span class="p">,</span>
+		<span class="nx">ConsensusParams</span><span class="p">:</span>                  <span class="nx">nextParams</span><span class="p">,</span>
+		<span class="nx">LastHeightConsensusParamsChanged</span><span class="p">:</span> <span class="nx">lastHeightParamsChanged</span><span class="p">,</span>
+		<span class="nx">LastResultsHash</span><span class="p">:</span>                  <span class="nx">abciResponses</span><span class="p">.</span><span class="nf">ResultsHash</span><span class="p">(),</span>
+		<span class="nx">AppHash</span><span class="p">:</span>                          <span class="kc">nil</span><span class="p">,</span>
+	<span class="p">},</span> <span class="kc">nil</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>首先是更新验证节点集合，更新策略就是这样的
+如果当前不存在则直接加入一个验证者
+如果当前存在并且投票权为0则删除
+如果当前存在其投票权不为0则更新
+然后更新共识参数，生成state，但是，这个时候还没有APPHASH呢，因为还没有调用完。
+然后执行commit</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">blockExec</span> <span class="o">*</span><span class="nx">BlockExecutor</span><span class="p">)</span> <span class="nf">Commit</span><span class="p">(</span>
+	<span class="nx">state</span> <span class="nx">State</span><span class="p">,</span>
+	<span class="nx">block</span> <span class="o">*</span><span class="nx">types</span><span class="p">.</span><span class="nx">Block</span><span class="p">,</span>
+<span class="p">)</span> <span class="p">([]</span><span class="kt">byte</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+	<span class="nx">blockExec</span><span class="p">.</span><span class="nx">mempool</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
+	<span class="k">defer</span> <span class="nx">blockExec</span><span class="p">.</span><span class="nx">mempool</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+
+	<span class="c1">// while mempool is Locked, flush to ensure all async requests have completed
+</span><span class="c1"></span>	<span class="c1">// in the ABCI app before Commit.
+</span><span class="c1"></span>	<span class="nx">err</span> <span class="o">:=</span> <span class="nx">blockExec</span><span class="p">.</span><span class="nx">mempool</span><span class="p">.</span><span class="nf">FlushAppConn</span><span class="p">()</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">blockExec</span><span class="p">.</span><span class="nx">logger</span><span class="p">.</span><span class="nf">Error</span><span class="p">(</span><span class="s">&#34;Client error during mempool.FlushAppConn&#34;</span><span class="p">,</span> <span class="s">&#34;err&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+		<span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
+	<span class="p">}</span>
+
+	<span class="c1">// Commit block, get hash back
+</span><span class="c1"></span>	<span class="nx">res</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">blockExec</span><span class="p">.</span><span class="nx">proxyApp</span><span class="p">.</span><span class="nf">CommitSync</span><span class="p">()</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">blockExec</span><span class="p">.</span><span class="nx">logger</span><span class="p">.</span><span class="nf">Error</span><span class="p">(</span>
+			<span class="s">&#34;Client error during proxyAppConn.CommitSync&#34;</span><span class="p">,</span>
+			<span class="s">&#34;err&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">,</span>
+		<span class="p">)</span>
+		<span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
+	<span class="p">}</span>
+	<span class="c1">// ResponseCommit has no error code - just data
+</span><span class="c1"></span>
+	<span class="nx">blockExec</span><span class="p">.</span><span class="nx">logger</span><span class="p">.</span><span class="nf">Info</span><span class="p">(</span>
+		<span class="s">&#34;Committed state&#34;</span><span class="p">,</span>
+		<span class="s">&#34;height&#34;</span><span class="p">,</span> <span class="nx">block</span><span class="p">.</span><span class="nx">Height</span><span class="p">,</span>
+		<span class="s">&#34;txs&#34;</span><span class="p">,</span> <span class="nx">block</span><span class="p">.</span><span class="nx">NumTxs</span><span class="p">,</span>
+		<span class="s">&#34;appHash&#34;</span><span class="p">,</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">&#34;%X&#34;</span><span class="p">,</span> <span class="nx">res</span><span class="p">.</span><span class="nx">Data</span><span class="p">),</span>
+	<span class="p">)</span>
+
+	<span class="c1">// Update mempool.
+</span><span class="c1"></span>	<span class="nx">err</span> <span class="p">=</span> <span class="nx">blockExec</span><span class="p">.</span><span class="nx">mempool</span><span class="p">.</span><span class="nf">Update</span><span class="p">(</span>
+		<span class="nx">block</span><span class="p">.</span><span class="nx">Height</span><span class="p">,</span>
+		<span class="nx">block</span><span class="p">.</span><span class="nx">Txs</span><span class="p">,</span>
+		<span class="nf">TxPreCheck</span><span class="p">(</span><span class="nx">state</span><span class="p">),</span>
+		<span class="nf">TxPostCheck</span><span class="p">(</span><span class="nx">state</span><span class="p">),</span>
+	<span class="p">)</span>
+
+	<span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">Data</span><span class="p">,</span> <span class="nx">err</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>不复杂，就是通知ABCI程序要commit到数据库了，调用了ABCI程序的COMMIT函数。然后从mempool中移除本次提交的交易。
+最后一步，把状态写入区块。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">saveState</span><span class="p">(</span><span class="nx">db</span> <span class="nx">dbm</span><span class="p">.</span><span class="nx">DB</span><span class="p">,</span> <span class="nx">state</span> <span class="nx">State</span><span class="p">,</span> <span class="nx">key</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="p">{</span>
+	<span class="nx">nextHeight</span> <span class="o">:=</span> <span class="nx">state</span><span class="p">.</span><span class="nx">LastBlockHeight</span> <span class="o">+</span> <span class="mi">1</span>
+	<span class="c1">// If first block, save validators for block 1.
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">nextHeight</span> <span class="o">==</span> <span class="mi">1</span> <span class="p">{</span>
+		<span class="c1">// This extra logic due to Tendermint validator set changes being delayed 1 block.
+</span><span class="c1"></span>		<span class="c1">// It may get overwritten due to InitChain validator updates.
+</span><span class="c1"></span>		<span class="nx">lastHeightVoteChanged</span> <span class="o">:=</span> <span class="nb">int64</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+		<span class="nf">saveValidatorsInfo</span><span class="p">(</span><span class="nx">db</span><span class="p">,</span> <span class="nx">nextHeight</span><span class="p">,</span> <span class="nx">lastHeightVoteChanged</span><span class="p">,</span> <span class="nx">state</span><span class="p">.</span><span class="nx">Validators</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="c1">// Save next validators.
+</span><span class="c1"></span>	<span class="nf">saveValidatorsInfo</span><span class="p">(</span><span class="nx">db</span><span class="p">,</span> <span class="nx">nextHeight</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="nx">state</span><span class="p">.</span><span class="nx">LastHeightValidatorsChanged</span><span class="p">,</span> <span class="nx">state</span><span class="p">.</span><span class="nx">NextValidators</span><span class="p">)</span>
+	<span class="c1">// Save next consensus params.
+</span><span class="c1"></span>	<span class="nf">saveConsensusParamsInfo</span><span class="p">(</span><span class="nx">db</span><span class="p">,</span> <span class="nx">nextHeight</span><span class="p">,</span> <span class="nx">state</span><span class="p">.</span><span class="nx">LastHeightConsensusParamsChanged</span><span class="p">,</span> <span class="nx">state</span><span class="p">.</span><span class="nx">ConsensusParams</span><span class="p">)</span>
+	<span class="nx">db</span><span class="p">.</span><span class="nf">SetSync</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">state</span><span class="p">.</span><span class="nf">Bytes</span><span class="p">())</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>我们可以看明白了，通过这个流程，最最最最主要的就是ApplyBlock程序了。
+这几个环节我们中间也进行了分析，再写ABCI程序也更清晰了。</p>
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">Hundred</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2019-03-06 02:32
+        
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">许可协议</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/%E5%8C%BA%E5%9D%97%E9%93%BE/">区块链</a>
+          <a href="/tags/golang/">golang</a>
+          <a href="/tags/%E6%BA%90%E7%A0%81/">源码</a>
+          <a href="/tags/tendermint/">tendermint</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/Tendermint%E9%98%85%E8%AF%BBIX/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">Tendermint阅读IX</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/Tendermint%E9%98%85%E8%AF%BBVII/">
+            <span class="next-text nav-default">Tendermint阅读VII</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+  
+  
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="#" class="iconfont icon-cnblogs" title="cnblogs"></a>
+      <a href="mailto:sdwangzhuo@gmail.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/hundredwz" class="iconfont icon-github" title="github"></a>
+      <a href="#" class="iconfont icon-juejin" title="juejin"></a>
+      <a href="#" class="iconfont icon-v2ex" title="v2ex"></a>
+      <a href="https://weibo.com/hundredwz" class="iconfont icon-weibo" title="weibo"></a>
+  <a href="https://hundredwz.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2013 - 
+    2020
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Hundred</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.min.js" integrity="sha256-jwCP0NAdCBloaIWTWHmW4i3snUNMHUNO+jr9rYd2iOI=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.locales.min.js" integrity="sha256-ZwofwC1Lf/faQCzN7nZtfijVV6hSwxjQMwXL4gn9qU8=" crossorigin="anonymous"></script>
+  <script><!-- NOTE: timeago.js uses the language code format like "zh_CN" (underscore and case sensitive) -->
+    var languageCode = "zh-CN".replace(/-/g, '_').replace(/_(.*)/, function ($0, $1) {return $0.replace($1, $1.toUpperCase());});
+    timeago().render(document.querySelectorAll('.timeago'), languageCode);
+    timeago.cancel();  
+  </script>
+<script type="text/javascript" src="/dist/even.26188efa.min.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+      showProcessingMessages: false,
+      messageStyle: 'none'
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"  integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-138883536-1', 'auto');
+	ga('set', 'anonymizeIp', true);
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+
+
+
+
+</body>
+</html>

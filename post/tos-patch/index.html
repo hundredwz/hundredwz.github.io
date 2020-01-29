@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>tos patch - A Lazy Coder</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="Hundred" /><meta name="description" content="最近这几天在学习patchrom，由于什么都不懂，凑巧有大神做了tos，为了熟悉流程，快速进入开发，就在大神的指导下做了个tos。现在记录下，希望对于其他人有帮助。
+" /><meta name="keywords" content="Blockchain, Golang, Fabric, Ethereum, Code" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.56.1 with even 4.0.0" />
+
+
+<link rel="canonical" href="https://hundredwz.github.io/post/tos-patch/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<link href="/dist/even.c2a46f00.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+<link rel="stylesheet" href="/css/reset-even.css">
+
+
+<meta property="og:title" content="tos patch" />
+<meta property="og:description" content="最近这几天在学习patchrom，由于什么都不懂，凑巧有大神做了tos，为了熟悉流程，快速进入开发，就在大神的指导下做了个tos。现在记录下，希望对于其他人有帮助。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://hundredwz.github.io/post/tos-patch/" />
+<meta property="article:published_time" content="2016-07-02T06:26:00+00:00" />
+<meta property="article:modified_time" content="2016-07-02T06:26:00+00:00" />
+<meta itemprop="name" content="tos patch">
+<meta itemprop="description" content="最近这几天在学习patchrom，由于什么都不懂，凑巧有大神做了tos，为了熟悉流程，快速进入开发，就在大神的指导下做了个tos。现在记录下，希望对于其他人有帮助。">
+
+
+<meta itemprop="datePublished" content="2016-07-02T06:26:00&#43;00:00" />
+<meta itemprop="dateModified" content="2016-07-02T06:26:00&#43;00:00" />
+<meta itemprop="wordCount" content="2064">
+
+
+
+<meta itemprop="keywords" content="patch,tos," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="tos patch"/>
+<meta name="twitter:description" content="最近这几天在学习patchrom，由于什么都不懂，凑巧有大神做了tos，为了熟悉流程，快速进入开发，就在大神的指导下做了个tos。现在记录下，希望对于其他人有帮助。"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">A Lazy Coder</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">首页</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">归档</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">分类</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/friends/">
+        <li class="mobile-menu-item">Friends</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">A Lazy Coder</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">首页</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">归档</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">分类</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/friends/">Friends</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">tos patch</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2016-07-02 06:26 </span>
+        <div class="post-category">
+            <a href="/categories/tool/"> tool </a>
+            </div>
+          <span class="more-meta"> 约 2064 字 </span>
+          <span class="more-meta"> 预计阅读 5 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    
+  </div>
+</div>
+  <div class="post-outdated">
+    <div class="warn">
+      <p>【注意】最后更新于 <span class="timeago" datetime="2016-07-02T06:26:00" title="July 2, 2016">July 2, 2016</span>，文中内容可能已过时，请谨慎使用。</p>
+    </div>
+  </div>
+    <div class="post-content">
+      <p>最近这几天在学习patchrom，由于什么都不懂，凑巧有大神做了tos，为了熟悉流程，快速进入开发，就在大神的指导下做了个tos。现在记录下，希望对于其他人有帮助。</p>
+
+<p>##1.下载源码
+这一步实际上不必多说，网上的很多教程这部说得很详细。
+而且tos更简单，连repo都没必要下载，直接git clone就可以</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">git clone https://github.com/TOSPlus/TPS</pre></td></tr></table>
+</div>
+</div>
+<p>这样代码就下载好了，我也没必要多解释。
+这个就是下载下来的结构
+<img src="https://raw.githubusercontent.com/hundredwz/Images/blog/tos_structure.png" alt="tos_structure" />
+这个结构官方文档讲的也比较清楚，主要开发处理的是devices里面的文件，一会做到了再解释。
+##2.创建项目
+这分为几步，官方文档解释的也比较清楚。
+首先初始化环境变量</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">source build/envsetup.sh</pre></td></tr></table>
+</div>
+</div>
+<p>接下来配置目标机型</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">make create brand=IUNI device=U810</pre></td></tr></table>
+</div>
+</div>
+<p>这个就是创建机型，然后在机型生成一些特定的文件。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">cp ota.zip TPS/device/U810/</pre></td></tr></table>
+</div>
+</div>
+<p>这个官方文档说复制到机型目录下，实际上直接找个*合并odex*的包，然后托过去就好了！
+注意，一定要合并odex！
+就是这样，这个ota.zip
+<img src="https://raw.githubusercontent.com/hundredwz/Images/blog/tos_device.png" alt="tos_device" />
+然后就是对目标机型进行配置</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">make config device=U810</pre></td></tr></table>
+</div>
+</div>
+<p>接下来就完了，配置些东西就开始吧。
+##3.配置文件
+<em>makefile</em>
+就像上面那个图，我们看到有个makefile文件，这是一个整体的配置，实际上完全不修改也可以，默认就好。
+如果要修改的话makefile上面也都有注释，虽然是英文的。
+由于我这个机型的rec有很多人编译，设置的目标机型也都不同，我就直接不让它生成验证脚本了</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">RECOVERY_DEVICE_ASSERT=false</pre></td></tr></table>
+</div>
+</div>
+<p>就是这一句，实际上无所谓。
+<em>config</em>
+这个地方需要几个文件，由于我是编译完成的，你至少得有我那些文件，除了我那个文件夹（这个会自动生成，不用管）。
+<img src="https://raw.githubusercontent.com/hundredwz/Images/blog/tos_device_config.png" alt="tos_device_config" />
+这些文件你直接新建出来就好了。
+首先这个build.prop，你从官方的里面找点也行，有几个属性是必须得设置的
+比如</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">ro.qrom.otapath=/data/media/0</pre></td></tr></table>
+</div>
+</div>
+<p>这个你就填这个就可以（实际上除非跟tos合作，谁有办法去做他的接口）。
+那个file_context你可以解包boot.img，然后里面就有，拉过来就好了。
+keep_files.list我理解的是保留官方包（底包）那些文件，不填就可以。
+misc_info.txt主要指的个分去的大小，这个主要修改分区大小就好了，在你解包boot.img出来的文件中打开img_info文件你就能找到。
+recovery.fstab在你解包boot.img中有个fstab.qcom，这个就是分区表，实际上都大同小异。
+remove_files.list这个我跟人感觉很重要，因为你得从官方包删东西啊.
+举个例子，你要删除media文件夹以及app/vpn.apk，那你就可以这么写</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span><span class="lnt">2
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">app/vpn.apk
+media/</pre></td></tr></table>
+</div>
+</div>
+<p>注意，最好把原包的短信以及phone.apk都删除，要不然很容易出问题。
+还有tos_system_files.ignore官方说了注入有问题，那就按他的写进去就好了</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span><span class="lnt">2
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">bin/mediaserver_injector
+lib/libmedia_jni.so</pre></td></tr></table>
+</div>
+</div>
+<p>到这实际上就配置完了，接下来就开始动工吧。
+##4.插桩
+首先要将文件反编译</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">make prepare</pre></td></tr></table>
+</div>
+</div>
+<p>我刚开始不明白，一直提示hmt什么的的jar包，最后发现是忘了合并odex了，所以记得要合并
+接下来是patch</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">make patch</pre></td></tr></table>
+</div>
+</div>
+<p>这个通常不会有什么问题，就正常过去了，这个速度取决于电脑配置了。反正我推荐做双系统，而不是虚拟机。
+当make patch完了后就开始处理冲突吧。
+因为怕出问题，所以主要修改的是
+<code>patch/smali/target</code>
+目录下的文件，具体怎么修复冲突就不再这详细说了。
+修改好了就可以</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">make repack</pre></td></tr></table>
+</div>
+</div>
+<p>把修改的添加进去，执行</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">make package</pre></td></tr></table>
+</div>
+</div>
+<p>做成包就可以了
+不过似乎tos打包的boot.img有点问题，你被替换成自己的boot.img，能开机就在修复问题
+##5.最后一点东西</p>
+
+<p>我在上面说了要替换boot.img，但是总不能做一个刷机包就替换一个吧，麻烦还没意义，正巧有个override文件夹，直接把boot.img放到BOOTABLE_IMAGES里面就好了。
+加入你想往system文件夹里预置点程序，比如输入法，比如音乐，就打开SYSTEM文件夹，创建相应的文件夹，文件粘贴进去就可以了。
+<img src="https://raw.githubusercontent.com/hundredwz/Images/blog/tos_override.png" alt="tos_override" />
+比如你想往app里添加个baidushurufa.apk，那就在SYSTEM这个文件夹里面创建个app文件夹，把baidushurufa.apk放到app文件夹就好啦。
+这个是我添加的
+<img src="https://raw.githubusercontent.com/hundredwz/Images/blog/tos_override_tree.png" alt="tos_override_tree" /></p>
+
+<p>----------------------------------我是分割线-------------------------</p>
+
+<p>到这似乎步骤就完了，也确实是完了。我在这想多说点东西。针对我等小白的。
+1.老生常谈，必须得坚持下去，毕竟过程很枯燥，而且最好对着感兴趣，要不然做着做着就想放弃了。
+2.最好找个大神做后盾。这个不是说遇到不懂的就要问他，而是这样会心里面有底，真出现错误了自己也不会怕，有帮着自己的人。但是遇到问题了能自己解决就自己解决，这样才会印象深刻。大婶可以给你信心勇气，但是一切得靠自己。
+3.用好beyondcompare这些工具，以及一些常用的linux命令，我当时就用了很多grep查找命令。用好了事半功倍。</p>
+
+<p>最后还是要感谢大神对我的指导帮助，原来在群里我还嫌他一直开车没少说他，对他也不好，大婶不计前嫌，指导我做出来包！感谢大神！
+我的device有时间发出来吧，大婶的<a href="https://github.com/hundred666/tos_device_iuni_u810">device</a>我已经替他上传了，感兴趣的同学可以学习学习！</p>
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">Hundred</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2016-07-02 06:26
+        
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">许可协议</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/patch/">patch</a>
+          <a href="/tags/tos/">tos</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/%E7%BD%91%E7%AB%99%E6%90%AC%E5%AE%B6%E5%88%B0github/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">网站搬家到github</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/esp8266%E8%AF%95%E7%8E%A9/">
+            <span class="next-text nav-default">esp8266试玩</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+  
+  
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="#" class="iconfont icon-cnblogs" title="cnblogs"></a>
+      <a href="mailto:sdwangzhuo@gmail.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/hundredwz" class="iconfont icon-github" title="github"></a>
+      <a href="#" class="iconfont icon-juejin" title="juejin"></a>
+      <a href="#" class="iconfont icon-v2ex" title="v2ex"></a>
+      <a href="https://weibo.com/hundredwz" class="iconfont icon-weibo" title="weibo"></a>
+  <a href="https://hundredwz.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2013 - 
+    2020
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Hundred</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.min.js" integrity="sha256-jwCP0NAdCBloaIWTWHmW4i3snUNMHUNO+jr9rYd2iOI=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.locales.min.js" integrity="sha256-ZwofwC1Lf/faQCzN7nZtfijVV6hSwxjQMwXL4gn9qU8=" crossorigin="anonymous"></script>
+  <script><!-- NOTE: timeago.js uses the language code format like "zh_CN" (underscore and case sensitive) -->
+    var languageCode = "zh-CN".replace(/-/g, '_').replace(/_(.*)/, function ($0, $1) {return $0.replace($1, $1.toUpperCase());});
+    timeago().render(document.querySelectorAll('.timeago'), languageCode);
+    timeago.cancel();  
+  </script>
+<script type="text/javascript" src="/dist/even.26188efa.min.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+      showProcessingMessages: false,
+      messageStyle: 'none'
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"  integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-138883536-1', 'auto');
+	ga('set', 'anonymizeIp', true);
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+
+
+
+
+</body>
+</html>

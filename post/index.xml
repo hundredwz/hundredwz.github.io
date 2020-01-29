@@ -1,0 +1,1045 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on A Lazy Coder</title>
+    <link>https://hundredwz.github.io/post/</link>
+    <description>Recent content in Posts on A Lazy Coder</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Wed, 29 Jan 2020 03:08:43 +0000</lastBuildDate>
+    
+	<atom:link href="https://hundredwz.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Tendermint II</title>
+      <link>https://hundredwz.github.io/post/Tendermint-II/</link>
+      <pubDate>Wed, 29 Jan 2020 03:08:43 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Tendermint-II/</guid>
+      <description>我们知道，在启动一个节点前，需要执行tendermint init完成相关系统文件的生成，具体如何处理的我们查看下InitFilesCmd 查看</description>
+    </item>
+    
+    <item>
+      <title>Tendermint I</title>
+      <link>https://hundredwz.github.io/post/Tendermint-I/</link>
+      <pubDate>Wed, 29 Jan 2020 03:05:57 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Tendermint-I/</guid>
+      <description>由于新型肺炎，不得不宅在家里面，闲着也是闲着，不如再认真地过一遍Tendermint源码吧。之前看的比较粗略，理解的也不够深。正好毕设使用了</description>
+    </item>
+    
+    <item>
+      <title>一道问题引发的golang调度</title>
+      <link>https://hundredwz.github.io/post/%E4%B8%80%E9%81%93%E9%97%AE%E9%A2%98%E5%BC%95%E5%8F%91%E7%9A%84golang%E8%B0%83%E5%BA%A6/</link>
+      <pubDate>Fri, 06 Sep 2019 01:54:03 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/%E4%B8%80%E9%81%93%E9%97%AE%E9%A2%98%E5%BC%95%E5%8F%91%E7%9A%84golang%E8%B0%83%E5%BA%A6/</guid>
+      <description>&lt;p&gt;说实话，网上对于golang调度的文章很多，但是大部分都是从理论上来描述，描写的精确一点的也依然不够直观。今天跟同学在讨论一道题目的时候又好好的理解了下golang的调度。感觉有所收获，记录一下。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Ethereum分片</title>
+      <link>https://hundredwz.github.io/post/ethereum%E5%88%86%E7%89%87/</link>
+      <pubDate>Fri, 09 Aug 2019 07:03:33 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/ethereum%E5%88%86%E7%89%87/</guid>
+      <description>背景 交易TPS的限制 存储数据的浪费 缺乏并行能力 核心目标 增强区块链的处理能力，首先降低数据的存储压力，其次增强区块链的处理能力 技术分类 Layer 2，在</description>
+    </item>
+    
+    <item>
+      <title>以太坊RLP编码</title>
+      <link>https://hundredwz.github.io/post/%E4%BB%A5%E5%A4%AA%E5%9D%8ARLP%E7%BC%96%E7%A0%81/</link>
+      <pubDate>Mon, 05 Aug 2019 11:43:06 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/%E4%BB%A5%E5%A4%AA%E5%9D%8ARLP%E7%BC%96%E7%A0%81/</guid>
+      <description>&lt;p&gt;在进行以太坊相关学习或者开发的时候，一个trie还有一个rlp都是绕不开的数据结构。这次我们先来讨论讨论rlp。&lt;/p&gt;
+
+&lt;p&gt;数据结构我们也了解过很多了，比如树、链表、图等；如果说数据的序列化方式，像json、xml、protobuf、klv等都是一些很成熟的序列化方式，可是以太坊为什么要用rlp呢？&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Tendermint阅读XI</title>
+      <link>https://hundredwz.github.io/post/Tendermint%E9%98%85%E8%AF%BBXI/</link>
+      <pubDate>Fri, 08 Mar 2019 08:25:56 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Tendermint%E9%98%85%E8%AF%BBXI/</guid>
+      <description>&lt;p&gt;我们现在来看一下Tendermint的工作流程，接上我们第一篇文章了。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Tendermint阅读X</title>
+      <link>https://hundredwz.github.io/post/Tendermint%E9%98%85%E8%AF%BBX/</link>
+      <pubDate>Fri, 08 Mar 2019 06:26:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Tendermint%E9%98%85%E8%AF%BBX/</guid>
+      <description>&lt;p&gt;我们要开始看最难的了，共识模块，这块事区块链的核心，也是流程多到让人痛苦，我们就尽力的看一看吧。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Tendermint阅读IX</title>
+      <link>https://hundredwz.github.io/post/Tendermint%E9%98%85%E8%AF%BBIX/</link>
+      <pubDate>Fri, 08 Mar 2019 03:11:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Tendermint%E9%98%85%E8%AF%BBIX/</guid>
+      <description>&lt;p&gt;我们现在要啃一个硬骨头了，共识模块。在开始之前，我们先看一下EvidencePool模块，一个合法证据池模块。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Tendermint阅读VIII</title>
+      <link>https://hundredwz.github.io/post/Tendermint%E9%98%85%E8%AF%BBVIII/</link>
+      <pubDate>Wed, 06 Mar 2019 02:32:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Tendermint%E9%98%85%E8%AF%BBVIII/</guid>
+      <description>&lt;p&gt;我们在上一篇文章中提到，block处理有处理state，以及相应的执行过程。我们这一节就来看一看。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Tendermint阅读VII</title>
+      <link>https://hundredwz.github.io/post/Tendermint%E9%98%85%E8%AF%BBVII/</link>
+      <pubDate>Mon, 04 Mar 2019 02:43:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Tendermint%E9%98%85%E8%AF%BBVII/</guid>
+      <description>&lt;p&gt;这次我们来看一个复杂的模块，blockchain模块，实际上我个人感觉，叫block模块似乎更好。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Tendermint阅读VI</title>
+      <link>https://hundredwz.github.io/post/Tendermint%E9%98%85%E8%AF%BBVI/</link>
+      <pubDate>Sat, 02 Mar 2019 02:15:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Tendermint%E9%98%85%E8%AF%BBVI/</guid>
+      <description>&lt;p&gt;看了两个复杂的，我们来看一个简单的模块，crypto模块。这个模块封装了很多常用的加密所用的包。我们就大体介绍一下。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Tendermint阅读V</title>
+      <link>https://hundredwz.github.io/post/Tendermint%E9%98%85%E8%AF%BBV/</link>
+      <pubDate>Thu, 28 Feb 2019 01:50:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Tendermint%E9%98%85%E8%AF%BBV/</guid>
+      <description>&lt;p&gt;我们看完了peer，看点稍微简单点的mempool实现吧。
+这个和我们写的abci程序有直接的关联，因此，我们需要仔细阅读下。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Tendermint阅读IV</title>
+      <link>https://hundredwz.github.io/post/Tendermint%E9%98%85%E8%AF%BBIV/</link>
+      <pubDate>Tue, 26 Feb 2019 13:05:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Tendermint%E9%98%85%E8%AF%BBIV/</guid>
+      <description>&lt;p&gt;我们之前看了Tendermint如何和别人连接，如何接受别人的连接，可是，Tendermint得怎么找到别人啊！
+不能手动一个一个的输入连接地址啊！
+这个就是pexreactor的功能了！&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Tendermint源码学习III</title>
+      <link>https://hundredwz.github.io/post/Tendermint%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0III/</link>
+      <pubDate>Mon, 25 Feb 2019 12:34:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Tendermint%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0III/</guid>
+      <description>&lt;p&gt;我们之前看了peer的基本操作，现在看一下更上一层的工作内容。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Tendermint源码阅读II</title>
+      <link>https://hundredwz.github.io/post/Tendermint%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BBII/</link>
+      <pubDate>Fri, 22 Feb 2019 02:40:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Tendermint%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BBII/</guid>
+      <description>&lt;p&gt;在开始本节之前，我们得先说两个非常重要的接口，service和reactor。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Tendermint源码学习I</title>
+      <link>https://hundredwz.github.io/post/Tendermint%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0I/</link>
+      <pubDate>Wed, 20 Feb 2019 03:26:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Tendermint%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0I/</guid>
+      <description>&lt;p&gt;作为一个区块链研究生&amp;amp;码农，没有系统的阅读过一个区块链系统的源码，实在不好意思说出去。
+之前我阅读过几天的Fabric，结果发现读起来有点难以理解。于是放弃了好久。
+以前了解了Tendermint，发现是一个研究生的毕设，而且目前应用也挺广泛，就沉下心来阅读一下吧。
+当然啦，我自己直接阅读起来发现还是有一些问题，就看着github上以为大神的内容，阅读了一遍。
+github大佬的地址为&lt;a href=&#34;https://github.com/wupeaking/tendermint_code_analysis&#34; target=&#34;_blank&#34;&gt;通用区块链平台tendermint源码分析&lt;/a&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>写了一个基于golang的博客系统</title>
+      <link>https://hundredwz.github.io/post/%E5%86%99%E4%BA%86%E4%B8%80%E4%B8%AA%E5%9F%BA%E4%BA%8Egolang%E7%9A%84%E5%8D%9A%E5%AE%A2%E7%B3%BB%E7%BB%9F/</link>
+      <pubDate>Wed, 12 Dec 2018 12:20:07 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/%E5%86%99%E4%BA%86%E4%B8%80%E4%B8%AA%E5%9F%BA%E4%BA%8Egolang%E7%9A%84%E5%8D%9A%E5%AE%A2%E7%B3%BB%E7%BB%9F/</guid>
+      <description>&lt;p&gt;最近这段时间，把所有的空闲无聊时间都利用了下，通过使用gin框架，开发了自己的第一套博客系统。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>golang的slice处理</title>
+      <link>https://hundredwz.github.io/post/golang%E7%9A%84slice%E5%A4%84%E7%90%86/</link>
+      <pubDate>Mon, 19 Nov 2018 09:17:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/golang%E7%9A%84slice%E5%A4%84%E7%90%86/</guid>
+      <description>&lt;p&gt;今天在看《go in action》的时候，看到切片这一章对于切片分配有点不太理解，做了几个实验理解了，感觉很有意义，记录下来。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>boltdb阅读IV</title>
+      <link>https://hundredwz.github.io/post/boltdb%E9%98%85%E8%AF%BBIV/</link>
+      <pubDate>Sun, 04 Nov 2018 08:10:50 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/boltdb%E9%98%85%E8%AF%BBIV/</guid>
+      <description>&lt;p&gt;我们在前面的文章中创建了一个数据库，接下来就要对数据库进行操作了。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>boltdb阅读III</title>
+      <link>https://hundredwz.github.io/post/boltdb%E9%98%85%E8%AF%BBIII/</link>
+      <pubDate>Fri, 02 Nov 2018 08:37:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/boltdb%E9%98%85%E8%AF%BBIII/</guid>
+      <description>&lt;p&gt;我们上一篇主要分析了boltdb初始化，也就是创建一个新的数据库的过程。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>boltdb阅读II</title>
+      <link>https://hundredwz.github.io/post/boltdb%E9%98%85%E8%AF%BBII/</link>
+      <pubDate>Fri, 02 Nov 2018 07:48:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/boltdb%E9%98%85%E8%AF%BBII/</guid>
+      <description>&lt;p&gt;我们继续上篇的bolt源码阅读。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>boltdb阅读I</title>
+      <link>https://hundredwz.github.io/post/boltdb%E9%98%85%E8%AF%BBI/</link>
+      <pubDate>Sun, 14 Oct 2018 02:44:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/boltdb%E9%98%85%E8%AF%BBI/</guid>
+      <description>&lt;p&gt;最近这两天闲了一些，准备好好学一下golang。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>十年的期许</title>
+      <link>https://hundredwz.github.io/post/%E5%8D%81%E5%B9%B4%E7%9A%84%E6%9C%9F%E8%AE%B8/</link>
+      <pubDate>Sat, 15 Sep 2018 09:31:34 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/%E5%8D%81%E5%B9%B4%E7%9A%84%E6%9C%9F%E8%AE%B8/</guid>
+      <description>&lt;p&gt;闲来无事，断断续续的看完了忠犬八公的故事，虽然没有达到很多人哭肿眼睛的程度，内心也已经难以平静。
+日复一日，年复一年，春去春来，花谢花开，十年来，hachi每天准时5：05等在车站门口，等着主人帕克。
+这一切，可能都源于那晚的邂逅吧。小八选择帕克，而帕克已经成为了小八的全部。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>win10安装latex使用sublime</title>
+      <link>https://hundredwz.github.io/post/win10%E5%AE%89%E8%A3%85latex%E4%BD%BF%E7%94%A8sublime/</link>
+      <pubDate>Fri, 07 Sep 2018 07:17:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/win10%E5%AE%89%E8%A3%85latex%E4%BD%BF%E7%94%A8sublime/</guid>
+      <description>&lt;p&gt;最近要写论文，推荐使用latex书写，由于比较习惯sublime，就安装了一遍。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>掌握比特币IV:节点功能II</title>
+      <link>https://hundredwz.github.io/post/%E6%8E%8C%E6%8F%A1%E6%AF%94%E7%89%B9%E5%B8%81IV%E8%8A%82%E7%82%B9%E5%8A%9F%E8%83%BDII/</link>
+      <pubDate>Sun, 15 Jul 2018 09:41:09 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/%E6%8E%8C%E6%8F%A1%E6%AF%94%E7%89%B9%E5%B8%81IV%E8%8A%82%E7%82%B9%E5%8A%9F%E8%83%BDII/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://txiner.top/tool/91.html&#34;&gt;上一篇&lt;/a&gt;大体讲了比特币中节点主要全节点的功能，本文分析下轻节点等相关的功能。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>解决golang循环依赖</title>
+      <link>https://hundredwz.github.io/post/%E8%A7%A3%E5%86%B3golang%E5%BE%AA%E7%8E%AF%E4%BE%9D%E8%B5%96/</link>
+      <pubDate>Sat, 14 Jul 2018 02:34:43 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/%E8%A7%A3%E5%86%B3golang%E5%BE%AA%E7%8E%AF%E4%BE%9D%E8%B5%96/</guid>
+      <description>&lt;p&gt;最近开发项目的时候，遇到了一个go里面很不好解决的问题，循环引用。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>golang getaddrinfow错误</title>
+      <link>https://hundredwz.github.io/post/golang-getaddrinfow%E9%94%99%E8%AF%AF/</link>
+      <pubDate>Sat, 14 Jul 2018 01:16:43 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/golang-getaddrinfow%E9%94%99%E8%AF%AF/</guid>
+      <description>&lt;p&gt;最近在开发一个golang的web项目，遇到了一个很奇怪的问题，服务一直无法启动。发现错误的原因让人很无奈。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>掌握比特币III:节点功能I</title>
+      <link>https://hundredwz.github.io/post/%E6%8E%8C%E6%8F%A1%E6%AF%94%E7%89%B9%E5%B8%81III%E8%8A%82%E7%82%B9%E5%8A%9F%E8%83%BDI/</link>
+      <pubDate>Fri, 13 Jul 2018 06:15:17 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/%E6%8E%8C%E6%8F%A1%E6%AF%94%E7%89%B9%E5%B8%81III%E8%8A%82%E7%82%B9%E5%8A%9F%E8%83%BDI/</guid>
+      <description>&lt;p&gt;比特币的节点分为好多种，但是功能都是钱包、矿工、完整区块链以及网络路由节点组成。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>掌握比特币II:支付方式</title>
+      <link>https://hundredwz.github.io/post/%E6%8E%8C%E6%8F%A1%E6%AF%94%E7%89%B9%E5%B8%81II%E6%94%AF%E4%BB%98%E6%96%B9%E5%BC%8F/</link>
+      <pubDate>Thu, 12 Jul 2018 03:11:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/%E6%8E%8C%E6%8F%A1%E6%AF%94%E7%89%B9%E5%B8%81II%E6%94%AF%E4%BB%98%E6%96%B9%E5%BC%8F/</guid>
+      <description>&lt;p&gt;今天了解了下比特币的支付方式，发现以前的了解太麻烦了，今天就多查了查资料弄明白点。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>掌握比特币I：钱包功能学习</title>
+      <link>https://hundredwz.github.io/post/%E6%8E%8C%E6%8F%A1%E6%AF%94%E7%89%B9%E5%B8%81I%E9%92%B1%E5%8C%85%E5%8A%9F%E8%83%BD%E5%AD%A6%E4%B9%A0/</link>
+      <pubDate>Tue, 10 Jul 2018 08:42:37 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/%E6%8E%8C%E6%8F%A1%E6%AF%94%E7%89%B9%E5%B8%81I%E9%92%B1%E5%8C%85%E5%8A%9F%E8%83%BD%E5%AD%A6%E4%B9%A0/</guid>
+      <description>&lt;p&gt;最近看了挺多区块链相关的论文，发现有挺多是解决比特币的一些问题的。仔细一看，发现这些问题我也能够想到，但是前提是对比特币的了解足够清楚。因此想着最近多看一看比特币的相关原理。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>江东子弟多才俊</title>
+      <link>https://hundredwz.github.io/post/%E6%B1%9F%E4%B8%9C%E5%AD%90%E5%BC%9F%E5%A4%9A%E6%89%8D%E4%BF%8A/</link>
+      <pubDate>Fri, 29 Jun 2018 07:36:17 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/%E6%B1%9F%E4%B8%9C%E5%AD%90%E5%BC%9F%E5%A4%9A%E6%89%8D%E4%BF%8A/</guid>
+      <description>&lt;p&gt;最近这段时间干活累成狗，各种任务，今天下午实在不想再看论文了，把前几天看的《霸王别姬》的影评写了吧。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>golang读取mysql中datetime格式</title>
+      <link>https://hundredwz.github.io/post/golang%E8%AF%BB%E5%8F%96mysql%E4%B8%ADdatetime%E6%A0%BC%E5%BC%8F/</link>
+      <pubDate>Fri, 15 Jun 2018 07:09:40 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/golang%E8%AF%BB%E5%8F%96mysql%E4%B8%ADdatetime%E6%A0%BC%E5%BC%8F/</guid>
+      <description>&lt;p&gt;在做一个小项目的时候，需要使用go从数据库里面读取时间信息，但是总会出错，在网上查了查，发现还是挺容易解决的。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>比特币协议论文阅读</title>
+      <link>https://hundredwz.github.io/post/%E6%AF%94%E7%89%B9%E5%B8%81%E5%8D%8F%E8%AE%AE%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/</link>
+      <pubDate>Wed, 13 Jun 2018 06:16:28 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/%E6%AF%94%E7%89%B9%E5%B8%81%E5%8D%8F%E8%AE%AE%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/</guid>
+      <description>&lt;p&gt;前一阵出差了一趟，这几天把Garay的The Bitcoin Backbone Protocol:Analysis and Applications读完了，有了些新的收获。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>混合共识Pass论文阅读</title>
+      <link>https://hundredwz.github.io/post/%E6%B7%B7%E5%90%88%E5%85%B1%E8%AF%86Pass%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/</link>
+      <pubDate>Thu, 31 May 2018 07:04:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/%E6%B7%B7%E5%90%88%E5%85%B1%E8%AF%86Pass%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/</guid>
+      <description>&lt;p&gt;今天看完了Rafael Pass大神的论文《Hybrid Consensus：Efficient Consensus in the Permissionless Model》，理解了我之前看&lt;a href=&#34;https://txiner.top/essay/84.html&#34;&gt;《Thunderella》&lt;/a&gt;好多不理解的内容。还有了很多新的收获。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Thunderella论文阅读</title>
+      <link>https://hundredwz.github.io/post/Thunderella%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/</link>
+      <pubDate>Wed, 30 May 2018 06:42:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Thunderella%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/</guid>
+      <description>&lt;p&gt;今日终于读完了Pass和Shi发表在欧密上的论文《Thunderella: Blockchains with Optimistic Instant Confirmation》，学习了很多，但依然迷惑很多。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>1984读后感</title>
+      <link>https://hundredwz.github.io/post/1984%E8%AF%BB%E5%90%8E%E6%84%9F/</link>
+      <pubDate>Sat, 21 Apr 2018 04:58:25 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/1984%E8%AF%BB%E5%90%8E%E6%84%9F/</guid>
+      <description>&lt;p&gt;最近这两天读完了1984，真的是神作，忍不住来写点读后感。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Raft造轮子VI</title>
+      <link>https://hundredwz.github.io/post/Raft%E9%80%A0%E8%BD%AE%E5%AD%90VI/</link>
+      <pubDate>Tue, 17 Apr 2018 08:25:40 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Raft%E9%80%A0%E8%BD%AE%E5%AD%90VI/</guid>
+      <description>&lt;p&gt;我们上一篇说了领导的选举，本篇讨论日志和心跳包的处理。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Raft造轮子V</title>
+      <link>https://hundredwz.github.io/post/Raft%E9%80%A0%E8%BD%AE%E5%AD%90V/</link>
+      <pubDate>Tue, 17 Apr 2018 06:59:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Raft%E9%80%A0%E8%BD%AE%E5%AD%90V/</guid>
+      <description>&lt;p&gt;我们上一篇文章分析了一个节点作为主动发起方，向别的节点请求投票的信息，本篇就分析下接收方的工作流程。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Raft造轮子IV</title>
+      <link>https://hundredwz.github.io/post/Raft%E9%80%A0%E8%BD%AE%E5%AD%90IV/</link>
+      <pubDate>Tue, 17 Apr 2018 06:15:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Raft%E9%80%A0%E8%BD%AE%E5%AD%90IV/</guid>
+      <description>&lt;p&gt;经过上一篇文章关于一些基础“接口”的定义，我们本篇开始操作核心，节点。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Raft造轮子III</title>
+      <link>https://hundredwz.github.io/post/Raft%E9%80%A0%E8%BD%AE%E5%AD%90III/</link>
+      <pubDate>Fri, 13 Apr 2018 08:50:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Raft%E9%80%A0%E8%BD%AE%E5%AD%90III/</guid>
+      <description>&lt;p&gt;我们之前定义了raft通信的基本数据格式以及rpc模式也生成了数据内容，这篇文章就要开始具体的操作了。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Raft造轮子II</title>
+      <link>https://hundredwz.github.io/post/Raft%E9%80%A0%E8%BD%AE%E5%AD%90II/</link>
+      <pubDate>Fri, 13 Apr 2018 07:35:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Raft%E9%80%A0%E8%BD%AE%E5%AD%90II/</guid>
+      <description>&lt;p&gt;读过文章之后，我们虽然不知道具体的程序要怎么动笔，但是让我们说出来怎么选举领导人，怎么复制日志，对大家来说问题不大了。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Raft造轮子I</title>
+      <link>https://hundredwz.github.io/post/Raft%E9%80%A0%E8%BD%AE%E5%AD%90I/</link>
+      <pubDate>Fri, 13 Apr 2018 07:02:24 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Raft%E9%80%A0%E8%BD%AE%E5%AD%90I/</guid>
+      <description>&lt;p&gt;前一段时间在学习raft算法，看完后感觉相对paxos来说没有那么复杂,就萌生了要造个轮子的想法。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Merkle树生成</title>
+      <link>https://hundredwz.github.io/post/Merkle%E6%A0%91%E7%94%9F%E6%88%90/</link>
+      <pubDate>Wed, 04 Apr 2018 08:27:40 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Merkle%E6%A0%91%E7%94%9F%E6%88%90/</guid>
+      <description>&lt;p&gt;今天在写程序的时候需要生成默克尔树进行校验，但是在网上一搜，全部都是讲的原理，没看到什么代码，很是奇怪，就自己动手写了一个。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>BFS算法</title>
+      <link>https://hundredwz.github.io/post/BFS%E7%AE%97%E6%B3%95/</link>
+      <pubDate>Fri, 30 Mar 2018 06:56:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/BFS%E7%AE%97%E6%B3%95/</guid>
+      <description>&lt;p&gt;没想到，像我这样傻的人也接触算法了！
+还好，只是最简单的算法。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>e2e_cli分析</title>
+      <link>https://hundredwz.github.io/post/e2e_cli%E5%88%86%E6%9E%90/</link>
+      <pubDate>Tue, 27 Mar 2018 08:52:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/e2e_cli%E5%88%86%E6%9E%90/</guid>
+      <description>&lt;p&gt;经过了将近$\frac{3}{4}$年的浑水摸鱼，我在fabric的道路上越走越偏，也该记录点东西误导下后续的人们了。本片文章分析下我们最常使用的e2e_cli吧。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>UTXO理解</title>
+      <link>https://hundredwz.github.io/post/UTXO%E7%90%86%E8%A7%A3/</link>
+      <pubDate>Fri, 09 Mar 2018 06:53:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/UTXO%E7%90%86%E8%A7%A3/</guid>
+      <description>&lt;p&gt;最近在看到区块链的底层内容，看到了UTXO，看的一头雾水，结合网上的帖子有了一些理解。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>go读取数据库反射变量</title>
+      <link>https://hundredwz.github.io/post/go%E8%AF%BB%E5%8F%96%E6%95%B0%E6%8D%AE%E5%BA%93%E5%8F%8D%E5%B0%84%E5%8F%98%E9%87%8F/</link>
+      <pubDate>Wed, 07 Mar 2018 01:38:55 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/go%E8%AF%BB%E5%8F%96%E6%95%B0%E6%8D%AE%E5%BA%93%E5%8F%8D%E5%B0%84%E5%8F%98%E9%87%8F/</guid>
+      <description>&lt;p&gt;最近写到一个程序，是关于go获取数据库的内容。按照以往用java的经验，我都是可以直接使用orm的，很方便快捷。go也有第三方的orm库，但是我嫌麻烦不想用。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>网站开启https</title>
+      <link>https://hundredwz.github.io/post/%E7%BD%91%E7%AB%99%E5%BC%80%E5%90%AFhttps/</link>
+      <pubDate>Fri, 02 Mar 2018 03:15:16 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/%E7%BD%91%E7%AB%99%E5%BC%80%E5%90%AFhttps/</guid>
+      <description>&lt;p&gt;最近看到别人的网站都是https的小绿锁了，有些羡慕，就想着跟着安装下吧。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>鸡年总结</title>
+      <link>https://hundredwz.github.io/post/%E9%B8%A1%E5%B9%B4%E6%80%BB%E7%BB%93/</link>
+      <pubDate>Wed, 28 Feb 2018 06:50:56 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/%E9%B8%A1%E5%B9%B4%E6%80%BB%E7%BB%93/</guid>
+      <description>&lt;p&gt;平时我是一个很喜欢总结的人，总喜欢在别人说后自己总结一下。虽然效果并不多好，但是是性格使然吧。
+如今狗年都已经过去了这么久，鸡年的总结我都没写过。今天闲来无事随便写一下吧。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>java设计模式之观察者模式</title>
+      <link>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E8%A7%82%E5%AF%9F%E8%80%85%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Fri, 26 Jan 2018 02:13:58 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E8%A7%82%E5%AF%9F%E8%80%85%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;本文来看下java设计模式之观察者模式。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>java设计模式之备忘录模式</title>
+      <link>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%A4%87%E5%BF%98%E5%BD%95%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Thu, 25 Jan 2018 02:28:10 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%A4%87%E5%BF%98%E5%BD%95%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;本文我们来讨论下java设计模式之备忘录模式。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>java设计模式之中介者模式</title>
+      <link>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E4%B8%AD%E4%BB%8B%E8%80%85%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Wed, 24 Jan 2018 02:26:41 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E4%B8%AD%E4%BB%8B%E8%80%85%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;本文来说一说java设计模式之中介者模式。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>区块链现象看法</title>
+      <link>https://hundredwz.github.io/post/%E5%8C%BA%E5%9D%97%E9%93%BE%E7%8E%B0%E8%B1%A1%E7%9C%8B%E6%B3%95/</link>
+      <pubDate>Tue, 23 Jan 2018 02:34:57 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/%E5%8C%BA%E5%9D%97%E9%93%BE%E7%8E%B0%E8%B1%A1%E7%9C%8B%E6%B3%95/</guid>
+      <description>&lt;p&gt;最近也不知道发生了什么，全民都在讨论区块链，比特币。似乎有一种区块链这个技术可以实现翻天覆地的变化。现在不往区块链上做点什么就是落伍了。
+作为一个刚入门没多久的小白，我有些不一样的看法。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>java设计模式之迭代器模式</title>
+      <link>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E8%BF%AD%E4%BB%A3%E5%99%A8%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Tue, 23 Jan 2018 02:10:01 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E8%BF%AD%E4%BB%A3%E5%99%A8%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;本文我们来讨论下java设计模式之迭代器模式。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>java设计模式之解释器模式</title>
+      <link>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E8%A7%A3%E9%87%8A%E5%99%A8%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Mon, 22 Jan 2018 03:02:11 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E8%A7%A3%E9%87%8A%E5%99%A8%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;本文来说下java设计模式之解释器模式。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>paxos算法 V</title>
+      <link>https://hundredwz.github.io/post/paxos%E7%AE%97%E6%B3%95-V/</link>
+      <pubDate>Fri, 19 Jan 2018 08:17:44 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/paxos%E7%AE%97%E6%B3%95-V/</guid>
+      <description>&lt;p&gt;我们之前在介绍paxos协议的时候,都是一直在说的神权阶段.通过法案都是一条一条的通过,不会有多条法案同步行进.如今Paxon改革换代,进入了国会阶段,协议也因此有了些变化.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>java设计模式之命令模式</title>
+      <link>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%91%BD%E4%BB%A4%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Fri, 19 Jan 2018 02:15:31 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%91%BD%E4%BB%A4%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;本文我们来讨论下java设计模式之命令模式.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>java设计模式之责任链模式</title>
+      <link>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E8%B4%A3%E4%BB%BB%E9%93%BE%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Thu, 18 Jan 2018 02:39:24 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E8%B4%A3%E4%BB%BB%E9%93%BE%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;本文来讨论下java设计模式之责任链模式。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>《守法公民》观后感</title>
+      <link>https://hundredwz.github.io/post/%E5%AE%88%E6%B3%95%E5%85%AC%E6%B0%91%E8%A7%82%E5%90%8E%E6%84%9F/</link>
+      <pubDate>Wed, 17 Jan 2018 13:14:10 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/%E5%AE%88%E6%B3%95%E5%85%AC%E6%B0%91%E8%A7%82%E5%90%8E%E6%84%9F/</guid>
+      <description>&lt;p&gt;最近观看了一部电影，《守法公民》。看完后内心有些震撼，也有些想法不吐不快。我的博客也不能太技术了，稍微添加点生活气息吧。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>paxos算法 IV</title>
+      <link>https://hundredwz.github.io/post/paxos%E7%AE%97%E6%B3%95-IV/</link>
+      <pubDate>Wed, 17 Jan 2018 08:47:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/paxos%E7%AE%97%E6%B3%95-IV/</guid>
+      <description>&lt;p&gt;上一篇我们说到了paxos协议的初始协议，可以满足paxos的三大定理。但是依然具有很大的弊端。所以Paxon人民砥砺前进，再创辉煌。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>java设计模式之享元模式</title>
+      <link>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E4%BA%AB%E5%85%83%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Wed, 17 Jan 2018 06:49:21 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E4%BA%AB%E5%85%83%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;本篇来讨论下java设计模式之享元模式。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>paxos算法 III</title>
+      <link>https://hundredwz.github.io/post/paxos%E7%AE%97%E6%B3%95-III/</link>
+      <pubDate>Tue, 16 Jan 2018 13:10:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/paxos%E7%AE%97%E6%B3%95-III/</guid>
+      <description>&lt;p&gt;本文继续研讨paxos算法。目前本人读到了paxos协议的实现部分，相对来说还是比较好理解的。当然，应用容易与否我们以后再进行深入探讨。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>java设计模式之外观模式</title>
+      <link>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%A4%96%E8%A7%82%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Tue, 16 Jan 2018 01:55:50 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%A4%96%E8%A7%82%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;本片文章是java设计模式的外观模式。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Paxos算法 II</title>
+      <link>https://hundredwz.github.io/post/Paxos%E7%AE%97%E6%B3%95-II/</link>
+      <pubDate>Mon, 15 Jan 2018 13:04:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Paxos%E7%AE%97%E6%B3%95-II/</guid>
+      <description>&lt;p&gt;本片内容就要正经的讨论下paxos算法了。很复杂，不好理解。我还没读完。
+只看到了基础的三定理，推导一致性的证明第一步。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>java设计模式之装饰模式</title>
+      <link>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E8%A3%85%E9%A5%B0%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Mon, 15 Jan 2018 02:00:33 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E8%A3%85%E9%A5%B0%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;本文来讨论下java设计模式之装饰模式。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>java设计模式之组合模式</title>
+      <link>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E7%BB%84%E5%90%88%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Fri, 12 Jan 2018 07:11:54 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E7%BB%84%E5%90%88%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;这一篇来说一说java设计模式之组合模式。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>paxos算法I</title>
+      <link>https://hundredwz.github.io/post/paxos%E7%AE%97%E6%B3%95I/</link>
+      <pubDate>Fri, 12 Jan 2018 02:19:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/paxos%E7%AE%97%E6%B3%95I/</guid>
+      <description>&lt;p&gt;paxos算法也是分布式中比较久远也比较基本的算法了。还不是太好理解。本篇文章主要考虑简略的介绍下paxos算法。从容易理解的角度来解释下。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>java设计模式之桥接模式</title>
+      <link>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E6%A1%A5%E6%8E%A5%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Fri, 22 Dec 2017 07:28:28 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E6%A1%A5%E6%8E%A5%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;这篇来聊一聊java设计模式之桥接模式。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>java设计模式之随笔</title>
+      <link>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E9%9A%8F%E7%AC%94/</link>
+      <pubDate>Thu, 21 Dec 2017 07:45:03 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E9%9A%8F%E7%AC%94/</guid>
+      <description>&lt;p&gt;设计模式这系列文章，是最近在考虑工作方向选择什么时候想着要写的文章。由于有好多乱七八糟的内容不方便放在正文里面，所里单独列出来放到一篇文章。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>java设计模式之适配器模式</title>
+      <link>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Thu, 21 Dec 2017 03:24:25 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;本篇来聊一聊java设计模式之适配器模式。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>java设计模式之原型模式</title>
+      <link>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%8E%9F%E5%9E%8B%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Wed, 20 Dec 2017 08:07:49 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%8E%9F%E5%9E%8B%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;本篇来说一说java设计模式之原型模式。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>java设计模式之创建者模式</title>
+      <link>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%88%9B%E5%BB%BA%E8%80%85%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Tue, 19 Dec 2017 02:54:58 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%88%9B%E5%BB%BA%E8%80%85%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;这篇来说一说java设计模式之builder模式&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>java设计模式之抽象工厂模式</title>
+      <link>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E6%8A%BD%E8%B1%A1%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Mon, 18 Dec 2017 02:52:16 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E6%8A%BD%E8%B1%A1%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;本篇来说一说java设计模式之抽象工厂模式。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>相似的背景，不同的人生</title>
+      <link>https://hundredwz.github.io/post/%E7%9B%B8%E4%BC%BC%E7%9A%84%E8%83%8C%E6%99%AF%E4%B8%8D%E5%90%8C%E7%9A%84%E4%BA%BA%E7%94%9F/</link>
+      <pubDate>Sun, 17 Dec 2017 03:25:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/%E7%9B%B8%E4%BC%BC%E7%9A%84%E8%83%8C%E6%99%AF%E4%B8%8D%E5%90%8C%E7%9A%84%E4%BA%BA%E7%94%9F/</guid>
+      <description>&lt;p&gt;最近有幸拜读了钱钟书的《围城》和严歌苓的《陆犯焉识》，故事中主人公所处的历史背景是有重叠的，两个人的经历都是相似的，但是私以为两个人走的是两种不同的人生。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>java设计模式之工厂模式</title>
+      <link>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Fri, 15 Dec 2017 08:19:34 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;本文来介绍下java设计模式之工厂模式?&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>java设计模式之多例模式</title>
+      <link>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%A4%9A%E4%BE%8B%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Fri, 15 Dec 2017 07:34:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%A4%9A%E4%BE%8B%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;本文来介绍下java设计模式之多例模式！&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>java设计模式之单例模式</title>
+      <link>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Fri, 15 Dec 2017 07:01:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;本文来看一看java设计模式之单例模式。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>java设计模式之代理模式</title>
+      <link>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Fri, 15 Dec 2017 06:28:29 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;本篇来看java设计模式之代理模式.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>java设计模式之策略模式</title>
+      <link>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Fri, 15 Dec 2017 03:05:32 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F/</guid>
+      <description>&lt;p&gt;最近有点迷茫，就想着来看些东西吧。java里面的设计模式一直没有系统学习过，就开一篇来学一学。本篇讲的是策略模式。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>transpose理解</title>
+      <link>https://hundredwz.github.io/post/transpose%E7%90%86%E8%A7%A3/</link>
+      <pubDate>Fri, 01 Dec 2017 07:37:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/transpose%E7%90%86%E8%A7%A3/</guid>
+      <description>&lt;p&gt;最近要做一个作业，用到了numpy的transpose函数，感觉理解起来不是很容易，记录一下。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>grpc学习</title>
+      <link>https://hundredwz.github.io/post/grpc%E5%AD%A6%E4%B9%A0/</link>
+      <pubDate>Wed, 22 Nov 2017 07:39:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/grpc%E5%AD%A6%E4%B9%A0/</guid>
+      <description>&lt;p&gt;在学习区块链的途中，看到了grpc。很久之前就听说过rpc，这次就仔细来一探究竟。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>fabric源码阅读7：fabric的启动III</title>
+      <link>https://hundredwz.github.io/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB7fabric%E7%9A%84%E5%90%AF%E5%8A%A8III/</link>
+      <pubDate>Tue, 21 Nov 2017 09:03:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB7fabric%E7%9A%84%E5%90%AF%E5%8A%A8III/</guid>
+      <description>&lt;p&gt;前面讨论了peer的启动，但都没有讨论完&lt;code&gt;peer node start&lt;/code&gt;的全过程。本文继续跟着讨论。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>fabric源码阅读6：fabric数据库I</title>
+      <link>https://hundredwz.github.io/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB6fabric%E6%95%B0%E6%8D%AE%E5%BA%93I/</link>
+      <pubDate>Tue, 21 Nov 2017 07:47:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB6fabric%E6%95%B0%E6%8D%AE%E5%BA%93I/</guid>
+      <description>&lt;p&gt;在上篇文章:&lt;a href=&#34;http://txiner.top/program/30.html&#34;&gt;fabric启动II&lt;/a&gt;中，我们大体上说到了peer的大体启动流程，但是并没有深入进去，现在我们追随&lt;code&gt;node start&lt;/code&gt;的脚步继续探索。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>fabric源码阅读5:fabric启动II</title>
+      <link>https://hundredwz.github.io/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB5fabric%E5%90%AF%E5%8A%A8II/</link>
+      <pubDate>Fri, 17 Nov 2017 09:08:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB5fabric%E5%90%AF%E5%8A%A8II/</guid>
+      <description>&lt;p&gt;在上一篇文章&lt;a href=&#34;http://txiner.top/program/29.html&#34;&gt;fabric源码阅读4：fabric启动I&lt;/a&gt;我们从操作者的角度分析了fabric的启动过程，这篇文章我们就尽量从开发者的角度来看fabric是怎么启动的。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>fabric源码阅读4：fabric启动I</title>
+      <link>https://hundredwz.github.io/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB4fabric%E5%90%AF%E5%8A%A8I/</link>
+      <pubDate>Tue, 14 Nov 2017 07:51:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB4fabric%E5%90%AF%E5%8A%A8I/</guid>
+      <description>&lt;p&gt;还记得我在上一篇&lt;a href=&#34;http://txiner.top/program/27.html&#34;&gt;PutState&amp;amp;GetState理解&lt;/a&gt;文章中留下了个疑问,猜测说fabric后台有个守护进程，对&lt;code&gt;chan&lt;/code&gt;进行监听什么的。但是只是猜测不行啊，还得从实际来证明。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>fabric源码阅读3：PutState&amp;amp;GetState理解</title>
+      <link>https://hundredwz.github.io/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB3PutStateampGetState%E7%90%86%E8%A7%A3/</link>
+      <pubDate>Thu, 09 Nov 2017 06:19:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB3PutStateampGetState%E7%90%86%E8%A7%A3/</guid>
+      <description>&lt;p&gt;最近还在继续看Fabric源码，发现自己还是差的太多了。估计可能是看的方式不太对。不过也慢慢的有了一点收获吧。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>proto文件学习</title>
+      <link>https://hundredwz.github.io/post/proto%E6%96%87%E4%BB%B6%E5%AD%A6%E4%B9%A0/</link>
+      <pubDate>Wed, 08 Nov 2017 07:00:40 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/proto%E6%96%87%E4%BB%B6%E5%AD%A6%E4%B9%A0/</guid>
+      <description>&lt;p&gt;最近在看fabric源码的时候看到了proto文件，以前没接触过，这次好好来看看.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>fabric源码阅读2：chaincode函数理解II</title>
+      <link>https://hundredwz.github.io/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB2chaincode%E5%87%BD%E6%95%B0%E7%90%86%E8%A7%A3II/</link>
+      <pubDate>Thu, 19 Oct 2017 07:14:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB2chaincode%E5%87%BD%E6%95%B0%E7%90%86%E8%A7%A3II/</guid>
+      <description>&lt;p&gt;上一篇讲了在chaincode端函数GetFuncAndParameters()的使用，但是在客户端这块使用还是有一点问题，就在此进一步解释下.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>fabric源码阅读1：chaincode函数理解I</title>
+      <link>https://hundredwz.github.io/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB1chaincode%E5%87%BD%E6%95%B0%E7%90%86%E8%A7%A3I/</link>
+      <pubDate>Mon, 16 Oct 2017 02:24:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/fabric%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB1chaincode%E5%87%BD%E6%95%B0%E7%90%86%E8%A7%A3I/</guid>
+      <description>&lt;p&gt;最近在开发chaincode的时候遇到了一个问题,使用GetFunctionAndParameters这个函数会返回一个函数以及参数，但是运行总是出了点问题。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>fabric-sdk-java初探</title>
+      <link>https://hundredwz.github.io/post/fabric-sdk-java%E5%88%9D%E6%8E%A2/</link>
+      <pubDate>Tue, 10 Oct 2017 11:43:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/fabric-sdk-java%E5%88%9D%E6%8E%A2/</guid>
+      <description>&lt;p&gt;最近在学习fabric，中间遇到了好多坑。而由于fabric更新迭代版本比较快，网上的很多教程也都不安全适用了。我反正也在学习过程中，就尽力的把自己所学习到的东西都记录下来吧。希望能够帮助到需要的人。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>fabric安装使用</title>
+      <link>https://hundredwz.github.io/post/fabric%E5%AE%89%E8%A3%85%E4%BD%BF%E7%94%A8/</link>
+      <pubDate>Fri, 22 Sep 2017 13:36:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/fabric%E5%AE%89%E8%A3%85%E4%BD%BF%E7%94%A8/</guid>
+      <description>&lt;p&gt;最近在学习区块链，想着把自己所学到的东西都记录下来，希望能够写一系列文章吧。本篇文章是fabric的安装教程。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>ssm学习过程中的问题</title>
+      <link>https://hundredwz.github.io/post/ssm%E5%AD%A6%E4%B9%A0%E8%BF%87%E7%A8%8B%E4%B8%AD%E7%9A%84%E9%97%AE%E9%A2%98/</link>
+      <pubDate>Thu, 24 Aug 2017 02:56:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/ssm%E5%AD%A6%E4%B9%A0%E8%BF%87%E7%A8%8B%E4%B8%AD%E7%9A%84%E9%97%AE%E9%A2%98/</guid>
+      <description>&lt;p&gt;最近在学习ssm，在进行配置的时候遇到了点问题，在此记录下，希望对有同样遇到问题的人有帮助。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>stm32处理tcp</title>
+      <link>https://hundredwz.github.io/post/stm32%E5%A4%84%E7%90%86tcp/</link>
+      <pubDate>Sun, 28 May 2017 03:50:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/stm32%E5%A4%84%E7%90%86tcp/</guid>
+      <description>&lt;p&gt;最近项目要用到stm32和wifi模块，接收处理TCP数据，在项目中遇到了一些问题，在此记录一下。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>jdbc连接mysql8小时</title>
+      <link>https://hundredwz.github.io/post/jdbc%E8%BF%9E%E6%8E%A5mysql8%E5%B0%8F%E6%97%B6/</link>
+      <pubDate>Thu, 11 May 2017 02:14:28 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/jdbc%E8%BF%9E%E6%8E%A5mysql8%E5%B0%8F%E6%97%B6/</guid>
+      <description>&lt;p&gt;最近是跟jdbc以及mysql刚上了，一直在做这块的代码。
+最近就遇到了一个问题，mysql数据库有个自动连接断开时间。如果8个小时之内没有数据操作，这个连接就断开了，但是程序上不知道，这就出问题了。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>jdbc连接非本机mysql出错</title>
+      <link>https://hundredwz.github.io/post/jdbc%E8%BF%9E%E6%8E%A5%E9%9D%9E%E6%9C%AC%E6%9C%BAmysql%E5%87%BA%E9%94%99/</link>
+      <pubDate>Thu, 20 Apr 2017 03:41:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/jdbc%E8%BF%9E%E6%8E%A5%E9%9D%9E%E6%9C%AC%E6%9C%BAmysql%E5%87%BA%E9%94%99/</guid>
+      <description>&lt;p&gt;最近做的项目遇到一个问题，就是要把数据库分出去，部署到不同的电脑上，结果总是连接不上。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>github安装hexo</title>
+      <link>https://hundredwz.github.io/post/github%E5%AE%89%E8%A3%85hexo/</link>
+      <pubDate>Fri, 10 Mar 2017 07:51:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/github%E5%AE%89%E8%A3%85hexo/</guid>
+      <description>&lt;p&gt;最近有同学要安装hexo，给他找了找教程，结果总是不对。我自己试了试，发现好多教程莫名其妙的一致，还都不大好理解，跟现在的3.0还都不一样了，就萌生了自己重新写教程的想法。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>nginx转发用户请求</title>
+      <link>https://hundredwz.github.io/post/nginx%E8%BD%AC%E5%8F%91%E7%94%A8%E6%88%B7%E8%AF%B7%E6%B1%82/</link>
+      <pubDate>Wed, 08 Mar 2017 03:29:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/nginx%E8%BD%AC%E5%8F%91%E7%94%A8%E6%88%B7%E8%AF%B7%E6%B1%82/</guid>
+      <description>&lt;p&gt;总所周知，nginx是一款很优秀的反代工具，针对用户的不同请求可以转发到不同的服务器上，最近做的项目用到了nginx，也做了一定得反向代理，现在记录下来，希望能够对需要的铜须提供帮助。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>java socket inputstream</title>
+      <link>https://hundredwz.github.io/post/java-socket-inputstream/</link>
+      <pubDate>Mon, 06 Mar 2017 02:38:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/java-socket-inputstream/</guid>
+      <description>&lt;p&gt;最近在做一个项目，要用到socket传输数据，而且考虑到跨平台，不得不使用字节传输，结果总是遇到一些问题。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Docker创建交互式进程</title>
+      <link>https://hundredwz.github.io/post/Docker%E5%88%9B%E5%BB%BA%E4%BA%A4%E4%BA%92%E5%BC%8F%E8%BF%9B%E7%A8%8B/</link>
+      <pubDate>Sat, 07 Jan 2017 04:10:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Docker%E5%88%9B%E5%BB%BA%E4%BA%A4%E4%BA%92%E5%BC%8F%E8%BF%9B%E7%A8%8B/</guid>
+      <description>&lt;p&gt;最近在学习docker，遇到了一个小问题，想了想感觉自己应该记录下。
+docker运行或者保持后台很容易了，用上几个参数就好了，可以如果我需要运行一个交互式的程序怎么办呢？&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>爬历年作文</title>
+      <link>https://hundredwz.github.io/post/%E7%88%AC%E5%8E%86%E5%B9%B4%E4%BD%9C%E6%96%87/</link>
+      <pubDate>Fri, 18 Nov 2016 02:06:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/%E7%88%AC%E5%8E%86%E5%B9%B4%E4%BD%9C%E6%96%87/</guid>
+      <description>&lt;p&gt;哈哈，考研狗出来诈尸啦！
+由于最近在复习英语作文，虽然有了一本书，但是平时一直拿着也不方便，就想着从网上找别人整理好的。
+但是看了看，没有找到。
+正巧新东方有历年的，只是每次打开太麻烦，干脆整理下吧。
+一看，从05-15，有的还有多篇范文，粘贴太麻烦，图片还得一个一个保存，干脆爬成md文档生成html转pdf吧
+新东方不要怪我啊！我可没有做商业用途（手动滑稽）&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>网站搬家到github</title>
+      <link>https://hundredwz.github.io/post/%E7%BD%91%E7%AB%99%E6%90%AC%E5%AE%B6%E5%88%B0github/</link>
+      <pubDate>Wed, 03 Aug 2016 11:56:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/%E7%BD%91%E7%AB%99%E6%90%AC%E5%AE%B6%E5%88%B0github/</guid>
+      <description>&lt;p&gt;今天不想复习，用了半晚上的时间把typecho的网站搬到github pages上&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>tos patch</title>
+      <link>https://hundredwz.github.io/post/tos-patch/</link>
+      <pubDate>Sat, 02 Jul 2016 06:26:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/tos-patch/</guid>
+      <description>&lt;p&gt;最近这几天在学习patchrom，由于什么都不懂，凑巧有大神做了tos，为了熟悉流程，快速进入开发，就在大神的指导下做了个tos。现在记录下，希望对于其他人有帮助。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>esp8266试玩</title>
+      <link>https://hundredwz.github.io/post/esp8266%E8%AF%95%E7%8E%A9/</link>
+      <pubDate>Mon, 09 May 2016 05:18:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/esp8266%E8%AF%95%E7%8E%A9/</guid>
+      <description>&lt;p&gt;前一阵买了一个esp8266，使用了一段时间之后感觉物有所值，很是值得拿来学习使用，记录下使用的过程，以及期间遇到的一些错误，希望对于大家有帮助。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>python计算叉乘</title>
+      <link>https://hundredwz.github.io/post/python%E8%AE%A1%E7%AE%97%E5%8F%89%E4%B9%98/</link>
+      <pubDate>Tue, 15 Mar 2016 07:08:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/python%E8%AE%A1%E7%AE%97%E5%8F%89%E4%B9%98/</guid>
+      <description>&lt;p&gt;最近这几天在复习高数空间几何，本来没有什么，结果计算叉乘算的头都大了
+叉乘本来也没有什么技术含量，就是一直重复的计算感觉没有太大意义。
+想着这几天学了python，正好编着玩玩。再说好久都没更新了，更新下吧&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>java NIO的socket编程</title>
+      <link>https://hundredwz.github.io/post/java-NIO%E7%9A%84socket%E7%BC%96%E7%A8%8B/</link>
+      <pubDate>Sun, 20 Dec 2015 05:56:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/java-NIO%E7%9A%84socket%E7%BC%96%E7%A8%8B/</guid>
+      <description>&lt;p&gt;前某个星期用java的阻塞式io写了一个socket的程序后，感觉用来玩玩还可以，连接量一上来就完了。
+然后又看到推荐说nio，就一直想着学学，结果中间这几天考试复习给耽搁了。正好今天没什么考试了，就找时间学了学。
+nio网上讲的也挺多的了，我也没必要班门弄斧，就是说说自己的理解吧。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>快速傅里叶变换 java实现</title>
+      <link>https://hundredwz.github.io/post/%E5%BF%AB%E9%80%9F%E5%82%85%E9%87%8C%E5%8F%B6%E5%8F%98%E6%8D%A2-java%E5%AE%9E%E7%8E%B0/</link>
+      <pubDate>Wed, 09 Dec 2015 15:05:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/%E5%BF%AB%E9%80%9F%E5%82%85%E9%87%8C%E5%8F%B6%E5%8F%98%E6%8D%A2-java%E5%AE%9E%E7%8E%B0/</guid>
+      <description>&lt;p&gt;昨天晚上数字信号处理粗略的复习了下，感觉快速傅里叶变换对于使用挺重要的，就想着编程实现它。
+今天上午没课，想着一上午实现吧，结果到晚上才编出来。
+反正是出结果了，我也不管结果对不对了，反正原理算是差不多了解了。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>矩阵键盘逐行扫描法</title>
+      <link>https://hundredwz.github.io/post/%E7%9F%A9%E9%98%B5%E9%94%AE%E7%9B%98%E9%80%90%E8%A1%8C%E6%89%AB%E6%8F%8F%E6%B3%95/</link>
+      <pubDate>Mon, 07 Dec 2015 15:25:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/%E7%9F%A9%E9%98%B5%E9%94%AE%E7%9B%98%E9%80%90%E8%A1%8C%E6%89%AB%E6%8F%8F%E6%B3%95/</guid>
+      <description>&lt;p&gt;今天，跟同学讨论单片机的时候，在看到键盘电路的时候看到了逐行扫描法。
+看着挺简单的，只是一到程序实现就感觉有点难了，结合百度加讨论弄明白了。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Servlet乱码</title>
+      <link>https://hundredwz.github.io/post/Servlet%E4%B9%B1%E7%A0%81/</link>
+      <pubDate>Fri, 06 Nov 2015 07:20:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/Servlet%E4%B9%B1%E7%A0%81/</guid>
+      <description>&lt;p&gt;最近学长分配了一个小任务，让做个微信公众号，想想就是一个servlet就够了，就开始做吧，结果不做没发现，一做发现问题太多了。 其中问题最大的就是中文乱码问题。&lt;/p&gt;
+
+&lt;p&gt;和学长研究了一下午都没找到具体什么地方出的问题，各种百度，什么方法都尝试过了，结果都解决不了。&lt;/p&gt;
+
+&lt;p&gt;甚至怕由于jdk的io不对又重新从官网下载了jdk。真心无语了！&lt;/p&gt;
+
+&lt;p&gt;最后无奈，我脱离了idea，试了试eclipse，然后发现乱码问题竟然神奇的解决啦！&lt;/p&gt;
+
+&lt;p&gt;想想eclipse绝对比idea高明不到那去啊，凭什么idea就不行？&lt;/p&gt;
+
+&lt;p&gt;最后发现错的很无语！&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>表达式求值中后缀转换</title>
+      <link>https://hundredwz.github.io/post/%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%B1%82%E5%80%BC%E4%B8%AD%E5%90%8E%E7%BC%80%E8%BD%AC%E6%8D%A2/</link>
+      <pubDate>Mon, 05 Oct 2015 14:15:00 +0000</pubDate>
+      
+      <guid>https://hundredwz.github.io/post/%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%B1%82%E5%80%BC%E4%B8%AD%E5%90%8E%E7%BC%80%E8%BD%AC%E6%8D%A2/</guid>
+      <description>&lt;p&gt;这几天闲着无聊用安卓编个计算器，实现方法有很多种。&lt;/p&gt;
+
+&lt;p&gt;想想学过的算法课，干脆点击监听录入表达式，然后中缀转为后缀计算吧&lt;/p&gt;
+
+&lt;p&gt;顺便复习下栈的应用，也不算白学一门课。&lt;/p&gt;
+
+&lt;p&gt;由于学的是c语言的，然后上课没好好听，只好边发文章边学了。&lt;/p&gt;
+
+&lt;p&gt;书上讲的中后缀表达式转换可能对于人工来说相对麻烦点&lt;/p&gt;
+
+&lt;p&gt;忘了在哪看到的一篇帖子，快速的转换，下面列出来方法&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

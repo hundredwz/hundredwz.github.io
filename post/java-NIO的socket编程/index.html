@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>java NIO的socket编程 - A Lazy Coder</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="Hundred" /><meta name="description" content="前某个星期用java的阻塞式io写了一个socket的程序后，感觉用来玩玩还可以，连接量一上来就完了。 然后又看到推荐说nio，就一直想着学学，结果中间这几天考试复习给耽搁了。正好今天没什么考试了，就找时间学了学。 nio网上讲的也挺多的了，我也没必要班门弄斧，就是说说自己的理解吧。
+" /><meta name="keywords" content="Blockchain, Golang, Fabric, Ethereum, Code" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.56.1 with even 4.0.0" />
+
+
+<link rel="canonical" href="https://hundredwz.github.io/post/java-NIO%E7%9A%84socket%E7%BC%96%E7%A8%8B/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<link href="/dist/even.c2a46f00.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+<link rel="stylesheet" href="/css/reset-even.css">
+
+
+<meta property="og:title" content="java NIO的socket编程" />
+<meta property="og:description" content="前某个星期用java的阻塞式io写了一个socket的程序后，感觉用来玩玩还可以，连接量一上来就完了。
+然后又看到推荐说nio，就一直想着学学，结果中间这几天考试复习给耽搁了。正好今天没什么考试了，就找时间学了学。
+nio网上讲的也挺多的了，我也没必要班门弄斧，就是说说自己的理解吧。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://hundredwz.github.io/post/java-NIO%E7%9A%84socket%E7%BC%96%E7%A8%8B/" />
+<meta property="article:published_time" content="2015-12-20T05:56:00+00:00" />
+<meta property="article:modified_time" content="2015-12-20T05:56:00+00:00" />
+<meta itemprop="name" content="java NIO的socket编程">
+<meta itemprop="description" content="前某个星期用java的阻塞式io写了一个socket的程序后，感觉用来玩玩还可以，连接量一上来就完了。
+然后又看到推荐说nio，就一直想着学学，结果中间这几天考试复习给耽搁了。正好今天没什么考试了，就找时间学了学。
+nio网上讲的也挺多的了，我也没必要班门弄斧，就是说说自己的理解吧。">
+
+
+<meta itemprop="datePublished" content="2015-12-20T05:56:00&#43;00:00" />
+<meta itemprop="dateModified" content="2015-12-20T05:56:00&#43;00:00" />
+<meta itemprop="wordCount" content="1745">
+
+
+
+<meta itemprop="keywords" content="java,socket," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="java NIO的socket编程"/>
+<meta name="twitter:description" content="前某个星期用java的阻塞式io写了一个socket的程序后，感觉用来玩玩还可以，连接量一上来就完了。
+然后又看到推荐说nio，就一直想着学学，结果中间这几天考试复习给耽搁了。正好今天没什么考试了，就找时间学了学。
+nio网上讲的也挺多的了，我也没必要班门弄斧，就是说说自己的理解吧。"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">A Lazy Coder</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">首页</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">归档</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">分类</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/friends/">
+        <li class="mobile-menu-item">Friends</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">A Lazy Coder</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">首页</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">归档</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">分类</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/friends/">Friends</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">java NIO的socket编程</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2015-12-20 05:56 </span>
+        <div class="post-category">
+            <a href="/categories/program/"> program </a>
+            </div>
+          <span class="more-meta"> 约 1745 字 </span>
+          <span class="more-meta"> 预计阅读 4 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    
+  </div>
+</div>
+  <div class="post-outdated">
+    <div class="warn">
+      <p>【注意】最后更新于 <span class="timeago" datetime="2015-12-20T05:56:00" title="December 20, 2015">December 20, 2015</span>，文中内容可能已过时，请谨慎使用。</p>
+    </div>
+  </div>
+    <div class="post-content">
+      <p>前某个星期用java的阻塞式io写了一个socket的程序后，感觉用来玩玩还可以，连接量一上来就完了。
+然后又看到推荐说nio，就一直想着学学，结果中间这几天考试复习给耽搁了。正好今天没什么考试了，就找时间学了学。
+nio网上讲的也挺多的了，我也没必要班门弄斧，就是说说自己的理解吧。</p>
+
+<p>在nio中比较重要的是channel、buffer以及selector这几个东西。
+channel跟io的流有点相似，buffer就是缓存区了。selector就是异步用的了。
+借用一个人的<a href="http://www.iteye.com/magazines/132-Java-NIO">神总结</a>，
+&gt;Channel对应以前的流，Buffer不是什么新东西，Selector是因为nio可以使用异步的非堵塞模式才加入的东西。
+以前的流总是堵塞的，一个线程只要对它进行操作，其它操作就会被堵塞，也就相当于水管没有阀门，你伸手接水的时候，不管水到了没有，你就都只能耗在接水（流）上。
+nio的Channel的加入，相当于增加了水龙头（有阀门），虽然一个时刻也只能接一个水管的水，但依赖轮换策略，在水量不大的时候，各个水管里流出来的水，都可以得到妥善接纳，这个关键之处就是增加了一个接水工，也就是Selector，他负责协调，也就是看哪根水管有水了的话，在当前水管的水接到一定程度的时候，就切换一下：临时关上当前水龙头，试着打开另一个水龙头（看看有没有水）。
+当其他人需要用水的时候，不是直接去接水，而是事前提了一个水桶给接水工，这个水桶就是Buffer。也就是，其他人虽然也可能要等，但不会在现场等，而是回家等，可以做其它事去，水接满了，接水工会通知他们。
+这其实也是非常接近当前社会分工细化的现实，也是统分利用现有资源达到并发效果的一种很经济的手段，而不是动不动就来个并行处理，虽然那样是最简单的，但也是最浪费资源的方式。</p>
+
+<p>相对于网上讲其他的复杂的解释这个更容易理解一点。
+继续套用那个例子的话，阻塞式io就是相当于如果多个水龙头来水(多个用户加入),就得多请几个节水工（开多个线程）,这就导致花销大啦(系统多开资源)。
+具体的关于程序的编写也不再多说啦。我也是看的一知半解的。
+还是有问题存在。比如
+<font color="red">客户端要发送多个数据的话或者是服务器要一直接受的话，就处理不了，只能一接一发。</font>
+这个仍然没想到解决方法。或许是逻辑哪出问题了吧。
+直接上程序吧.这个是服务器端的。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span><span class="lnt">75
+</span><span class="lnt">76
+</span><span class="lnt">77
+</span><span class="lnt">78
+</span><span class="lnt">79
+</span><span class="lnt">80
+</span><span class="lnt">81
+</span><span class="lnt">82
+</span><span class="lnt">83
+</span><span class="lnt">84
+</span><span class="lnt">85
+</span><span class="lnt">86
+</span><span class="lnt">87
+</span><span class="lnt">88
+</span><span class="lnt">89
+</span><span class="lnt">90
+</span><span class="lnt">91
+</span><span class="lnt">92
+</span><span class="lnt">93
+</span><span class="lnt">94
+</span><span class="lnt">95
+</span><span class="lnt">96
+</span><span class="lnt">97
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kn">package</span> <span class="nf">top</span><span class="p">.</span><span class="na">txiner</span><span class="p">.</span><span class="na">nio</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nf">java</span><span class="p">.</span><span class="na">io</span><span class="p">.</span><span class="o">*</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nf">java</span><span class="p">.</span><span class="na">net</span><span class="p">.</span><span class="na">InetSocketAddress</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nf">java</span><span class="p">.</span><span class="na">net</span><span class="p">.</span><span class="na">ServerSocket</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nf">java</span><span class="p">.</span><span class="na">nio</span><span class="p">.</span><span class="na">ByteBuffer</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nf">java</span><span class="p">.</span><span class="na">nio</span><span class="p">.</span><span class="na">channels</span><span class="p">.</span><span class="na">SelectionKey</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nf">java</span><span class="p">.</span><span class="na">nio</span><span class="p">.</span><span class="na">channels</span><span class="p">.</span><span class="na">Selector</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nf">java</span><span class="p">.</span><span class="na">nio</span><span class="p">.</span><span class="na">channels</span><span class="p">.</span><span class="na">ServerSocketChannel</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nf">java</span><span class="p">.</span><span class="na">nio</span><span class="p">.</span><span class="na">channels</span><span class="p">.</span><span class="na">SocketChannel</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nf">java</span><span class="p">.</span><span class="na">util</span><span class="p">.</span><span class="na">Iterator</span><span class="p">;</span>
+<span class="cm">/**
+</span><span class="cm"> * Created by hundred on 2015/12/20.
+</span><span class="cm"> */</span>
+<span class="kd">public</span> <span class="nf">class</span> <span class="n">ServerNIO</span> <span class="p">{</span>
+    <span class="kd">public</span> <span class="nf">static</span> <span class="kd">final</span> <span class="nf">InetSocketAddress</span> <span class="n">ADDRESS</span> <span class="o">=</span> <span class="k">new</span> <span class="n">InetSocketAddress</span><span class="p">(</span><span class="n">8080</span><span class="p">);</span>
+    <span class="kd">public</span> <span class="nf">Selector</span> <span class="n">selector</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+    <span class="kd">static</span> <span class="nf">int</span> <span class="n">BLOCK</span> <span class="o">=</span> <span class="n">1024</span><span class="p">;</span>
+    <span class="kd">private</span> <span class="nf">ByteBuffer</span> <span class="n">receiveBuffer</span> <span class="o">=</span> <span class="n">ByteBuffer</span><span class="p">.</span><span class="na">allocate</span><span class="p">(</span><span class="n">BLOCK</span><span class="p">);</span>
+    <span class="kd">private</span> <span class="nf">ByteBuffer</span> <span class="n">sendBuffer</span> <span class="o">=</span> <span class="n">ByteBuffer</span><span class="p">.</span><span class="na">allocate</span><span class="p">(</span><span class="n">BLOCK</span><span class="p">);</span>
+    <span class="kd">public</span> <span class="nf">ServerNIO</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">try</span> <span class="p">{</span>
+            <span class="n">ServerSocketChannel</span> <span class="nf">channel</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="n">channel</span> <span class="o">=</span> <span class="n">ServerSocketChannel</span><span class="p">.</span><span class="na">open</span><span class="p">();</span>
+            <span class="n">channel</span><span class="p">.</span><span class="na">configureBlocking</span><span class="p">(</span><span class="kc">false</span><span class="p">);</span>
+            <span class="n">ServerSocket</span> <span class="nf">serverSocket</span> <span class="o">=</span> <span class="n">channel</span><span class="p">.</span><span class="na">socket</span><span class="p">();</span>
+            <span class="n">serverSocket</span><span class="p">.</span><span class="na">bind</span><span class="p">(</span><span class="n">ADDRESS</span><span class="p">);</span>
+            <span class="n">selector</span> <span class="o">=</span> <span class="n">Selector</span><span class="p">.</span><span class="na">open</span><span class="p">();</span>
+            <span class="n">channel</span><span class="p">.</span><span class="na">register</span><span class="p">(</span><span class="n">selector</span><span class="p">,</span> <span class="n">SelectionKey</span><span class="p">.</span><span class="na">OP_ACCEPT</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="n">IOException</span> <span class="nf">e</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">e</span><span class="p">.</span><span class="na">printStackTrace</span><span class="p">();</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="kd">public</span> <span class="nf">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="p">[]</span> <span class="nf">args</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">ServerNIO</span> <span class="nf">serverNIO</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ServerNIO</span><span class="p">();</span>
+        <span class="n">serverNIO</span><span class="p">.</span><span class="na">listen</span><span class="p">();</span>
+    <span class="p">}</span>
+    <span class="kd">private</span> <span class="nf">void</span> <span class="n">listen</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">Iterator</span> <span class="nf">iter</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">while</span> <span class="p">(</span><span class="kc">true</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">try</span> <span class="p">{</span>
+                <span class="n">selector</span><span class="p">.</span><span class="na">select</span><span class="p">();</span>
+                <span class="n">iter</span> <span class="o">=</span> <span class="n">selector</span><span class="p">.</span><span class="na">selectedKeys</span><span class="p">().</span><span class="na">iterator</span><span class="p">();</span>
+                <span class="k">while</span> <span class="p">(</span><span class="n">iter</span><span class="p">.</span><span class="na">hasNext</span><span class="p">())</span> <span class="p">{</span>
+                    <span class="n">SelectionKey</span> <span class="nf">key</span> <span class="o">=</span> <span class="p">(</span><span class="n">SelectionKey</span><span class="p">)</span> <span class="n">iter</span><span class="p">.</span><span class="na">next</span><span class="p">();</span>
+                    <span class="n">iter</span><span class="p">.</span><span class="na">remove</span><span class="p">();</span>
+                    <span class="n">handle</span><span class="p">(</span><span class="n">key</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="n">IOException</span> <span class="nf">e</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">e</span><span class="p">.</span><span class="na">printStackTrace</span><span class="p">();</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="kd">private</span> <span class="nf">void</span> <span class="n">handle</span><span class="p">(</span><span class="n">SelectionKey</span> <span class="nf">key</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">String</span> <span class="nf">receiveText</span><span class="p">;</span>
+        <span class="n">String</span> <span class="nf">sendText</span><span class="p">;</span>
+        <span class="kt">int</span> <span class="nf">count</span> <span class="o">=</span> <span class="n">0</span><span class="p">;</span>
+        <span class="n">SocketChannel</span> <span class="nf">channel</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">key</span><span class="p">.</span><span class="na">isAcceptable</span><span class="p">())</span> <span class="p">{</span>
+            <span class="k">try</span> <span class="p">{</span>
+                <span class="n">ServerSocketChannel</span> <span class="nf">serverSocketChannel</span> <span class="o">=</span>
+                        <span class="p">(</span><span class="n">ServerSocketChannel</span><span class="p">)</span> <span class="n">key</span><span class="p">.</span><span class="na">channel</span><span class="p">();</span>
+                <span class="n">channel</span> <span class="o">=</span> <span class="n">serverSocketChannel</span><span class="p">.</span><span class="na">accept</span><span class="p">();</span>
+                <span class="n">channel</span><span class="p">.</span><span class="na">configureBlocking</span><span class="p">(</span><span class="kc">false</span><span class="p">);</span>
+                <span class="n">channel</span><span class="p">.</span><span class="na">register</span><span class="p">(</span><span class="n">selector</span><span class="p">,</span> <span class="n">SelectionKey</span><span class="p">.</span><span class="na">OP_READ</span><span class="p">);</span>
+            <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="n">IOException</span> <span class="nf">e</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">e</span><span class="p">.</span><span class="na">printStackTrace</span><span class="p">();</span>
+            <span class="p">}</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">key</span><span class="p">.</span><span class="na">isReadable</span><span class="p">())</span> <span class="p">{</span>
+            <span class="k">try</span> <span class="p">{</span>
+                <span class="n">channel</span> <span class="o">=</span> <span class="p">(</span><span class="n">SocketChannel</span><span class="p">)</span> <span class="n">key</span><span class="p">.</span><span class="na">channel</span><span class="p">();</span>
+                <span class="n">receiveBuffer</span><span class="p">.</span><span class="na">clear</span><span class="p">();</span>
+                <span class="n">count</span> <span class="o">=</span> <span class="n">channel</span><span class="p">.</span><span class="na">read</span><span class="p">(</span><span class="n">receiveBuffer</span><span class="p">);</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">count</span> <span class="o">&gt;</span> <span class="n">0</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="n">receiveText</span> <span class="o">=</span> <span class="k">new</span> <span class="n">String</span><span class="p">(</span><span class="n">receiveBuffer</span><span class="p">.</span><span class="na">array</span><span class="p">(),</span> <span class="n">0</span><span class="p">,</span> <span class="n">count</span><span class="p">);</span>
+                    <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&#34;data from client: &#34;</span> <span class="o">+</span> <span class="n">receiveText</span><span class="p">);</span>
+                    <span class="n">channel</span><span class="p">.</span><span class="na">register</span><span class="p">(</span><span class="n">selector</span><span class="p">,</span> <span class="n">SelectionKey</span><span class="p">.</span><span class="na">OP_WRITE</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="n">IOException</span> <span class="nf">e</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">e</span><span class="p">.</span><span class="na">printStackTrace</span><span class="p">();</span>
+            <span class="p">}</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">key</span><span class="p">.</span><span class="na">isWritable</span><span class="p">())</span> <span class="p">{</span>
+            <span class="k">try</span> <span class="p">{</span>
+                <span class="n">sendBuffer</span><span class="p">.</span><span class="na">clear</span><span class="p">();</span>
+                <span class="n">channel</span> <span class="o">=</span> <span class="p">(</span><span class="n">SocketChannel</span><span class="p">)</span> <span class="n">key</span><span class="p">.</span><span class="na">channel</span><span class="p">();</span>
+                <span class="n">BufferedReader</span> <span class="nf">br</span> <span class="o">=</span> <span class="k">new</span> <span class="n">BufferedReader</span><span class="p">(</span><span class="k">new</span> <span class="n">InputStreamReader</span>
+                        <span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="na">in</span><span class="p">));</span>
+                <span class="n">sendText</span> <span class="o">=</span> <span class="n">br</span><span class="p">.</span><span class="na">readLine</span><span class="p">();</span>
+                <span class="n">sendBuffer</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="n">sendText</span><span class="p">.</span><span class="na">getBytes</span><span class="p">());</span>
+                <span class="n">sendBuffer</span><span class="p">.</span><span class="na">flip</span><span class="p">();</span>
+                <span class="n">channel</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="n">sendBuffer</span><span class="p">);</span>
+                <span class="n">channel</span><span class="p">.</span><span class="na">register</span><span class="p">(</span><span class="n">selector</span><span class="p">,</span> <span class="n">SelectionKey</span><span class="p">.</span><span class="na">OP_READ</span><span class="p">);</span>
+            <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="n">IOException</span> <span class="nf">e</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">e</span><span class="p">.</span><span class="na">printStackTrace</span><span class="p">();</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>这个是客户端的。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span><span class="lnt">75
+</span><span class="lnt">76
+</span><span class="lnt">77
+</span><span class="lnt">78
+</span><span class="lnt">79
+</span><span class="lnt">80
+</span><span class="lnt">81
+</span><span class="lnt">82
+</span><span class="lnt">83
+</span><span class="lnt">84
+</span><span class="lnt">85
+</span><span class="lnt">86
+</span><span class="lnt">87
+</span><span class="lnt">88
+</span><span class="lnt">89
+</span><span class="lnt">90
+</span><span class="lnt">91
+</span><span class="lnt">92
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kn">package</span> <span class="nf">top</span><span class="p">.</span><span class="na">txiner</span><span class="p">.</span><span class="na">nio</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nf">java</span><span class="p">.</span><span class="na">io</span><span class="p">.</span><span class="na">BufferedReader</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nf">java</span><span class="p">.</span><span class="na">io</span><span class="p">.</span><span class="na">IOException</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nf">java</span><span class="p">.</span><span class="na">io</span><span class="p">.</span><span class="na">InputStreamReader</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nf">java</span><span class="p">.</span><span class="na">net</span><span class="p">.</span><span class="na">InetSocketAddress</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nf">java</span><span class="p">.</span><span class="na">nio</span><span class="p">.</span><span class="na">ByteBuffer</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nf">java</span><span class="p">.</span><span class="na">nio</span><span class="p">.</span><span class="na">channels</span><span class="p">.</span><span class="na">SelectionKey</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nf">java</span><span class="p">.</span><span class="na">nio</span><span class="p">.</span><span class="na">channels</span><span class="p">.</span><span class="na">Selector</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nf">java</span><span class="p">.</span><span class="na">nio</span><span class="p">.</span><span class="na">channels</span><span class="p">.</span><span class="na">SocketChannel</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nf">java</span><span class="p">.</span><span class="na">util</span><span class="p">.</span><span class="na">Iterator</span><span class="p">;</span>
+<span class="cm">/**
+</span><span class="cm"> * Created by hundred on 2015/12/20.
+</span><span class="cm"> */</span>
+<span class="kd">public</span> <span class="nf">class</span> <span class="n">ClientNIO</span> <span class="p">{</span>
+    <span class="kd">public</span> <span class="nf">Selector</span> <span class="n">selector</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+    <span class="kd">static</span> <span class="nf">int</span> <span class="n">BLOCK</span> <span class="o">=</span> <span class="n">1024</span><span class="p">;</span>
+    <span class="kd">public</span> <span class="nf">int</span> <span class="n">ID</span> <span class="o">=</span> <span class="n">0</span><span class="p">;</span>
+    <span class="kd">private</span> <span class="nf">ByteBuffer</span> <span class="n">receiveBuffer</span> <span class="o">=</span> <span class="n">ByteBuffer</span><span class="p">.</span><span class="na">allocate</span><span class="p">(</span><span class="n">BLOCK</span><span class="p">);</span>
+    <span class="kd">private</span> <span class="nf">ByteBuffer</span> <span class="n">sendBuffer</span> <span class="o">=</span> <span class="n">ByteBuffer</span><span class="p">.</span><span class="na">allocate</span><span class="p">(</span><span class="n">BLOCK</span><span class="p">);</span>
+    <span class="kd">public</span> <span class="nf">static</span> <span class="kd">final</span> <span class="nf">InetSocketAddress</span> <span class="n">ADDRESS</span> <span class="o">=</span> <span class="k">new</span> <span class="n">InetSocketAddress</span>
+            <span class="p">(</span><span class="s">&#34;localhost&#34;</span><span class="p">,</span> <span class="n">8080</span><span class="p">);</span>
+    <span class="kd">public</span> <span class="nf">ClientNIO</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">try</span> <span class="p">{</span>
+            <span class="n">SocketChannel</span> <span class="nf">channel</span> <span class="o">=</span> <span class="n">SocketChannel</span><span class="p">.</span><span class="na">open</span><span class="p">();</span>
+            <span class="n">channel</span><span class="p">.</span><span class="na">configureBlocking</span><span class="p">(</span><span class="kc">false</span><span class="p">);</span>
+            <span class="n">channel</span><span class="p">.</span><span class="na">connect</span><span class="p">(</span><span class="n">ADDRESS</span><span class="p">);</span>
+            <span class="n">selector</span> <span class="o">=</span> <span class="n">Selector</span><span class="p">.</span><span class="na">open</span><span class="p">();</span>
+            <span class="n">channel</span><span class="p">.</span><span class="na">register</span><span class="p">(</span><span class="n">selector</span><span class="p">,</span> <span class="n">SelectionKey</span><span class="p">.</span><span class="na">OP_CONNECT</span><span class="p">);</span>
+            <span class="n">ID</span> <span class="o">=</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span> <span class="p">(</span><span class="n">Math</span><span class="p">.</span><span class="na">random</span><span class="p">()</span> <span class="o">*</span> <span class="n">10</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="n">IOException</span> <span class="nf">e</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">e</span><span class="p">.</span><span class="na">printStackTrace</span><span class="p">();</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="kd">public</span> <span class="nf">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="p">[]</span> <span class="nf">args</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">ClientNIO</span> <span class="nf">clientNIO</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ClientNIO</span><span class="p">();</span>
+        <span class="n">clientNIO</span><span class="p">.</span><span class="na">send</span><span class="p">();</span>
+    <span class="p">}</span>
+    <span class="kd">private</span> <span class="nf">void</span> <span class="n">send</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kt">int</span> <span class="nf">count</span> <span class="o">=</span> <span class="n">0</span><span class="p">;</span>
+        <span class="n">SelectionKey</span> <span class="nf">key</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="n">SocketChannel</span> <span class="nf">channel</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="n">String</span> <span class="nf">noticeMsg</span> <span class="o">=</span> <span class="s">&#34;connect with you now.I am the &#34;</span> <span class="o">+</span> <span class="n">ID</span><span class="p">;</span>
+        <span class="n">String</span> <span class="nf">receiveText</span><span class="p">;</span>
+        <span class="n">String</span> <span class="nf">sendText</span><span class="p">;</span>
+        <span class="k">while</span> <span class="p">(</span><span class="kc">true</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">try</span> <span class="p">{</span>
+                <span class="n">selector</span><span class="p">.</span><span class="na">select</span><span class="p">();</span>
+                <span class="n">Iterator</span> <span class="nf">iter</span> <span class="o">=</span> <span class="n">selector</span><span class="p">.</span><span class="na">selectedKeys</span><span class="p">().</span><span class="na">iterator</span><span class="p">();</span>
+                <span class="k">while</span> <span class="p">(</span><span class="n">iter</span><span class="p">.</span><span class="na">hasNext</span><span class="p">())</span> <span class="p">{</span>
+                    <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="n">SelectionKey</span><span class="p">)</span> <span class="n">iter</span><span class="p">.</span><span class="na">next</span><span class="p">();</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="n">key</span><span class="p">.</span><span class="na">isConnectable</span><span class="p">())</span> <span class="p">{</span>
+                        <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&#34;connect to server&#34;</span><span class="p">);</span>
+                        <span class="n">channel</span> <span class="o">=</span> <span class="p">(</span><span class="n">SocketChannel</span><span class="p">)</span> <span class="n">key</span><span class="p">.</span><span class="na">channel</span><span class="p">();</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="n">channel</span><span class="p">.</span><span class="na">isConnectionPending</span><span class="p">())</span> <span class="p">{</span>
+                            <span class="n">channel</span><span class="p">.</span><span class="na">finishConnect</span><span class="p">();</span>
+                            <span class="n">sendBuffer</span><span class="p">.</span><span class="na">clear</span><span class="p">();</span>
+                            <span class="n">sendBuffer</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="n">noticeMsg</span><span class="p">.</span><span class="na">getBytes</span><span class="p">());</span>
+                            <span class="n">sendBuffer</span><span class="p">.</span><span class="na">flip</span><span class="p">();</span>
+                            <span class="n">channel</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="n">sendBuffer</span><span class="p">);</span>
+                        <span class="p">}</span>
+                        <span class="n">channel</span><span class="p">.</span><span class="na">configureBlocking</span><span class="p">(</span><span class="kc">false</span><span class="p">);</span>
+                        <span class="n">channel</span><span class="p">.</span><span class="na">register</span><span class="p">(</span><span class="n">selector</span><span class="p">,</span> <span class="n">SelectionKey</span><span class="p">.</span><span class="na">OP_READ</span><span class="p">);</span>
+                    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">key</span><span class="p">.</span><span class="na">isReadable</span><span class="p">())</span> <span class="p">{</span>
+                        <span class="n">channel</span> <span class="o">=</span> <span class="p">(</span><span class="n">SocketChannel</span><span class="p">)</span> <span class="n">key</span><span class="p">.</span><span class="na">channel</span><span class="p">();</span>
+                        <span class="n">receiveBuffer</span><span class="p">.</span><span class="na">clear</span><span class="p">();</span>
+                        <span class="n">count</span> <span class="o">=</span> <span class="n">channel</span><span class="p">.</span><span class="na">read</span><span class="p">(</span><span class="n">receiveBuffer</span><span class="p">);</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="n">count</span> <span class="o">&gt;</span> <span class="n">0</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="n">receiveText</span> <span class="o">=</span> <span class="k">new</span> <span class="n">String</span><span class="p">(</span><span class="n">receiveBuffer</span><span class="p">.</span><span class="na">array</span><span class="p">(),</span>
+                                    <span class="n">0</span><span class="p">,</span> <span class="n">count</span><span class="p">);</span>
+                            <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&#34;data from server: &#34;</span> <span class="o">+</span>
+                                    <span class="n">receiveText</span><span class="p">);</span>
+                            <span class="n">channel</span><span class="p">.</span><span class="na">register</span><span class="p">(</span><span class="n">selector</span><span class="p">,</span> <span class="n">SelectionKey</span><span class="p">.</span><span class="na">OP_WRITE</span><span class="p">);</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">key</span><span class="p">.</span><span class="na">isWritable</span><span class="p">())</span> <span class="p">{</span>
+                        <span class="n">channel</span> <span class="o">=</span> <span class="p">(</span><span class="n">SocketChannel</span><span class="p">)</span> <span class="n">key</span><span class="p">.</span><span class="na">channel</span><span class="p">();</span>
+                        <span class="n">sendBuffer</span><span class="p">.</span><span class="na">clear</span><span class="p">();</span>
+                        <span class="n">BufferedReader</span> <span class="nf">br</span> <span class="o">=</span> <span class="k">new</span> <span class="n">BufferedReader</span><span class="p">(</span><span class="k">new</span>
+                                <span class="n">InputStreamReader</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="na">in</span><span class="p">));</span>
+                        <span class="n">sendText</span> <span class="o">=</span> <span class="n">br</span><span class="p">.</span><span class="na">readLine</span><span class="p">();</span>
+                        <span class="n">sendBuffer</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="n">sendText</span><span class="p">.</span><span class="na">getBytes</span><span class="p">());</span>
+                        <span class="n">sendBuffer</span><span class="p">.</span><span class="na">flip</span><span class="p">();</span>
+                        <span class="n">channel</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="n">sendBuffer</span><span class="p">);</span>
+                        <span class="n">channel</span><span class="p">.</span><span class="na">register</span><span class="p">(</span><span class="n">selector</span><span class="p">,</span> <span class="n">SelectionKey</span><span class="p">.</span><span class="na">OP_READ</span><span class="p">);</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+                <span class="n">selector</span><span class="p">.</span><span class="na">selectedKeys</span><span class="p">().</span><span class="na">clear</span><span class="p">();</span>
+            <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="n">IOException</span> <span class="nf">e</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">e</span><span class="p">.</span><span class="na">printStackTrace</span><span class="p">();</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>在学nio的时候参考太多了，也没记录，就不付具体参考的了。
+如果以后能改得了上面那个问题就再改程序。
+数字信号处理考试好难，好多都不会做，没心情在往下瞎编了。</p>
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">Hundred</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2015-12-20 05:56
+        
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">许可协议</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/java/">java</a>
+          <a href="/tags/socket/">socket</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/python%E8%AE%A1%E7%AE%97%E5%8F%89%E4%B9%98/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">python计算叉乘</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/%E5%BF%AB%E9%80%9F%E5%82%85%E9%87%8C%E5%8F%B6%E5%8F%98%E6%8D%A2-java%E5%AE%9E%E7%8E%B0/">
+            <span class="next-text nav-default">快速傅里叶变换 java实现</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+  
+  
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="#" class="iconfont icon-cnblogs" title="cnblogs"></a>
+      <a href="mailto:sdwangzhuo@gmail.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/hundredwz" class="iconfont icon-github" title="github"></a>
+      <a href="#" class="iconfont icon-juejin" title="juejin"></a>
+      <a href="#" class="iconfont icon-v2ex" title="v2ex"></a>
+      <a href="https://weibo.com/hundredwz" class="iconfont icon-weibo" title="weibo"></a>
+  <a href="https://hundredwz.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2013 - 
+    2020
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Hundred</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.min.js" integrity="sha256-jwCP0NAdCBloaIWTWHmW4i3snUNMHUNO+jr9rYd2iOI=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timeago.js@3.0.2/dist/timeago.locales.min.js" integrity="sha256-ZwofwC1Lf/faQCzN7nZtfijVV6hSwxjQMwXL4gn9qU8=" crossorigin="anonymous"></script>
+  <script><!-- NOTE: timeago.js uses the language code format like "zh_CN" (underscore and case sensitive) -->
+    var languageCode = "zh-CN".replace(/-/g, '_').replace(/_(.*)/, function ($0, $1) {return $0.replace($1, $1.toUpperCase());});
+    timeago().render(document.querySelectorAll('.timeago'), languageCode);
+    timeago.cancel();  
+  </script>
+<script type="text/javascript" src="/dist/even.26188efa.min.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+      showProcessingMessages: false,
+      messageStyle: 'none'
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"  integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-138883536-1', 'auto');
+	ga('set', 'anonymizeIp', true);
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+
+
+
+
+</body>
+</html>
